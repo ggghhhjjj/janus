@@ -1,0 +1,130 @@
+<div
+  class="modal-backdrop"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="isEditMode ? 'Edit Transaction' : 'Add Transaction'"
+  (click)="onBackdropClick($event)"
+  (keydown)="onKeydown($event)"
+  tabindex="-1"
+>
+  <div class="modal-card">
+    <h2 class="modal-title">{{ isEditMode ? 'Edit Transaction' : 'Add Transaction' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSave()" novalidate>
+      <!-- Date -->
+      <div class="field">
+        <label class="field__label" for="tx-date">Date <span aria-hidden="true">*</span></label>
+        <input
+          id="tx-date"
+          type="date"
+          class="field__input"
+          [class.field__input--error]="hasError('date')"
+          formControlName="date"
+          aria-required="true"
+        />
+        @if (hasError('date')) {
+          <span class="field__error" role="alert">Date is required.</span>
+        }
+      </div>
+
+      <!-- Ticker -->
+      <div class="field">
+        <label class="field__label" for="tx-ticker">Ticker <span aria-hidden="true">*</span></label>
+        <input
+          id="tx-ticker"
+          type="text"
+          class="field__input"
+          [class.field__input--error]="hasError('ticker')"
+          formControlName="ticker"
+          placeholder="e.g. AAPL"
+          aria-required="true"
+          autocomplete="off"
+          autocapitalize="characters"
+        />
+        @if (hasError('ticker')) {
+          <span class="field__error" role="alert">Ticker is required.</span>
+        }
+      </div>
+
+      <!-- Type -->
+      <div class="field">
+        <label class="field__label" for="tx-type">Type <span aria-hidden="true">*</span></label>
+        <select
+          id="tx-type"
+          class="field__input"
+          [class.field__input--error]="hasError('type')"
+          formControlName="type"
+          aria-required="true"
+        >
+          @for (t of transactionTypes; track t) {
+            <option [value]="t">{{ t | titlecase }}</option>
+          }
+        </select>
+        @if (hasError('type')) {
+          <span class="field__error" role="alert">Type is required.</span>
+        }
+      </div>
+
+      <!-- Quantity -->
+      <div class="field">
+        <label class="field__label" for="tx-quantity">Quantity <span aria-hidden="true">*</span></label>
+        <input
+          id="tx-quantity"
+          type="number"
+          class="field__input"
+          [class.field__input--error]="hasError('quantity')"
+          formControlName="quantity"
+          min="0.0000001"
+          step="any"
+          aria-required="true"
+        />
+        @if (hasError('quantity')) {
+          <span class="field__error" role="alert">Quantity must be greater than 0.</span>
+        }
+      </div>
+
+      <!-- Price -->
+      <div class="field">
+        <label class="field__label" for="tx-price">Price <span aria-hidden="true">*</span></label>
+        <input
+          id="tx-price"
+          type="number"
+          class="field__input"
+          [class.field__input--error]="hasError('price')"
+          formControlName="price"
+          min="0.0000001"
+          step="any"
+          aria-required="true"
+        />
+        @if (hasError('price')) {
+          <span class="field__error" role="alert">Price must be greater than 0.</span>
+        }
+      </div>
+
+      <!-- Notes -->
+      <div class="field">
+        <label class="field__label" for="tx-notes">Notes</label>
+        <textarea
+          id="tx-notes"
+          class="field__input field__textarea"
+          formControlName="notes"
+          rows="3"
+          placeholder="Optional notes"
+        ></textarea>
+      </div>
+
+      @if (errorMessage) {
+        <p class="form-error" role="alert">{{ errorMessage }}</p>
+      }
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn--secondary" (click)="onCancel()" [disabled]="saving">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving">
+          {{ saving ? 'Saving…' : 'Save' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

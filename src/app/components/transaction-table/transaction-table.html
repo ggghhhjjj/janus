@@ -1,0 +1,114 @@
+<div class="tx-table-view">
+  <div class="tx-table-view__toolbar">
+    <h1 class="tx-table-view__title">Transactions</h1>
+    <button type="button" class="btn btn--primary" (click)="openAdd()" aria-label="Add new transaction">
+      + Add Transaction
+    </button>
+  </div>
+
+  @if (transactionCount() === 0) {
+    <div class="empty-state">
+      <p>No transactions yet. Click <strong>"+ Add Transaction"</strong> to begin.</p>
+    </div>
+  } @else {
+    <div class="table-wrapper" role="region" aria-label="Transactions table" tabindex="0">
+      <table class="data-table" aria-label="Transactions">
+        <thead>
+          <tr>
+            <th scope="col">
+              <button class="sort-btn" (click)="sort('date')" [attr.aria-label]="'Sort by Date ' + sortIcon('date')">
+                Date {{ sortIcon('date') }}
+              </button>
+            </th>
+            <th scope="col">
+              <button class="sort-btn" (click)="sort('ticker')" [attr.aria-label]="'Sort by Ticker ' + sortIcon('ticker')">
+                Ticker {{ sortIcon('ticker') }}
+              </button>
+            </th>
+            <th scope="col">
+              <button class="sort-btn" (click)="sort('type')" [attr.aria-label]="'Sort by Type ' + sortIcon('type')">
+                Type {{ sortIcon('type') }}
+              </button>
+            </th>
+            <th scope="col" class="text-right">
+              <button class="sort-btn" (click)="sort('quantity')" [attr.aria-label]="'Sort by Quantity ' + sortIcon('quantity')">
+                Quantity {{ sortIcon('quantity') }}
+              </button>
+            </th>
+            <th scope="col" class="text-right">
+              <button class="sort-btn" (click)="sort('price')" [attr.aria-label]="'Sort by Price ' + sortIcon('price')">
+                Price {{ sortIcon('price') }}
+              </button>
+            </th>
+            <th scope="col">Notes</th>
+            <th scope="col" class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tx of pageItems(); track tx.id) {
+            <tr>
+              <td>{{ tx.date }}</td>
+              <td><strong>{{ tx.ticker }}</strong></td>
+              <td>
+                <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
+              </td>
+              <td class="text-right">{{ tx.quantity | number: '1.0-4' }}</td>
+              <td class="text-right">{{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }}</td>
+              <td class="notes-cell">{{ tx.notes }}</td>
+              <td class="text-right">
+                <button
+                  type="button"
+                  class="btn btn--ghost btn--sm"
+                  (click)="openEdit(tx)"
+                  [attr.aria-label]="'Edit transaction ' + tx.id"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="btn btn--danger-ghost btn--sm"
+                  (click)="onDelete(tx)"
+                  [attr.aria-label]="'Delete transaction ' + tx.id"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPages() > 1) {
+      <div class="pagination" role="navigation" aria-label="Table pagination">
+        <button
+          type="button"
+          class="btn btn--ghost btn--sm"
+          (click)="prevPage()"
+          [disabled]="currentPage() === 1"
+          aria-label="Previous page"
+        >
+          ← Prev
+        </button>
+        <span class="pagination__info">Page {{ currentPage() }} of {{ totalPages() }}</span>
+        <button
+          type="button"
+          class="btn btn--ghost btn--sm"
+          (click)="nextPage()"
+          [disabled]="currentPage() === totalPages()"
+          aria-label="Next page"
+        >
+          Next →
+        </button>
+      </div>
+    }
+  }
+</div>
+
+@if (formOpen()) {
+  <app-transaction-form
+    [transaction]="editingTransaction()"
+    (saved)="onFormSaved()"
+    (cancelled)="onFormCancelled()"
+  />
+}

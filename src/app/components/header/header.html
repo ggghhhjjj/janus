@@ -1,0 +1,16 @@
+<header class="header">
+  <div class="header__brand">
+    <a routerLink="/" class="header__logo">FIFO Accounter</a>
+  </div>
+  <nav class="header__nav" aria-label="Main navigation">
+    <a routerLink="/" routerLinkActive="header__nav-link--active" [routerLinkActiveOptions]="{ exact: true }" class="header__nav-link">
+      Dashboard
+    </a>
+    <a routerLink="/transactions" routerLinkActive="header__nav-link--active" class="header__nav-link">
+      Transactions
+    </a>
+    <a routerLink="/import" routerLinkActive="header__nav-link--active" class="header__nav-link">
+      Import CSV
+    </a>
+  </nav>
+</header>

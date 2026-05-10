@@ -1,7 +1,11 @@
-<div class="app">
-  <h1>Apache Cordova</h1>
-  <div id="deviceready" [class.ready]="ready()">
-    <p class="event listening">Connecting to Device</p>
-    <p class="event received">Device is Ready</p>
+@if (ready()) {
+  <app-header />
+  <main class="app-content">
+    <router-outlet />
+  </main>
+} @else {
+  <div class="app-loading" aria-live="polite" aria-label="Loading application">
+    <div class="app-loading__spinner" role="status"></div>
+    <p>Loading FIFO Accounter…</p>
   </div>
-</div>
+}

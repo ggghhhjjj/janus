@@ -1,0 +1,73 @@
+<div class="dashboard">
+  <h1 class="dashboard__title">Dashboard</h1>
+
+  <!-- Total Realized Gain/Loss -->
+  <section class="dashboard__section card">
+    <h2 class="card__title">Total Realized Gain / Loss</h2>
+    <p
+      class="card__value"
+      [class.card__value--positive]="totalGainLoss() > 0"
+      [class.card__value--negative]="totalGainLoss() < 0"
+    >
+      {{ totalGainLoss() | currency: 'USD' : 'symbol' : '1.2-2' }}
+    </p>
+  </section>
+
+  <!-- Year-by-Year Breakdown -->
+  <section class="dashboard__section card">
+    <h2 class="card__title">Year-by-Year Breakdown</h2>
+    @if (yearlyBreakdown().length === 0) {
+      <p class="empty-state">No realized gains or losses yet.</p>
+    } @else {
+      <table class="data-table" aria-label="Yearly gain/loss breakdown">
+        <thead>
+          <tr>
+            <th scope="col">Year</th>
+            <th scope="col" class="text-right">Realized Gain / Loss</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of yearlyBreakdown(); track row.year) {
+            <tr>
+              <td>{{ row.year }}</td>
+              <td
+                class="text-right"
+                [class.text-positive]="row.gainLoss > 0"
+                [class.text-negative]="row.gainLoss < 0"
+              >
+                {{ row.gainLoss | currency: 'USD' : 'symbol' : '1.2-2' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+
+  <!-- Open Lots by Ticker -->
+  <section class="dashboard__section card">
+    <h2 class="card__title">Open Lots by Ticker</h2>
+    @if (openLotsByTicker().length === 0) {
+      <p class="empty-state">No open positions.</p>
+    } @else {
+      <table class="data-table" aria-label="Open lots by ticker">
+        <thead>
+          <tr>
+            <th scope="col">Ticker</th>
+            <th scope="col" class="text-right">Quantity Held</th>
+            <th scope="col" class="text-right">Avg. Cost Basis</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (lot of openLotsByTicker(); track lot.ticker) {
+            <tr>
+              <td><strong>{{ lot.ticker }}</strong></td>
+              <td class="text-right">{{ lot.totalQty | number: '1.0-4' }}</td>
+              <td class="text-right">{{ lot.avgCostBasis | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+</div>

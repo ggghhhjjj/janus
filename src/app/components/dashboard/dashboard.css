@@ -1,0 +1,68 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dashboard__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+}
+
+.card__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+  margin: 0 0 0.75rem;
+}
+
+.card__value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.card__value--positive {
+  color: var(--color-success);
+}
+
+.card__value--negative {
+  color: var(--color-danger);
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-positive {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.text-negative {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+
+  .dashboard__title {
+    grid-column: 1 / -1;
+  }
+}

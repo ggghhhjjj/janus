@@ -1,0 +1,174 @@
+<div class="importer">
+  <h1 class="importer__title">Import CSV</h1>
+  <p class="importer__subtitle">Supports Interactive Brokers, DEGIRO, and generic CSV formats.</p>
+
+  <!-- Step 1: Upload -->
+  @if (step() === 'upload') {
+    <div
+      class="drop-zone"
+      (dragover)="onDragOver($event)"
+      (drop)="onDrop($event)"
+      role="region"
+      aria-label="File drop zone"
+    >
+      <p class="drop-zone__icon" aria-hidden="true">📂</p>
+      <p class="drop-zone__label">Drag a CSV file here or click to select</p>
+      <label class="btn btn--primary" for="csv-file-input">
+        Choose File
+        <input
+          id="csv-file-input"
+          type="file"
+          accept=".csv"
+          class="visually-hidden"
+          (change)="onFileSelected($event)"
+          aria-label="Select CSV file"
+        />
+      </label>
+    </div>
+
+    @if (fileError()) {
+      <p class="importer__error" role="alert">{{ fileError() }}</p>
+    }
+  }
+
+  <!-- Step 2: Format Preview -->
+  @if (step() === 'preview') {
+    <div class="card importer__step">
+      <p class="importer__file-name">📄 {{ fileName() }}</p>
+      <p class="importer__detected">
+        Detected format: <strong>{{ formatLabel(detectedFormat()) }}</strong>
+      </p>
+
+      <h2 class="importer__section-title">File Preview (first 5 rows)</h2>
+      <div class="table-wrapper">
+        <table class="data-table" aria-label="CSV preview">
+          <thead>
+            <tr>
+              @for (h of previewHeaders(); track $index) {
+                <th scope="col">{{ h }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of previewRows(); track $index) {
+              <tr>
+                @for (cell of row; track $index) {
+                  <td>{{ cell }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="importer__actions">
+        <button type="button" class="btn btn--secondary" (click)="reset()">Back</button>
+        <button type="button" class="btn btn--primary" (click)="confirmFormat()">
+          Yes, use this format →
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Step 3: Parsed Transactions Preview -->
+  @if (step() === 'transactions') {
+    <div class="card importer__step">
+      <p>Parsed <strong>{{ parsedTransactions().length }}</strong> transactions.</p>
+
+      <h2 class="importer__section-title">Transaction Preview</h2>
+      <div class="table-wrapper">
+        <table class="data-table" aria-label="Parsed transactions preview">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Ticker</th>
+              <th scope="col">Type</th>
+              <th scope="col" class="text-right">Quantity</th>
+              <th scope="col" class="text-right">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tx of parsedTransactions().slice(0, 20); track $index) {
+              <tr>
+                <td>{{ tx.date }}</td>
+                <td><strong>{{ tx.ticker }}</strong></td>
+                <td>{{ tx.type }}</td>
+                <td class="text-right">{{ tx.quantity | number: '1.0-4' }}</td>
+                <td class="text-right">{{ tx.price | number: '1.2-4' }}</td>
+              </tr>
+            }
+            @if (parsedTransactions().length > 20) {
+              <tr>
+                <td colspan="5" class="text-center text-muted">
+                  … and {{ parsedTransactions().length - 20 }} more
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="importer__actions">
+        <button type="button" class="btn btn--secondary" (click)="reset()">Cancel</button>
+        <button type="button" class="btn btn--primary" (click)="checkConflicts()">
+          Check for Duplicates →
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Step 4: Conflict Check -->
+  @if (step() === 'conflicts') {
+    <div class="card importer__step">
+      <h2 class="importer__section-title">Duplicate Check</h2>
+
+      @if (hasConflicts()) {
+        <p class="importer__conflict-note" role="alert">
+          ⚠️ Found <strong>{{ duplicates().length }}</strong> duplicate transaction(s) that already exist.
+        </p>
+        <p>{{ toImport().length }} new transaction(s) will be imported.</p>
+        <div class="importer__actions">
+          <button type="button" class="btn btn--secondary" (click)="reset()">Cancel</button>
+          <button type="button" class="btn btn--secondary" (click)="doImport(true)" [disabled]="importing()">
+            Import {{ toImport().length }} (skip duplicates)
+          </button>
+          <button type="button" class="btn btn--primary" (click)="doImport(false)" [disabled]="importing()">
+            Import all {{ parsedTransactions().length }} (include duplicates)
+          </button>
+        </div>
+      } @else {
+        <p class="importer__no-conflict">✅ No duplicates found. {{ toImport().length }} transaction(s) ready to import.</p>
+        <div class="importer__actions">
+          <button type="button" class="btn btn--secondary" (click)="reset()">Cancel</button>
+          <button type="button" class="btn btn--primary" (click)="doImport(true)" [disabled]="importing()">
+            {{ importing() ? 'Importing…' : 'Import Now' }}
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Step 5: Result -->
+  @if (step() === 'result') {
+    <div class="card importer__step">
+      <h2 class="importer__section-title">Import Complete</h2>
+      @if (summary(); as s) {
+        <ul class="importer__summary">
+          <li class="text-positive">✅ {{ s.imported }} transactions imported successfully.</li>
+          @if (s.skipped > 0) {
+            <li class="text-muted">⏭ {{ s.skipped }} transactions skipped (duplicates).</li>
+          }
+          @if (s.errors > 0) {
+            <li class="text-negative">❌ {{ s.errors }} error(s) encountered.</li>
+          }
+        </ul>
+      }
+      <div class="importer__actions">
+        <button type="button" class="btn btn--secondary" (click)="reset()">Import Another</button>
+        <button type="button" class="btn btn--primary" (click)="goToTransactions()">
+          View Transactions →
+        </button>
+      </div>
+    </div>
+  }
+</div>
