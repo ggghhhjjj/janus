@@ -59,16 +59,20 @@ export class FifoService {
           const costBasis = round2(qtyMatched * lot.price);
           const proceeds = round2(qtyMatched * tx.price);
           const gainLoss = round2(proceeds - costBasis);
+          const proportionalBuyFee = lot.fee ? round2((lot.fee / lot.originalQty) * qtyMatched) : 0;
 
           matchedLots.push({
             lotId: lot.id,
             buyDate: lot.date,
+            originalQty: lot.originalQty,
+            availableUnits: lot.remaining,
             qtyMatched,
             buyPrice: lot.price,
             sellPrice: tx.price,
             costBasis,
             proceeds,
             gainLoss,
+            proportionalBuyFee,
           });
 
           lot.remaining = round2(lot.remaining - qtyMatched);
@@ -77,19 +81,7 @@ export class FifoService {
 
         const totalCostBasis = round2(matchedLots.reduce((s, m) => s + m.costBasis, 0));
         const totalProceeds = round2(matchedLots.reduce((s, m) => s + m.proceeds, 0));
-        
-        // Calculate proportional buy fees and total sell fee
-        let totalBuyFees = 0;
-        for (let i = 0; i < matchedLots.length; i++) {
-          const matchedLot = matchedLots[i];
-          const lot = lots.find((l) => l.id === matchedLot.lotId);
-          if (lot && lot.fee) {
-            // Add proportional buy fee based on quantity matched from this lot
-            const proportionalFee = round2((lot.fee / lot.originalQty) * matchedLot.qtyMatched);
-            totalBuyFees += proportionalFee;
-          }
-        }
-        totalBuyFees = round2(totalBuyFees);
+        const totalBuyFees = round2(matchedLots.reduce((s, m) => s + m.proportionalBuyFee, 0));
         
         const totalSellFee = tx.fee ?? 0;
         const totalCostBasisWithFees = round2(totalCostBasis + totalBuyFees);

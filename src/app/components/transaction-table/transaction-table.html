@@ -1,5 +1,10 @@
 <div class="tx-table-view">
   <div class="tx-table-view__toolbar">
+    @if (showBackButton()) {
+      <button type="button" class="btn btn--ghost btn--sm back-btn" (click)="navigateBackToDashboard()" aria-label="Back to Dashboard">
+        ← Back to Dashboard
+      </button>
+    }
     <h1 class="tx-table-view__title">Transactions</h1>
     <button type="button" class="btn btn--primary" (click)="openAdd()" aria-label="Add new transaction">
       + Add Transaction
@@ -15,6 +20,7 @@
       <table class="data-table" aria-label="Transactions">
         <thead>
           <tr>
+            <th scope="col" class="col-num text-center">#</th>
             <th scope="col">
               <button class="sort-btn" (click)="sort('date')" [attr.aria-label]="'Sort by Date ' + sortIcon('date')">
                 Date {{ sortIcon('date') }}
@@ -50,8 +56,12 @@
           </tr>
         </thead>
         <tbody>
-          @for (tx of pageItems(); track tx.id) {
-            <tr>
+          @for (tx of sorted(); track tx.id) {
+            <tr
+              [attr.data-tx-id]="tx.id"
+              [class.highlighted]="highlightedTransactionId() === tx.id"
+            >
+              <td class="col-num text-center num-cell">{{ transactionNumbers().get(tx.id) ?? '' }}</td>
               <td>{{ tx.date }}</td>
               <td><strong>{{ tx.ticker }}</strong></td>
               <td>
@@ -84,30 +94,6 @@
         </tbody>
       </table>
     </div>
-
-    @if (totalPages() > 1) {
-      <div class="pagination" role="navigation" aria-label="Table pagination">
-        <button
-          type="button"
-          class="btn btn--ghost btn--sm"
-          (click)="prevPage()"
-          [disabled]="currentPage() === 1"
-          aria-label="Previous page"
-        >
-          ← Prev
-        </button>
-        <span class="pagination__info">Page {{ currentPage() }} of {{ totalPages() }}</span>
-        <button
-          type="button"
-          class="btn btn--ghost btn--sm"
-          (click)="nextPage()"
-          [disabled]="currentPage() === totalPages()"
-          aria-label="Next page"
-        >
-          Next →
-        </button>
-      </div>
-    }
   }
 </div>
 

@@ -10,12 +10,28 @@ export interface Lot {
 export interface MatchedLot {
   lotId: number; // buy transaction id
   buyDate: string;
+  originalQty: number;      // buy lot's quantity (after any splits)
+  availableUnits: number;   // lot remaining at the moment this sell was processed
   qtyMatched: number;
   buyPrice: number;
   sellPrice: number;
   costBasis: number;
   proceeds: number;
   gainLoss: number;
+  proportionalBuyFee: number; // proportional share of buy commission for this match
+}
+
+export interface MatchingDetailsRow {
+  sellDate: string;
+  sellTransactionId: number;
+  buyDate: string;
+  buyTransactionId: number;
+  ticker: string;
+  availableUnits: number;
+  matchedUnits: number;
+  effectiveBuyPrice: number;
+  effectiveSellPrice: number;
+  totalGain: number;
 }
 
 export interface SellResult {

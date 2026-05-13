@@ -1,15 +1,17 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,  inject,  signal,
+  computed,
+  effect,
+  inject,
+  signal,
 } from '@angular/core';
 import { TitleCasePipe, DecimalPipe, CurrencyPipe } from '@angular/common';
+import { Router } from '@angular/router';
 import { StateService } from '../../services/state.service';
 import { Transaction } from '../../models/transaction.model';
 import { TransactionFormComponent } from '../transaction-form/transaction-form';
 import { toSignal } from '@angular/core/rxjs-interop';
-
-const PAGE_SIZE = 50;
 
 type SortColumn = 'date' | 'ticker' | 'type' | 'quantity' | 'price' | 'fee';
 type SortDir = 'asc' | 'desc';
@@ -24,13 +26,13 @@ type SortDir = 'asc' | 'desc';
 })
 export class TransactionTableComponent {
   private readonly state = inject(StateService);
+  private readonly router = inject(Router);
   private readonly allTransactions = toSignal(this.state.transactions$, { initialValue: [] });
 
   readonly transactionCount = computed(() => this.allTransactions().length);
 
   readonly sortColumn = signal<SortColumn>('date');
   readonly sortDir = signal<SortDir>('asc');
-  readonly currentPage = signal(1);
 
   readonly sorted = computed(() => {
     const col = this.sortColumn();
@@ -47,19 +49,26 @@ export class TransactionTableComponent {
     });
   });
 
-  readonly totalPages = computed(() => Math.max(1, Math.ceil(this.sorted().length / PAGE_SIZE)));
-
-  readonly pageItems = computed(() => {
-    const page = Math.min(this.currentPage(), this.totalPages());
-    const start = (page - 1) * PAGE_SIZE;
-    return this.sorted().slice(start, start + PAGE_SIZE);
-  });
-
   // Modal state
   readonly formOpen = signal(false);
   readonly editingTransaction = signal<Transaction | null>(null);
 
+  // Navigation / highlight (exposed from StateService for template)
+  readonly highlightedTransactionId = this.state.highlightedTransactionId;
+  readonly transactionNumbers = this.state.transactionNumbers;
+  readonly showBackButton = computed(() => this.highlightedTransactionId() != null);
 
+  constructor() {
+    // Scroll to the highlighted row after Angular renders
+    effect(() => {
+      const id = this.highlightedTransactionId();
+      if (id == null) return;
+      setTimeout(() => {
+        document.querySelector<HTMLElement>(`[data-tx-id="${id}"]`)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    });
+  }
 
   sort(col: SortColumn): void {
     if (this.sortColumn() === col) {
@@ -68,7 +77,6 @@ export class TransactionTableComponent {
       this.sortColumn.set(col);
       this.sortDir.set('asc');
     }
-    this.currentPage.set(1);
   }
 
   sortIcon(col: SortColumn): string {
@@ -104,11 +112,10 @@ export class TransactionTableComponent {
     this.editingTransaction.set(null);
   }
 
-  prevPage(): void {
-    this.currentPage.update((p) => Math.max(1, p - 1));
-  }
-
-  nextPage(): void {
-    this.currentPage.update((p) => Math.min(this.totalPages(), p + 1));
+  navigateBackToDashboard(): void {
+    const id = this.state.highlightedTransactionId();
+    this.state.highlightedMatchingTransactionId.set(id);
+    this.state.highlightedTransactionId.set(null);
+    this.router.navigate(['/']);
   }
 }

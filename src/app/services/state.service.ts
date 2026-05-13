@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Transaction, NewTransaction } from '../models/transaction.model';
 import { FifoState } from '../models/fifo.model';
 import { DatabaseService } from './database.service';
@@ -12,6 +13,21 @@ export class StateService {
 
   readonly transactions$ = this._transactions$.asObservable();
   readonly fifoState$ = this._fifoState$.asObservable();
+
+  // Stable sequential number for each transaction (1-based, sorted by date asc)
+  private readonly _txSignal = toSignal(this._transactions$, { initialValue: [] as Transaction[] });
+  readonly transactionNumbers = computed<Map<number, number>>(() => {
+    const sorted = [...this._txSignal()].sort((a, b) =>
+      a.date < b.date ? -1 : a.date > b.date ? 1 : a.id - b.id
+    );
+    const map = new Map<number, number>();
+    sorted.forEach((tx, i) => map.set(tx.id, i + 1));
+    return map;
+  });
+
+  // Cross-view navigation highlight state
+  readonly highlightedTransactionId = signal<number | null>(null);
+  readonly highlightedMatchingTransactionId = signal<number | null>(null);
 
   constructor(
     private readonly db: DatabaseService,
