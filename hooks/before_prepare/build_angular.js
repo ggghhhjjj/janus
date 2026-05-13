@@ -14,10 +14,17 @@ const path = require('path');
 module.exports = function (context) {
   const projectRoot = context.opts.projectRoot;
 
+  if (process.env.ANGULAR_BUILT) {
+    console.log('[hook] Angular already built by npm script, skipping.');
+    return;
+  }
+
   console.log('[hook] Building Angular app…');
 
+  const ng = path.join(projectRoot, 'node_modules', '.bin', 'ng');
+
   try {
-    execSync('npm run build', {
+    execSync(`"${ng}" build`, {
       cwd: projectRoot,
       stdio: 'inherit',
       env: { ...process.env },
