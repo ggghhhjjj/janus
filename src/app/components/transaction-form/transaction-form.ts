@@ -63,6 +63,10 @@ export class TransactionFormComponent implements OnChanges {
         tx?.price ?? '',
         [Validators.required, Validators.min(0.0000001)],
       ],
+      fee: [
+        tx?.fee ?? '',
+        [Validators.min(0)],
+      ],
       notes: [tx?.notes ?? ''],
     });
   }
@@ -83,6 +87,7 @@ export class TransactionFormComponent implements OnChanges {
       type: raw.type as TransactionType,
       quantity: Number(raw.quantity),
       price: Number(raw.price),
+      fee: raw.fee ? Number(raw.fee) : undefined,
       notes: (raw.notes as string) ?? '',
     };
 
@@ -119,5 +124,10 @@ export class TransactionFormComponent implements OnChanges {
   hasError(field: string): boolean {
     const ctrl = this.form.get(field);
     return !!(ctrl && ctrl.invalid && ctrl.touched);
+  }
+
+  isFeeApplicable(): boolean {
+    const typeCtrl = this.form.get('type');
+    return typeCtrl?.value === 'buy' || typeCtrl?.value === 'sell';
   }
 }

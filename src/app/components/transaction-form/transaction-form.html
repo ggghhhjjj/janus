@@ -101,6 +101,26 @@
         }
       </div>
 
+      <!-- Fee (conditional: only for buy/sell) -->
+      @if (isFeeApplicable()) {
+        <div class="field">
+          <label class="field__label" for="tx-fee">Commission Fee</label>
+          <input
+            id="tx-fee"
+            type="number"
+            class="field__input"
+            [class.field__input--error]="hasError('fee')"
+            formControlName="fee"
+            min="0"
+            step="any"
+            placeholder="e.g. 5.00"
+          />
+          @if (hasError('fee')) {
+            <span class="field__error" role="alert">Fee must be 0 or greater.</span>
+          }
+        </div>
+      }
+
       <!-- Notes -->
       <div class="field">
         <label class="field__label" for="tx-notes">Notes</label>

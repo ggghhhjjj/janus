@@ -4,6 +4,7 @@ export interface Lot {
   originalQty: number;
   price: number;
   remaining: number;
+  fee?: number; // Commission fee on the buy (optional)
 }
 
 export interface MatchedLot {
@@ -24,6 +25,7 @@ export interface SellResult {
   matchedLots: MatchedLot[];
   totalCostBasis: number;
   totalProceeds: number;
+  totalSellFee?: number; // Commission fee on the sell (optional)
   totalGainLoss: number;
 }
 

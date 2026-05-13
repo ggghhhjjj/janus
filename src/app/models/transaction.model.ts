@@ -7,6 +7,7 @@ export interface Transaction {
   type: TransactionType;
   quantity: number;
   price: number;
+  fee?: number; // Commission fee in USD (optional, for buy/sell transactions)
   notes: string;
 }
 

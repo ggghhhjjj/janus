@@ -173,4 +173,69 @@ describe('FifoService.calculate', () => {
 
     expect(state.totalRealizedGainLoss).toBe(1400);
   });
+
+  it('calculates gain with buy fee (increases cost basis)', () => {
+    const txs: Transaction[] = [
+      makeTx({ id: 1, date: '2024-01-01', type: 'buy', quantity: 100, price: 10, fee: 5 }),
+      makeTx({ id: 2, date: '2024-02-01', type: 'sell', quantity: 100, price: 15 }),
+    ];
+    const state = svc.calculate(txs);
+    // Cost basis = 100 * 10 + 5 = 1005
+    // Proceeds = 100 * 15 = 1500
+    // Gain = 1500 - 1005 = 495
+    expect(state.totalRealizedGainLoss).toBe(495);
+    expect(state.results['TEST'].sellResults[0].totalGainLoss).toBe(495);
+  });
+
+  it('calculates gain with sell fee (decreases proceeds)', () => {
+    const txs: Transaction[] = [
+      makeTx({ id: 1, date: '2024-01-01', type: 'buy', quantity: 100, price: 10 }),
+      makeTx({ id: 2, date: '2024-02-01', type: 'sell', quantity: 100, price: 15, fee: 2 }),
+    ];
+    const state = svc.calculate(txs);
+    // Cost basis = 100 * 10 = 1000
+    // Proceeds = 100 * 15 - 2 = 1498
+    // Gain = 1498 - 1000 = 498
+    expect(state.totalRealizedGainLoss).toBe(498);
+    expect(state.results['TEST'].sellResults[0].totalGainLoss).toBe(498);
+  });
+
+  it('calculates gain with both buy and sell fees', () => {
+    const txs: Transaction[] = [
+      makeTx({ id: 1, date: '2024-01-01', type: 'buy', quantity: 100, price: 10, fee: 5 }),
+      makeTx({ id: 2, date: '2024-02-01', type: 'sell', quantity: 100, price: 15, fee: 2 }),
+    ];
+    const state = svc.calculate(txs);
+    // Cost basis = 100 * 10 + 5 = 1005
+    // Proceeds = 100 * 15 - 2 = 1498
+    // Gain = 1498 - 1005 = 493
+    expect(state.totalRealizedGainLoss).toBe(493);
+    expect(state.results['TEST'].sellResults[0].totalGainLoss).toBe(493);
+  });
+
+  it('distributes buy fees proportionally across multiple matched lots', () => {
+    const txs: Transaction[] = [
+      makeTx({ id: 1, date: '2024-01-01', type: 'buy', quantity: 100, price: 10, fee: 10 }),
+      makeTx({ id: 2, date: '2024-02-01', type: 'buy', quantity: 50, price: 12, fee: 5 }),
+      makeTx({ id: 3, date: '2024-03-01', type: 'sell', quantity: 130, price: 20 }),
+    ];
+    const state = svc.calculate(txs);
+    const sell = state.results['TEST'].sellResults[0];
+    // Lot 1: 100 @ 10 + $10 fee = cost 1010, proceeds 2000, gain 990
+    // Lot 2: 30 @ 12 + $3 fee (30/50 * 5) = cost 363, proceeds 600, gain 237
+    // Total gain = 990 + 237 = 1227
+    expect(sell.matchedLots[0].qtyMatched).toBe(100);
+    expect(sell.totalGainLoss).toBe(1227);
+  });
+
+  it('ignores fees on dividend and split transactions', () => {
+    const txs: Transaction[] = [
+      makeTx({ id: 1, date: '2024-01-01', type: 'buy', quantity: 100, price: 10 }),
+      makeTx({ id: 2, date: '2024-03-01', type: 'dividend', quantity: 0, price: 200, fee: 5 }),
+      makeTx({ id: 3, date: '2024-06-01', type: 'sell', quantity: 100, price: 15 }),
+    ];
+    const state = svc.calculate(txs);
+    // Gain = 100 * (15 - 10) = 500 (dividend fee should not affect)
+    expect(state.totalRealizedGainLoss).toBe(500);
+  });
 });

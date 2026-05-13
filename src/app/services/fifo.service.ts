@@ -38,6 +38,7 @@ export class FifoService {
           originalQty: tx.quantity,
           price: tx.price,
           remaining: tx.quantity,
+          fee: tx.fee ?? 0,
         });
       } else if (tx.type === 'split') {
         // tx.price holds the split ratio
@@ -76,15 +77,33 @@ export class FifoService {
 
         const totalCostBasis = round2(matchedLots.reduce((s, m) => s + m.costBasis, 0));
         const totalProceeds = round2(matchedLots.reduce((s, m) => s + m.proceeds, 0));
-        const totalGainLoss = round2(totalProceeds - totalCostBasis);
+        
+        // Calculate proportional buy fees and total sell fee
+        let totalBuyFees = 0;
+        for (let i = 0; i < matchedLots.length; i++) {
+          const matchedLot = matchedLots[i];
+          const lot = lots.find((l) => l.id === matchedLot.lotId);
+          if (lot && lot.fee) {
+            // Add proportional buy fee based on quantity matched from this lot
+            const proportionalFee = round2((lot.fee / lot.originalQty) * matchedLot.qtyMatched);
+            totalBuyFees += proportionalFee;
+          }
+        }
+        totalBuyFees = round2(totalBuyFees);
+        
+        const totalSellFee = tx.fee ?? 0;
+        const totalCostBasisWithFees = round2(totalCostBasis + totalBuyFees);
+        const totalProceedsAfterFee = round2(totalProceeds - totalSellFee);
+        const totalGainLoss = round2(totalProceedsAfterFee - totalCostBasisWithFees);
 
         const sellResult: SellResult = {
           sellTransactionId: tx.id,
           sellDate: tx.date,
           sellPrice: tx.price,
           matchedLots,
-          totalCostBasis,
-          totalProceeds,
+          totalCostBasis: totalCostBasisWithFees,
+          totalProceeds: totalProceedsAfterFee,
+          totalSellFee: totalSellFee > 0 ? totalSellFee : undefined,
           totalGainLoss,
         };
         result.sellResults.push(sellResult);

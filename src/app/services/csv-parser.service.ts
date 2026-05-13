@@ -149,6 +149,7 @@ export class CsvParserService {
         let typeStr = '';
         let quantityStr = '';
         let priceStr = '';
+        let feeStr = '';
         let notes = '';
 
         if (format === 'ibkr') {
@@ -158,6 +159,7 @@ export class CsvParserService {
           typeStr = buySell.toLowerCase().startsWith('b') ? 'buy' : 'sell';
           quantityStr = col(row, 'quantity');
           priceStr = col(row, 'tradeprice');
+          feeStr = col(row, 'fee') || col(row, 'commission') || col(row, 'commissionfee') || '';
           notes = col(row, 'description') || col(row, 'notes') || '';
         } else if (format === 'degiro') {
           rawDate = col(row, 'date');
@@ -168,6 +170,7 @@ export class CsvParserService {
           typeStr = qtyNum >= 0 ? 'buy' : 'sell';
           quantityStr = String(Math.abs(qtyNum));
           priceStr = col(row, 'koers') || col(row, 'price');
+          feeStr = col(row, 'fee') || col(row, 'commission') || col(row, 'cost') || col(row, 'commissionfee') || '';
           notes = col(row, 'omschrijving') || col(row, 'description') || col(row, 'notes') || '';
         } else {
           // generic
@@ -176,19 +179,21 @@ export class CsvParserService {
           typeStr = col(row, 'type').toLowerCase();
           quantityStr = col(row, 'quantity');
           priceStr = col(row, 'price');
+          feeStr = col(row, 'fee') || col(row, 'commission') || col(row, 'cost') || col(row, 'commissionfee') || '';
           notes = col(row, 'notes') || '';
         }
 
         const date = parseDate(rawDate);
         const quantity = parseFloat(quantityStr.replace(',', '.'));
         const price = parseFloat(priceStr.replace(',', '.').replace(/[^0-9.\-]/g, ''));
+        const fee = feeStr ? parseFloat(feeStr.replace(',', '.').replace(/[^0-9.\-]/g, '')) : undefined;
         const type = typeStr as TransactionType;
 
         if (!date || !ticker || !['buy', 'sell', 'dividend', 'split'].includes(type) || isNaN(quantity) || isNaN(price)) {
           continue; // skip invalid rows silently
         }
 
-        results.push({ date, ticker, type, quantity, price, notes });
+        results.push({ date, ticker, type, quantity, price, ...(fee && !isNaN(fee) ? { fee } : {}), notes });
       } catch {
         // skip malformed rows
         continue;

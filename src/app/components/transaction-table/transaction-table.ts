@@ -11,7 +11,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 const PAGE_SIZE = 50;
 
-type SortColumn = 'date' | 'ticker' | 'type' | 'quantity' | 'price';
+type SortColumn = 'date' | 'ticker' | 'type' | 'quantity' | 'price' | 'fee';
 type SortDir = 'asc' | 'desc';
 
 @Component({
@@ -42,6 +42,7 @@ export class TransactionTableComponent {
       else if (col === 'type') cmp = a.type.localeCompare(b.type);
       else if (col === 'quantity') cmp = a.quantity - b.quantity;
       else if (col === 'price') cmp = a.price - b.price;
+      else if (col === 'fee') cmp = (a.fee ?? 0) - (b.fee ?? 0);
       return dir === 'asc' ? cmp : -cmp;
     });
   });
