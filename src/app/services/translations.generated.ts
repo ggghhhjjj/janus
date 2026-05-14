@@ -1,7 +1,3 @@
-// AUTO-GENERATED FILE - DO NOT EDIT MANUALLY
-// Generated from XLIF files in src/locale/
-// Run: npm run i18n:bundle
-
 export interface TranslationMap {
   [key: string]: {
     [locale: string]: string;
