@@ -13,7 +13,8 @@
     "test": "ng test",
     "cordova:run": "cordova run browser",
     "cordova:build": "cordova build browser",
-    "cordova:prepare": "cordova prepare browser"
+    "cordova:prepare": "cordova prepare browser",
+    "clean": "rimraf www"
   },
   "keywords": [
     "ecosystem:cordova"
@@ -49,6 +50,7 @@
     "@angular/compiler-cli": "^21.0.0",
     "cordova-browser": "^7.0.0",
     "jsdom": "^27.1.0",
+    "rimraf": "^5.0.10",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8",
     "xml2js": "^0.6.2"

@@ -33,6 +33,7 @@ Apache Cordova app targeting the **browser** platform, with **Angular 21** as th
 npm install          # First time or after package.json changes
 npm run build        # ng build → www/ → cordova build browser
 npm run cordova:run  # Build + serve in browser
+npm run clean        # Delete www/ output directory
 ```
 
 > Requires `cordova` CLI: `npm install -g cordova`
