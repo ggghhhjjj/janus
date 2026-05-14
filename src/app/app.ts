@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/cor
 import { RouterOutlet } from '@angular/router';
 import { CordovaService } from './cordova.service';
 import { StateService } from './services/state.service';
+import { I18nService } from './services/i18n.service';
 import { HeaderComponent } from './components/header/header';
 
 @Component({
@@ -14,11 +15,15 @@ import { HeaderComponent } from './components/header/header';
 })
 export class App implements OnInit {
   protected readonly ready = signal(false);
+  protected readonly i18nService: I18nService;
 
   constructor(
     private readonly cordova: CordovaService,
-    private readonly state: StateService
-  ) {}
+    private readonly state: StateService,
+    i18n: I18nService,
+  ) {
+    this.i18nService = i18n;
+  }
 
   ngOnInit(): void {
     this.cordova.deviceReady$.subscribe(async () => {
@@ -27,4 +32,5 @@ export class App implements OnInit {
     });
   }
 }
+
 

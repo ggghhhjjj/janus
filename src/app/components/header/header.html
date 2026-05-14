@@ -1,16 +1,48 @@
 <header class="header">
   <div class="header__brand">
-    <a routerLink="/" class="header__logo">FIFO Accounter</a>
+    <a routerLink="/" class="header__logo">{{ i18n.translate('fifoAccounter') }}</a>
   </div>
   <nav class="header__nav" aria-label="Main navigation">
-    <a routerLink="/" routerLinkActive="header__nav-link--active" [routerLinkActiveOptions]="{ exact: true }" class="header__nav-link">
-      Dashboard
+    <a
+      routerLink="/"
+      routerLinkActive="header__nav-link--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="header__nav-link"
+    >
+      {{ i18n.translate('dashboard') }}
     </a>
     <a routerLink="/transactions" routerLinkActive="header__nav-link--active" class="header__nav-link">
-      Transactions
+      {{ i18n.translate('transactions') }}
     </a>
     <a routerLink="/import" routerLinkActive="header__nav-link--active" class="header__nav-link">
-      Import CSV
+      {{ i18n.translate('importCsv') }}
     </a>
   </nav>
+
+  <!-- Language Selector -->
+  <div class="header__language-selector">
+    <button
+      class="header__language-button"
+      (click)="toggleLanguageMenu()"
+      [attr.aria-expanded]="showLanguageMenu"
+    >
+      {{ i18n.translate('language') }}
+    </button>
+
+    @if (showLanguageMenu) {
+      <div class="header__language-menu" role="menu">
+        @for (locale of i18n.getSupportedLocales(); track locale) {
+          <button
+            type="button"
+            class="header__language-option"
+            [class.header__language-option--active]="i18n.getCurrentLocale() === locale"
+            (click)="selectLanguage(locale)"
+            role="menuitem"
+          >
+            {{ i18n.getLocaleLabel(locale) }}
+          </button>
+        }
+      </div>
+    }
+  </div>
 </header>

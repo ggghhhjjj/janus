@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" target-language="bg" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="fifoAccounter" datatype="html">
+        <source>FIFO Accounter</source>
+        <target>FIFO Счетоводител</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/header/header.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard" datatype="html">
+        <source>Dashboard</source>
+        <target>Таблица</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/header/header.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="transactions" datatype="html">
+        <source>Transactions</source>
+        <target>Транзакции</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/header/header.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="importCsv" datatype="html">
+        <source>Import CSV</source>
+        <target>Импортиране CSV</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/header/header.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="loadingFifoAccounter" datatype="html">
+        <source>Loading FIFO Accounter…</source>
+        <target>Зареждане на FIFO Счетоводител…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="language" datatype="html">
+        <source>Language</source>
+        <target>Език</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/header/header.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="english" datatype="html">
+        <source>English</source>
+        <target>Английски</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/header/header.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="bulgarian" datatype="html">
+        <source>Bulgarian</source>
+        <target>Български</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/header/header.html</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
