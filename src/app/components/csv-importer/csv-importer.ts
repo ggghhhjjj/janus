@@ -3,10 +3,12 @@ import {
   Component,
   signal,
   computed,
+  inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CsvParserService, CsvFormat } from '../../services/csv-parser.service';
 import { StateService } from '../../services/state.service';
+import { I18nService } from '../../services/i18n.service';
 import { NewTransaction } from '../../models/transaction.model';
 import { DecimalPipe } from '@angular/common';
 
@@ -47,7 +49,8 @@ export class CsvImporterComponent {
   constructor(
     private readonly csvParser: CsvParserService,
     private readonly state: StateService,
-    private readonly router: Router
+    private readonly router: Router,
+    readonly i18n: I18nService
   ) {}
 
   onDragOver(event: DragEvent): void {

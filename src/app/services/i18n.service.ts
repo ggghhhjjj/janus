@@ -1,10 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-
-interface TranslationMap {
-  [key: string]: {
-    [locale: string]: string;
-  };
-}
+import { GENERATED_TRANSLATIONS, TranslationMap } from './translations.generated';
 
 @Injectable({
   providedIn: 'root',
@@ -16,40 +11,7 @@ export class I18nService {
 
   readonly currentLocale = signal<string>(this.getInitialLocale());
 
-  private readonly translations: TranslationMap = {
-    fifoAccounter: {
-      en: 'FIFO Accounter',
-      bg: 'FIFO Счетоводител',
-    },
-    dashboard: {
-      en: 'Dashboard',
-      bg: 'Таблица',
-    },
-    transactions: {
-      en: 'Transactions',
-      bg: 'Транзакции',
-    },
-    importCsv: {
-      en: 'Import CSV',
-      bg: 'Импортиране CSV',
-    },
-    loadingFifoAccounter: {
-      en: 'Loading FIFO Accounter…',
-      bg: 'Зареждане на FIFO Счетоводител…',
-    },
-    language: {
-      en: 'Language',
-      bg: 'Език',
-    },
-    english: {
-      en: 'English',
-      bg: 'Английски',
-    },
-    bulgarian: {
-      en: 'Bulgarian',
-      bg: 'Български',
-    },
-  };
+  private readonly translations: TranslationMap = GENERATED_TRANSLATIONS;
 
   constructor() {}
 
@@ -108,4 +70,5 @@ export class I18nService {
     return translation[currentLocale] || translation['en'] || key;
   }
 }
+
 

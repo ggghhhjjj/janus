@@ -1,59 +1,59 @@
 <div class="tx-table-view">
   <div class="tx-table-view__toolbar">
     @if (showBackButton()) {
-      <button type="button" class="btn btn--ghost btn--sm back-btn" (click)="navigateBackToDashboard()" aria-label="Back to Dashboard">
-        ← Back to Dashboard
+      <button type="button" class="btn btn--ghost btn--sm back-btn" (click)="navigateBackToDashboard()" [attr.aria-label]="i18n.translate('backToDashboard')">
+        {{ i18n.translate('backToDashboard') }}
       </button>
     }
-    <h1 class="tx-table-view__title">Transactions</h1>
-    <button type="button" class="btn btn--primary" (click)="openAdd()" aria-label="Add new transaction">
-      + Add Transaction
+    <h1 class="tx-table-view__title">{{ i18n.translate('transactions') }}</h1>
+    <button type="button" class="btn btn--primary" (click)="openAdd()" [attr.aria-label]="i18n.translate('addTransaction')">
+      {{ i18n.translate('addTransaction') }}
     </button>
   </div>
 
   @if (transactionCount() === 0) {
     <div class="empty-state">
-      <p>No transactions yet. Click <strong>"+ Add Transaction"</strong> to begin.</p>
+      <p>{{ i18n.translate('noTransactionsYet') }} <strong>"{{ i18n.translate('addTransaction') }}"</strong> {{ i18n.translate('toBegin') }}</p>
     </div>
   } @else {
-    <div class="table-wrapper" role="region" aria-label="Transactions table" tabindex="0">
-      <table class="data-table" aria-label="Transactions">
+    <div class="table-wrapper" role="region" [attr.aria-label]="i18n.translate('transactions') + ' ' + i18n.translate('tableHeaderActions')" tabindex="0">
+      <table class="data-table" [attr.aria-label]="i18n.translate('transactions')">
         <thead>
           <tr>
-            <th scope="col" class="col-num text-center">#</th>
-            <th scope="col" class="col-issues text-center">Issues</th>
+            <th scope="col" class="col-num text-center">{{ i18n.translate('tableHeaderNum') }}</th>
+            <th scope="col" class="col-issues text-center">{{ i18n.translate('tableHeaderIssues') }}</th>
             <th scope="col">
-              <button class="sort-btn" (click)="sort('date')" [attr.aria-label]="'Sort by Date ' + sortIcon('date')">
-                Date {{ sortIcon('date') }}
-              </button>
-            </th>
-            <th scope="col">
-              <button class="sort-btn" (click)="sort('ticker')" [attr.aria-label]="'Sort by Ticker ' + sortIcon('ticker')">
-                Ticker {{ sortIcon('ticker') }}
+              <button class="sort-btn" (click)="sort('date')" [attr.aria-label]="i18n.translate('sortByDate') + ' ' + sortIcon('date')">
+                {{ i18n.translate('tableHeaderDate') }} {{ sortIcon('date') }}
               </button>
             </th>
             <th scope="col">
-              <button class="sort-btn" (click)="sort('type')" [attr.aria-label]="'Sort by Type ' + sortIcon('type')">
-                Type {{ sortIcon('type') }}
+              <button class="sort-btn" (click)="sort('ticker')" [attr.aria-label]="i18n.translate('sortByTicker') + ' ' + sortIcon('ticker')">
+                {{ i18n.translate('tableHeaderTicker') }} {{ sortIcon('ticker') }}
+              </button>
+            </th>
+            <th scope="col">
+              <button class="sort-btn" (click)="sort('type')" [attr.aria-label]="i18n.translate('sortByType') + ' ' + sortIcon('type')">
+                {{ i18n.translate('tableHeaderType') }} {{ sortIcon('type') }}
               </button>
             </th>
             <th scope="col" class="text-right">
-              <button class="sort-btn" (click)="sort('quantity')" [attr.aria-label]="'Sort by Quantity ' + sortIcon('quantity')">
-                Quantity {{ sortIcon('quantity') }}
+              <button class="sort-btn" (click)="sort('quantity')" [attr.aria-label]="i18n.translate('sortByQuantity') + ' ' + sortIcon('quantity')">
+                {{ i18n.translate('tableHeaderQuantity') }} {{ sortIcon('quantity') }}
               </button>
             </th>
             <th scope="col" class="text-right">
-              <button class="sort-btn" (click)="sort('price')" [attr.aria-label]="'Sort by Price ' + sortIcon('price')">
-                Price {{ sortIcon('price') }}
+              <button class="sort-btn" (click)="sort('price')" [attr.aria-label]="i18n.translate('sortByPrice') + ' ' + sortIcon('price')">
+                {{ i18n.translate('tableHeaderPrice') }} {{ sortIcon('price') }}
               </button>
             </th>
             <th scope="col" class="text-right">
-              <button class="sort-btn" (click)="sort('fee')" [attr.aria-label]="'Sort by Fee ' + sortIcon('fee')">
-                Fee {{ sortIcon('fee') }}
+              <button class="sort-btn" (click)="sort('fee')" [attr.aria-label]="i18n.translate('sortByFee') + ' ' + sortIcon('fee')">
+                {{ i18n.translate('tableHeaderFee') }} {{ sortIcon('fee') }}
               </button>
             </th>
-            <th scope="col">Notes</th>
-            <th scope="col" class="text-right">Actions</th>
+            <th scope="col">{{ i18n.translate('tableHeaderNotes') }}</th>
+            <th scope="col" class="text-right">{{ i18n.translate('tableHeaderActions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -66,7 +66,7 @@
               <td class="col-num text-center num-cell">{{ transactionNumbers().get(tx.id) ?? '' }}</td>
               <td class="col-issues text-center">
                 @if (conflictTransactionIds().has(tx.id)) {
-                  <span class="issue-badge" aria-label="Conflict: Multiple transactions with same date, time, and ticker" title="Conflict: Multiple transactions with same date, time, and ticker">⚠</span>
+                  <span class="issue-badge" [attr.aria-label]="i18n.translate('conflictLabel')" [attr.title]="i18n.translate('conflictLabel')">⚠</span>
                 }
               </td>
               <td>{{ tx.date }} {{ tx.time }}</td>
@@ -84,26 +84,26 @@
                     type="button"
                     class="btn btn--warn-ghost btn--sm"
                     (click)="openSwapModal(tx)"
-                    [attr.aria-label]="'Reorder conflicting transaction ' + tx.id"
+                    [attr.aria-label]="i18n.translate('reorderButton') + ' ' + i18n.translate('transactions') + ' ' + tx.id"
                   >
-                    ⇄ Reorder
+                    {{ i18n.translate('reorderButton') }}
                   </button>
                 }
                 <button
                   type="button"
                   class="btn btn--ghost btn--sm"
                   (click)="openEdit(tx)"
-                  [attr.aria-label]="'Edit transaction ' + tx.id"
+                  [attr.aria-label]="i18n.translate('editButton') + ' ' + i18n.translate('transactions') + ' ' + tx.id"
                 >
-                  Edit
+                  {{ i18n.translate('editButton') }}
                 </button>
                 <button
                   type="button"
                   class="btn btn--danger-ghost btn--sm"
                   (click)="onDelete(tx)"
-                  [attr.aria-label]="'Delete transaction ' + tx.id"
+                  [attr.aria-label]="i18n.translate('deleteButton') + ' ' + i18n.translate('transactions') + ' ' + tx.id"
                 >
-                  Delete
+                  {{ i18n.translate('deleteButton') }}
                 </button>
               </td>
             </tr>
@@ -119,16 +119,16 @@
     class="modal-backdrop"
     role="dialog"
     aria-modal="true"
-    aria-label="Reorder Conflicting Transactions"
+    [attr.aria-label]="i18n.translate('reorderTitle')"
     (click)="closeSwapModal()"
     tabindex="-1"
   >
     <div class="modal-card" (click)="$event.stopPropagation()">
-      <h2 class="modal-title">Reorder Conflicting Transactions</h2>
+      <h2 class="modal-title">{{ i18n.translate('reorderTitle') }}</h2>
 
       <div class="swap-modal-content">
         <div class="swap-section">
-          <h3 class="swap-section__title">Source Transaction (will swap with selected target)</h3>
+          <h3 class="swap-section__title">{{ i18n.translate('sourceTransaction') }}</h3>
           @for (tx of swapGroupTransactions(); track tx.id) {
             @if (tx.id === swapSourceId()) {
               <div class="swap-transaction-summary">
@@ -149,7 +149,7 @@
         </div>
 
         <div class="swap-section">
-          <h3 class="swap-section__title">Swap with (select one)</h3>
+          <h3 class="swap-section__title">{{ i18n.translate('swapWith') }}</h3>
           <div class="swap-radio-group">
             @for (tx of swapGroupTransactions(); track tx.id) {
               @if (tx.id !== swapSourceId()) {
@@ -182,14 +182,14 @@
       </div>
 
       <div class="modal-actions">
-        <button type="button" class="btn btn--secondary" (click)="closeSwapModal()">Close</button>
+        <button type="button" class="btn btn--secondary" (click)="closeSwapModal()">{{ i18n.translate('closeButton') }}</button>
         <button
           type="button"
           class="btn btn--primary"
           (click)="confirmSwap()"
           [disabled]="!swapTargetId()"
         >
-          Swap Numbers
+          {{ i18n.translate('swapNumbers') }}
         </button>
       </div>
     </div>

@@ -1,9 +1,9 @@
 <div class="dashboard">
-  <h1 class="dashboard__title">Dashboard</h1>
+  <h1 class="dashboard__title">{{ i18n.translate('dashboard') }}</h1>
 
   <!-- Total Realized Gain/Loss -->
   <section class="dashboard__section card">
-    <h2 class="card__title">Total Realized Gain / Loss</h2>
+    <h2 class="card__title">{{ i18n.translate('totalRealizedGainLoss') }}</h2>
     <p
       class="card__value"
       [class.card__value--positive]="totalGainLoss() > 0"
@@ -15,15 +15,15 @@
 
   <!-- Year-by-Year Breakdown -->
   <section class="dashboard__section card">
-    <h2 class="card__title">Year-by-Year Breakdown</h2>
+    <h2 class="card__title">{{ i18n.translate('yearByYearBreakdown') }}</h2>
     @if (yearlyBreakdown().length === 0) {
-      <p class="empty-state">No realized gains or losses yet.</p>
+      <p class="empty-state">{{ i18n.translate('noRealizedGainsYet') }}</p>
     } @else {
-      <table class="data-table" aria-label="Yearly gain/loss breakdown">
+      <table class="data-table" [attr.aria-label]="i18n.translate('yearByYearBreakdown')">
         <thead>
           <tr>
-            <th scope="col">Year</th>
-            <th scope="col" class="text-right">Realized Gain / Loss</th>
+            <th scope="col">{{ i18n.translate('tableHeaderYear') }}</th>
+            <th scope="col" class="text-right">{{ i18n.translate('tableHeaderRealizedGainLoss') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -46,16 +46,16 @@
 
   <!-- Open Lots by Ticker -->
   <section class="dashboard__section card">
-    <h2 class="card__title">Open Lots by Ticker</h2>
+    <h2 class="card__title">{{ i18n.translate('openLotsByTicker') }}</h2>
     @if (openLotsByTicker().length === 0) {
-      <p class="empty-state">No open positions.</p>
+      <p class="empty-state">{{ i18n.translate('noOpenPositions') }}</p>
     } @else {
-      <table class="data-table" aria-label="Open lots by ticker">
+      <table class="data-table" [attr.aria-label]="i18n.translate('openLotsByTicker')">
         <thead>
           <tr>
-            <th scope="col">Ticker</th>
-            <th scope="col" class="text-right">Quantity Held</th>
-            <th scope="col" class="text-right">Avg. Cost Basis</th>
+            <th scope="col">{{ i18n.translate('tableHeaderTicker') }}</th>
+            <th scope="col" class="text-right">{{ i18n.translate('tableHeaderQuantityHeld') }}</th>
+            <th scope="col" class="text-right">{{ i18n.translate('tableHeaderAvgCostBasis') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -74,30 +74,30 @@
   <!-- FIFO Matching Details (Verification) -->
   <section class="dashboard__section card matching-section">
     <div class="matching-header">
-      <h2 class="card__title matching-title">FIFO Matching Details</h2>
+      <h2 class="card__title matching-title">{{ i18n.translate('fifoMatchingDetails') }}</h2>
       <button type="button" class="btn btn--ghost btn--sm" (click)="isMatchingExpanded.set(!isMatchingExpanded())">
-        {{ isMatchingExpanded() ? 'Hide' : 'Show (' + matchingDetails().length + ' lots)' }}
+        {{ isMatchingExpanded() ? i18n.translate('hideButton') : i18n.translate('showButton') + ' (' + matchingDetails().length + ' ' + i18n.translate('lotsLabel') + ')' }}
       </button>
     </div>
 
     @if (isMatchingExpanded()) {
       @if (matchingDetails().length === 0) {
-        <p class="empty-state">No realized transactions to display.</p>
+        <p class="empty-state">{{ i18n.translate('noRealizedTransactions') }}</p>
       } @else {
-        <div class="table-wrapper" role="region" aria-label="FIFO matching details" tabindex="0">
-          <table class="data-table matching-table" aria-label="FIFO matching details">
+        <div class="table-wrapper" role="region" [attr.aria-label]="i18n.translate('fifoMatchingDetails')" tabindex="0">
+          <table class="data-table matching-table" [attr.aria-label]="i18n.translate('fifoMatchingDetails')">
             <thead>
               <tr>
-                <th scope="col" class="text-center col-num">Sell #</th>
-                <th scope="col" class="text-center col-num">Buy #</th>
-                <th scope="col">Sell Date</th>
-                <th scope="col">Buy Date</th>
-                <th scope="col">Ticker</th>
-                <th scope="col" class="text-right">Available Units</th>
-                <th scope="col" class="text-right">Matched Units</th>
-                <th scope="col" class="text-right">Eff. Buy Price</th>
-                <th scope="col" class="text-right">Eff. Sell Price</th>
-                <th scope="col" class="text-right">Taxable Gain</th>
+                <th scope="col" class="text-center col-num">{{ i18n.translate('tableHeaderSellNum') }}</th>
+                <th scope="col" class="text-center col-num">{{ i18n.translate('tableHeaderBuyNum') }}</th>
+                <th scope="col">{{ i18n.translate('tableHeaderSellDate') }}</th>
+                <th scope="col">{{ i18n.translate('tableHeaderBuyDate') }}</th>
+                <th scope="col">{{ i18n.translate('tableHeaderTicker') }}</th>
+                <th scope="col" class="text-right">{{ i18n.translate('tableHeaderAvailableUnits') }}</th>
+                <th scope="col" class="text-right">{{ i18n.translate('tableHeaderMatchedUnits') }}</th>
+                <th scope="col" class="text-right">{{ i18n.translate('tableHeaderEffBuyPrice') }}</th>
+                <th scope="col" class="text-right">{{ i18n.translate('tableHeaderEffSellPrice') }}</th>
+                <th scope="col" class="text-right">{{ i18n.translate('tableHeaderTaxableGain') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -130,13 +130,13 @@
             </tbody>
             <tfoot>
               <tr class="matching-footer">
-                <td colspan="6" class="text-right matching-footer__label">Totals</td>
+                <td colspan="6" class="text-right matching-footer__label">{{ i18n.translate('totalsLabel') }}</td>
                 <td class="text-right">{{ matchingTotals().matchedUnits | number: '1.0-6' }}</td>
                 <td colspan="2"></td>
                 <td class="text-right" [class.text-positive]="matchingTotals().totalGain > 0" [class.text-negative]="matchingTotals().totalGain < 0">
                   {{ matchingTotals().totalGain | currency: 'USD' : 'symbol' : '1.2-2' }}
                   @if (isTotalVerified()) {
-                    <span class="verified-badge" title="Matches Total Realized Gain / Loss">✓</span>
+                    <span class="verified-badge" [attr.title]="i18n.translate('verifiedBadge')">{{ i18n.translate('verifiedBadge') }}</span>
                   } @else {
                     <span class="unverified-badge" title="Mismatch with Total Realized Gain / Loss">✗</span>
                   }

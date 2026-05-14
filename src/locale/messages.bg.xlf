@@ -2,61 +2,466 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en" target-language="bg" datatype="plaintext" original="ng2.template">
     <body>
+      <!-- Header & Navigation -->
       <trans-unit id="fifoAccounter" datatype="html">
         <source>FIFO Accounter</source>
         <target>FIFO Счетоводител</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="dashboard" datatype="html">
         <source>Dashboard</source>
         <target>Таблица</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="transactions" datatype="html">
         <source>Transactions</source>
         <target>Транзакции</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="importCsv" datatype="html">
         <source>Import CSV</source>
         <target>Импортиране CSV</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="loadingFifoAccounter" datatype="html">
-        <source>Loading FIFO Accounter…</source>
-        <target>Зареждане на FIFO Счетоводител…</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/app.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="language" datatype="html">
         <source>Language</source>
         <target>Език</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="english" datatype="html">
         <source>English</source>
         <target>Английски</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="bulgarian" datatype="html">
         <source>Bulgarian</source>
         <target>Български</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
+      </trans-unit>
+      <trans-unit id="loadingFifoAccounter" datatype="html">
+        <source>Loading FIFO Accounter…</source>
+        <target>Зареждане на FIFO Счетоводител…</target>
+      </trans-unit>
+
+      <!-- Transaction Table -->
+      <trans-unit id="backToDashboard" datatype="html">
+        <source>← Back to Dashboard</source>
+        <target>← Обратно към Таблица</target>
+      </trans-unit>
+      <trans-unit id="addTransaction" datatype="html">
+        <source>+ Add Transaction</source>
+        <target>+ Добави транзакция</target>
+      </trans-unit>
+      <trans-unit id="noTransactionsYet" datatype="html">
+        <source>No transactions yet. Click</source>
+        <target>Няма транзакции. Щракнете</target>
+      </trans-unit>
+      <trans-unit id="toBegin" datatype="html">
+        <source>to begin.</source>
+        <target>за да започнете.</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderNum" datatype="html">
+        <source>#</source>
+        <target>#</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderIssues" datatype="html">
+        <source>Issues</source>
+        <target>Проблеми</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderDate" datatype="html">
+        <source>Date</source>
+        <target>Дата</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderTicker" datatype="html">
+        <source>Ticker</source>
+        <target>Тикер</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderType" datatype="html">
+        <source>Type</source>
+        <target>Вид</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderQuantity" datatype="html">
+        <source>Quantity</source>
+        <target>Количество</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderPrice" datatype="html">
+        <source>Price</source>
+        <target>Цена</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderFee" datatype="html">
+        <source>Fee</source>
+        <target>Комисион</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderNotes" datatype="html">
+        <source>Notes</source>
+        <target>Бележки</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderActions" datatype="html">
+        <source>Actions</source>
+        <target>Действия</target>
+      </trans-unit>
+      <trans-unit id="sortByDate" datatype="html">
+        <source>Sort by Date</source>
+        <target>Сортиране по дата</target>
+      </trans-unit>
+      <trans-unit id="sortByTicker" datatype="html">
+        <source>Sort by Ticker</source>
+        <target>Сортиране по тикер</target>
+      </trans-unit>
+      <trans-unit id="sortByType" datatype="html">
+        <source>Sort by Type</source>
+        <target>Сортиране по вид</target>
+      </trans-unit>
+      <trans-unit id="sortByQuantity" datatype="html">
+        <source>Sort by Quantity</source>
+        <target>Сортиране по количество</target>
+      </trans-unit>
+      <trans-unit id="sortByPrice" datatype="html">
+        <source>Sort by Price</source>
+        <target>Сортиране по цена</target>
+      </trans-unit>
+      <trans-unit id="sortByFee" datatype="html">
+        <source>Sort by Fee</source>
+        <target>Сортиране по комисион</target>
+      </trans-unit>
+      <trans-unit id="conflictLabel" datatype="html">
+        <source>Conflict: Multiple transactions with same date, time, and ticker</source>
+        <target>Конфликт: Множество транзакции с същата дата, час и тикер</target>
+      </trans-unit>
+      <trans-unit id="reorderButton" datatype="html">
+        <source>⇄ Reorder</source>
+        <target>⇄ Пренареждане</target>
+      </trans-unit>
+      <trans-unit id="editButton" datatype="html">
+        <source>Edit</source>
+        <target>Редактиране</target>
+      </trans-unit>
+      <trans-unit id="deleteButton" datatype="html">
+        <source>Delete</source>
+        <target>Изтриване</target>
+      </trans-unit>
+      <trans-unit id="reorderTitle" datatype="html">
+        <source>Reorder Conflicting Transactions</source>
+        <target>Пренареждане на конфликтни транзакции</target>
+      </trans-unit>
+      <trans-unit id="sourceTransaction" datatype="html">
+        <source>Source Transaction (will swap with selected target)</source>
+        <target>Изходна транзакция (ще се обменя с избрания целеви)</target>
+      </trans-unit>
+      <trans-unit id="swapWith" datatype="html">
+        <source>Swap with (select one)</source>
+        <target>Обмяна с (изберете един)</target>
+      </trans-unit>
+      <trans-unit id="closeButton" datatype="html">
+        <source>Close</source>
+        <target>Затворете</target>
+      </trans-unit>
+      <trans-unit id="swapNumbers" datatype="html">
+        <source>Swap Numbers</source>
+        <target>Обмяна на номера</target>
+      </trans-unit>
+
+      <!-- Dashboard -->
+      <trans-unit id="totalRealizedGainLoss" datatype="html">
+        <source>Total Realized Gain / Loss</source>
+        <target>Общо реализирана печалба / загуба</target>
+      </trans-unit>
+      <trans-unit id="noRealizedGainsYet" datatype="html">
+        <source>No realized gains or losses yet.</source>
+        <target>Все още няма реализирани печалби или загуби.</target>
+      </trans-unit>
+      <trans-unit id="yearByYearBreakdown" datatype="html">
+        <source>Year-by-Year Breakdown</source>
+        <target>Разбивка по години</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderYear" datatype="html">
+        <source>Year</source>
+        <target>Година</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderRealizedGainLoss" datatype="html">
+        <source>Realized Gain / Loss</source>
+        <target>Реализирана печалба / загуба</target>
+      </trans-unit>
+      <trans-unit id="openLotsByTicker" datatype="html">
+        <source>Open Lots by Ticker</source>
+        <target>Отворени парции по тикер</target>
+      </trans-unit>
+      <trans-unit id="noOpenPositions" datatype="html">
+        <source>No open positions.</source>
+        <target>Няма отворени позиции.</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderQuantityHeld" datatype="html">
+        <source>Quantity Held</source>
+        <target>Количество държано</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderAvgCostBasis" datatype="html">
+        <source>Avg. Cost Basis</source>
+        <target>Средна цена</target>
+      </trans-unit>
+      <trans-unit id="fifoMatchingDetails" datatype="html">
+        <source>FIFO Matching Details</source>
+        <target>Детайли на FIFO съответствие</target>
+      </trans-unit>
+      <trans-unit id="hideButton" datatype="html">
+        <source>Hide</source>
+        <target>Скриване</target>
+      </trans-unit>
+      <trans-unit id="showButton" datatype="html">
+        <source>Show</source>
+        <target>Показване</target>
+      </trans-unit>
+      <trans-unit id="lotsLabel" datatype="html">
+        <source>lots</source>
+        <target>парции</target>
+      </trans-unit>
+      <trans-unit id="noRealizedTransactions" datatype="html">
+        <source>No realized transactions to display.</source>
+        <target>Няма реализирани транзакции за показване.</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderSellNum" datatype="html">
+        <source>Sell #</source>
+        <target>Продажба #</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderBuyNum" datatype="html">
+        <source>Buy #</source>
+        <target>Покупка #</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderSellDate" datatype="html">
+        <source>Sell Date</source>
+        <target>Дата на продажба</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderBuyDate" datatype="html">
+        <source>Buy Date</source>
+        <target>Дата на покупка</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderAvailableUnits" datatype="html">
+        <source>Available Units</source>
+        <target>Налични единици</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderMatchedUnits" datatype="html">
+        <source>Matched Units</source>
+        <target>Съответстващи единици</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderEffBuyPrice" datatype="html">
+        <source>Eff. Buy Price</source>
+        <target>Ефективна цена на покупка</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderEffSellPrice" datatype="html">
+        <source>Eff. Sell Price</source>
+        <target>Ефективна цена на продажба</target>
+      </trans-unit>
+      <trans-unit id="tableHeaderTaxableGain" datatype="html">
+        <source>Taxable Gain</source>
+        <target>Облагаема печалба</target>
+      </trans-unit>
+      <trans-unit id="totalsLabel" datatype="html">
+        <source>Totals</source>
+        <target>Общо</target>
+      </trans-unit>
+      <trans-unit id="verifiedBadge" datatype="html">
+        <source>✓ Matches Total Realized Gain / Loss</source>
+        <target>✓ Съответства на общо реализирана печалба / загуба</target>
+      </trans-unit>
+
+      <!-- CSV Importer -->
+      <trans-unit id="imporCsvTitle" datatype="html">
+        <source>Import CSV</source>
+        <target>Импортиране CSV</target>
+      </trans-unit>
+      <trans-unit id="importer_subtitle" datatype="html">
+        <source>Supports Interactive Brokers, DEGIRO, and generic CSV formats.</source>
+        <target>Поддържа Interactive Brokers, DEGIRO и общи CSV формати.</target>
+      </trans-unit>
+      <trans-unit id="dragCsvHere" datatype="html">
+        <source>Drag a CSV file here or click to select</source>
+        <target>Плъзнете CSV файл тук или щракнете за избор</target>
+      </trans-unit>
+      <trans-unit id="chooseFile" datatype="html">
+        <source>Choose File</source>
+        <target>Избор на файл</target>
+      </trans-unit>
+      <trans-unit id="detectedFormat" datatype="html">
+        <source>Detected format:</source>
+        <target>Открит формат:</target>
+      </trans-unit>
+      <trans-unit id="filePreview" datatype="html">
+        <source>File Preview (first 5 rows)</source>
+        <target>Преглед на файла (първи 5 реда)</target>
+      </trans-unit>
+      <trans-unit id="useThisFormat" datatype="html">
+        <source>Yes, use this format →</source>
+        <target>Да, използвай този формат →</target>
+      </trans-unit>
+      <trans-unit id="cancelButton" datatype="html">
+        <source>Cancel</source>
+        <target>Отказ</target>
+      </trans-unit>
+      <trans-unit id="backButton" datatype="html">
+        <source>Back</source>
+        <target>Обратно</target>
+      </trans-unit>
+      <trans-unit id="parsedTransactions" datatype="html">
+        <source>Parsed transactions.</source>
+        <target>Анализирани транзакции.</target>
+      </trans-unit>
+      <trans-unit id="transactionPreview" datatype="html">
+        <source>Transaction Preview</source>
+        <target>Преглед на транзакции</target>
+      </trans-unit>
+      <trans-unit id="andMoreLabel" datatype="html">
+        <source>… and more</source>
+        <target>… и още</target>
+      </trans-unit>
+      <trans-unit id="checkForDuplicates" datatype="html">
+        <source>Check for Duplicates →</source>
+        <target>Проверка за дублирани →</target>
+      </trans-unit>
+      <trans-unit id="duplicateCheck" datatype="html">
+        <source>Duplicate Check</source>
+        <target>Проверка за дублирани</target>
+      </trans-unit>
+      <trans-unit id="duplicateFound" datatype="html">
+        <source>Found duplicate transaction(s) that already exist.</source>
+        <target>Намерени дублирани транзакции, които вече съществуват.</target>
+      </trans-unit>
+      <trans-unit id="newTransactionsWillImport" datatype="html">
+        <source>new transaction(s) will be imported.</source>
+        <target>нови транзакции ще бъдат импортирани.</target>
+      </trans-unit>
+      <trans-unit id="importSkipDuplicates" datatype="html">
+        <source>Import (skip duplicates)</source>
+        <target>Импортиране (пропускане на дублирани)</target>
+      </trans-unit>
+      <trans-unit id="importAll" datatype="html">
+        <source>Import all (include duplicates)</source>
+        <target>Импортиране на всички (включително дублирани)</target>
+      </trans-unit>
+      <trans-unit id="noDuplicatesFound" datatype="html">
+        <source>No duplicates found. transaction(s) ready to import.</source>
+        <target>Няма намерени дублирани. Транзакции готови за импортиране.</target>
+      </trans-unit>
+      <trans-unit id="importing" datatype="html">
+        <source>Importing…</source>
+        <target>Импортиране…</target>
+      </trans-unit>
+      <trans-unit id="importNow" datatype="html">
+        <source>Import Now</source>
+        <target>Импортиране сега</target>
+      </trans-unit>
+      <trans-unit id="importComplete" datatype="html">
+        <source>Import Complete</source>
+        <target>Импортирането е завършено</target>
+      </trans-unit>
+      <trans-unit id="transactionsImported" datatype="html">
+        <source>✅ transactions imported successfully.</source>
+        <target>✅ транзакции успешно импортирани.</target>
+      </trans-unit>
+      <trans-unit id="transactionsSkipped" datatype="html">
+        <source>⏭ transactions skipped (duplicates).</source>
+        <target>⏭ транзакции пропуснати (дублирани).</target>
+      </trans-unit>
+      <trans-unit id="errorsEncountered" datatype="html">
+        <source>❌ error(s) encountered.</source>
+        <target>❌ възникнали грешки.</target>
+      </trans-unit>
+      <trans-unit id="importAnother" datatype="html">
+        <source>Import Another</source>
+        <target>Импортиране на друг</target>
+      </trans-unit>
+      <trans-unit id="viewTransactions" datatype="html">
+        <source>View Transactions →</source>
+        <target>Преглед на транзакции →</target>
+      </trans-unit>
+
+      <!-- Transaction Form -->
+      <trans-unit id="editTransaction" datatype="html">
+        <source>Edit Transaction</source>
+        <target>Редактиране на транзакция</target>
+      </trans-unit>
+      <trans-unit id="addTransactionForm" datatype="html">
+        <source>Add Transaction</source>
+        <target>Добави транзакция</target>
+      </trans-unit>
+      <trans-unit id="formLabelDate" datatype="html">
+        <source>Date</source>
+        <target>Дата</target>
+      </trans-unit>
+      <trans-unit id="formLabelTime" datatype="html">
+        <source>Time (HH:MM:SS[.mmm])</source>
+        <target>Час (ЧЧ:МІ:СС[.ммм])</target>
+      </trans-unit>
+      <trans-unit id="formLabelTicker" datatype="html">
+        <source>Ticker</source>
+        <target>Тикер</target>
+      </trans-unit>
+      <trans-unit id="formLabelType" datatype="html">
+        <source>Type</source>
+        <target>Вид</target>
+      </trans-unit>
+      <trans-unit id="formLabelQuantity" datatype="html">
+        <source>Quantity</source>
+        <target>Количество</target>
+      </trans-unit>
+      <trans-unit id="formLabelPrice" datatype="html">
+        <source>Price</source>
+        <target>Цена</target>
+      </trans-unit>
+      <trans-unit id="formLabelFee" datatype="html">
+        <source>Commission Fee</source>
+        <target>Комисионна такса</target>
+      </trans-unit>
+      <trans-unit id="formLabelNotes" datatype="html">
+        <source>Notes</source>
+        <target>Бележки</target>
+      </trans-unit>
+      <trans-unit id="formPlaceholderTime" datatype="html">
+        <source>e.g. 10:54:05.300</source>
+        <target>напр. 10:54:05.300</target>
+      </trans-unit>
+      <trans-unit id="formPlaceholderTicker" datatype="html">
+        <source>e.g. AAPL</source>
+        <target>напр. AAPL</target>
+      </trans-unit>
+      <trans-unit id="formPlaceholderFee" datatype="html">
+        <source>e.g. 5.00</source>
+        <target>напр. 5.00</target>
+      </trans-unit>
+      <trans-unit id="formPlaceholderNotes" datatype="html">
+        <source>Optional notes</source>
+        <target>Факултативни бележки</target>
+      </trans-unit>
+      <trans-unit id="formErrorDate" datatype="html">
+        <source>Date is required.</source>
+        <target>Датата е задължителна.</target>
+      </trans-unit>
+      <trans-unit id="formErrorTime" datatype="html">
+        <source>Invalid time format. Use HH:MM:SS or HH:MM:SS.mmm</source>
+        <target>Невалиден формат на час. Използвайте ЧЧ:МІ:СС или ЧЧ:МІ:СС.ммм</target>
+      </trans-unit>
+      <trans-unit id="formErrorTicker" datatype="html">
+        <source>Ticker is required.</source>
+        <target>Тикерът е задължителен.</target>
+      </trans-unit>
+      <trans-unit id="formErrorType" datatype="html">
+        <source>Type is required.</source>
+        <target>Видът е задължителен.</target>
+      </trans-unit>
+      <trans-unit id="formErrorQuantity" datatype="html">
+        <source>Quantity must be greater than 0.</source>
+        <target>Количеството трябва да е по-голямо от 0.</target>
+      </trans-unit>
+      <trans-unit id="formErrorPrice" datatype="html">
+        <source>Price must be greater than 0.</source>
+        <target>Цената трябва да е по-голяма от 0.</target>
+      </trans-unit>
+      <trans-unit id="formErrorFee" datatype="html">
+        <source>Fee must be 0 or greater.</source>
+        <target>Такса трябва да е 0 или по-голяма.</target>
+      </trans-unit>
+      <trans-unit id="saveButton" datatype="html">
+        <source>Save</source>
+        <target>Запис</target>
+      </trans-unit>
+      <trans-unit id="saving" datatype="html">
+        <source>Saving…</source>
+        <target>Запис…</target>
+      </trans-unit>
+      <trans-unit id="requiredField" datatype="html">
+        <source>*</source>
+        <target>*</target>
       </trans-unit>
     </body>
   </file>

@@ -6,11 +6,13 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
 import { Transaction, TransactionType } from '../../models/transaction.model';
 import { StateService } from '../../services/state.service';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-transaction-form',
@@ -37,7 +39,8 @@ export class TransactionFormComponent implements OnChanges {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly state: StateService
+    private readonly state: StateService,
+    readonly i18n: I18nService
   ) {
     this.form = this.buildForm();
   }

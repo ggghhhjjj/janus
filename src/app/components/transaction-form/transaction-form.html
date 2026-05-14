@@ -2,18 +2,18 @@
   class="modal-backdrop"
   role="dialog"
   aria-modal="true"
-  [attr.aria-label]="isEditMode ? 'Edit Transaction' : 'Add Transaction'"
+  [attr.aria-label]="isEditMode ? i18n.translate('editTransaction') : i18n.translate('addTransactionForm')"
   (click)="onBackdropClick($event)"
   (keydown)="onKeydown($event)"
   tabindex="-1"
 >
   <div class="modal-card">
-    <h2 class="modal-title">{{ isEditMode ? 'Edit Transaction' : 'Add Transaction' }}</h2>
+    <h2 class="modal-title">{{ isEditMode ? i18n.translate('editTransaction') : i18n.translate('addTransactionForm') }}</h2>
 
     <form [formGroup]="form" (ngSubmit)="onSave()" novalidate>
       <!-- Date -->
       <div class="field">
-        <label class="field__label" for="tx-date">Date <span aria-hidden="true">*</span></label>
+        <label class="field__label" for="tx-date">{{ i18n.translate('formLabelDate') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
         <input
           id="tx-date"
           type="date"
@@ -23,49 +23,49 @@
           aria-required="true"
         />
         @if (hasError('date')) {
-          <span class="field__error" role="alert">Date is required.</span>
+          <span class="field__error" role="alert">{{ i18n.translate('formErrorDate') }}</span>
         }
       </div>
 
       <!-- Time -->
       <div class="field">
-        <label class="field__label" for="tx-time">Time (HH:MM:SS[.mmm])</label>
+        <label class="field__label" for="tx-time">{{ i18n.translate('formLabelTime') }}</label>
         <input
           id="tx-time"
           type="text"
           class="field__input"
           [class.field__input--error]="hasError('time')"
           formControlName="time"
-          placeholder="e.g. 10:54:05.300"
+          [placeholder]="i18n.translate('formPlaceholderTime')"
           pattern="^(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?(?:\.(\d{1,3}))?$"
         />
         @if (hasError('time')) {
-          <span class="field__error" role="alert">Invalid time format. Use HH:MM:SS or HH:MM:SS.mmm</span>
+          <span class="field__error" role="alert">{{ i18n.translate('formErrorTime') }}</span>
         }
       </div>
 
       <!-- Ticker -->
       <div class="field">
-        <label class="field__label" for="tx-ticker">Ticker <span aria-hidden="true">*</span></label>
+        <label class="field__label" for="tx-ticker">{{ i18n.translate('formLabelTicker') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
         <input
           id="tx-ticker"
           type="text"
           class="field__input"
           [class.field__input--error]="hasError('ticker')"
           formControlName="ticker"
-          placeholder="e.g. AAPL"
+          [placeholder]="i18n.translate('formPlaceholderTicker')"
           aria-required="true"
           autocomplete="off"
           autocapitalize="characters"
         />
         @if (hasError('ticker')) {
-          <span class="field__error" role="alert">Ticker is required.</span>
+          <span class="field__error" role="alert">{{ i18n.translate('formErrorTicker') }}</span>
         }
       </div>
 
       <!-- Type -->
       <div class="field">
-        <label class="field__label" for="tx-type">Type <span aria-hidden="true">*</span></label>
+        <label class="field__label" for="tx-type">{{ i18n.translate('formLabelType') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
         <select
           id="tx-type"
           class="field__input"
@@ -78,13 +78,13 @@
           }
         </select>
         @if (hasError('type')) {
-          <span class="field__error" role="alert">Type is required.</span>
+          <span class="field__error" role="alert">{{ i18n.translate('formErrorType') }}</span>
         }
       </div>
 
       <!-- Quantity -->
       <div class="field">
-        <label class="field__label" for="tx-quantity">Quantity <span aria-hidden="true">*</span></label>
+        <label class="field__label" for="tx-quantity">{{ i18n.translate('formLabelQuantity') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
         <input
           id="tx-quantity"
           type="number"
@@ -96,13 +96,13 @@
           aria-required="true"
         />
         @if (hasError('quantity')) {
-          <span class="field__error" role="alert">Quantity must be greater than 0.</span>
+          <span class="field__error" role="alert">{{ i18n.translate('formErrorQuantity') }}</span>
         }
       </div>
 
       <!-- Price -->
       <div class="field">
-        <label class="field__label" for="tx-price">Price <span aria-hidden="true">*</span></label>
+        <label class="field__label" for="tx-price">{{ i18n.translate('formLabelPrice') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
         <input
           id="tx-price"
           type="number"
@@ -114,14 +114,14 @@
           aria-required="true"
         />
         @if (hasError('price')) {
-          <span class="field__error" role="alert">Price must be greater than 0.</span>
+          <span class="field__error" role="alert">{{ i18n.translate('formErrorPrice') }}</span>
         }
       </div>
 
       <!-- Fee (conditional: only for buy/sell) -->
       @if (isFeeApplicable()) {
         <div class="field">
-          <label class="field__label" for="tx-fee">Commission Fee</label>
+          <label class="field__label" for="tx-fee">{{ i18n.translate('formLabelFee') }}</label>
           <input
             id="tx-fee"
             type="number"
@@ -130,23 +130,23 @@
             formControlName="fee"
             min="0"
             step="any"
-            placeholder="e.g. 5.00"
+            [placeholder]="i18n.translate('formPlaceholderFee')"
           />
           @if (hasError('fee')) {
-            <span class="field__error" role="alert">Fee must be 0 or greater.</span>
+            <span class="field__error" role="alert">{{ i18n.translate('formErrorFee') }}</span>
           }
         </div>
       }
 
       <!-- Notes -->
       <div class="field">
-        <label class="field__label" for="tx-notes">Notes</label>
+        <label class="field__label" for="tx-notes">{{ i18n.translate('formLabelNotes') }}</label>
         <textarea
           id="tx-notes"
           class="field__input field__textarea"
           formControlName="notes"
           rows="3"
-          placeholder="Optional notes"
+          [placeholder]="i18n.translate('formPlaceholderNotes')"
         ></textarea>
       </div>
 
@@ -156,10 +156,10 @@
 
       <div class="modal-actions">
         <button type="button" class="btn btn--secondary" (click)="onCancel()" [disabled]="saving">
-          Cancel
+          {{ i18n.translate('cancelButton') }}
         </button>
         <button type="submit" class="btn btn--primary" [disabled]="saving">
-          {{ saving ? 'Saving…' : 'Save' }}
+          {{ saving ? i18n.translate('saving') : i18n.translate('saveButton') }}
         </button>
       </div>
     </form>

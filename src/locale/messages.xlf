@@ -2,53 +2,353 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template">
     <body>
+      <!-- Header & Navigation -->
       <trans-unit id="fifoAccounter" datatype="html">
         <source>FIFO Accounter</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="dashboard" datatype="html">
         <source>Dashboard</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="transactions" datatype="html">
         <source>Transactions</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="importCsv" datatype="html">
         <source>Import CSV</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="loadingFifoAccounter" datatype="html">
-        <source>Loading FIFO Accounter…</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/app.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="language" datatype="html">
         <source>Language</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="english" datatype="html">
         <source>English</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="bulgarian" datatype="html">
         <source>Bulgarian</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/header/header.html</context>
-        </context-group>
+      </trans-unit>
+      <trans-unit id="loadingFifoAccounter" datatype="html">
+        <source>Loading FIFO Accounter…</source>
+      </trans-unit>
+
+      <!-- Transaction Table -->
+      <trans-unit id="backToDashboard" datatype="html">
+        <source>← Back to Dashboard</source>
+      </trans-unit>
+      <trans-unit id="addTransaction" datatype="html">
+        <source>+ Add Transaction</source>
+      </trans-unit>
+      <trans-unit id="noTransactionsYet" datatype="html">
+        <source>No transactions yet. Click</source>
+      </trans-unit>
+      <trans-unit id="toBegin" datatype="html">
+        <source>to begin.</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderNum" datatype="html">
+        <source>#</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderIssues" datatype="html">
+        <source>Issues</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderDate" datatype="html">
+        <source>Date</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderTicker" datatype="html">
+        <source>Ticker</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderType" datatype="html">
+        <source>Type</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderQuantity" datatype="html">
+        <source>Quantity</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderPrice" datatype="html">
+        <source>Price</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderFee" datatype="html">
+        <source>Fee</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderNotes" datatype="html">
+        <source>Notes</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderActions" datatype="html">
+        <source>Actions</source>
+      </trans-unit>
+      <trans-unit id="sortByDate" datatype="html">
+        <source>Sort by Date</source>
+      </trans-unit>
+      <trans-unit id="sortByTicker" datatype="html">
+        <source>Sort by Ticker</source>
+      </trans-unit>
+      <trans-unit id="sortByType" datatype="html">
+        <source>Sort by Type</source>
+      </trans-unit>
+      <trans-unit id="sortByQuantity" datatype="html">
+        <source>Sort by Quantity</source>
+      </trans-unit>
+      <trans-unit id="sortByPrice" datatype="html">
+        <source>Sort by Price</source>
+      </trans-unit>
+      <trans-unit id="sortByFee" datatype="html">
+        <source>Sort by Fee</source>
+      </trans-unit>
+      <trans-unit id="conflictLabel" datatype="html">
+        <source>Conflict: Multiple transactions with same date, time, and ticker</source>
+      </trans-unit>
+      <trans-unit id="reorderButton" datatype="html">
+        <source>⇄ Reorder</source>
+      </trans-unit>
+      <trans-unit id="editButton" datatype="html">
+        <source>Edit</source>
+      </trans-unit>
+      <trans-unit id="deleteButton" datatype="html">
+        <source>Delete</source>
+      </trans-unit>
+      <trans-unit id="reorderTitle" datatype="html">
+        <source>Reorder Conflicting Transactions</source>
+      </trans-unit>
+      <trans-unit id="sourceTransaction" datatype="html">
+        <source>Source Transaction (will swap with selected target)</source>
+      </trans-unit>
+      <trans-unit id="swapWith" datatype="html">
+        <source>Swap with (select one)</source>
+      </trans-unit>
+      <trans-unit id="closeButton" datatype="html">
+        <source>Close</source>
+      </trans-unit>
+      <trans-unit id="swapNumbers" datatype="html">
+        <source>Swap Numbers</source>
+      </trans-unit>
+
+      <!-- Dashboard -->
+      <trans-unit id="totalRealizedGainLoss" datatype="html">
+        <source>Total Realized Gain / Loss</source>
+      </trans-unit>
+      <trans-unit id="noRealizedGainsYet" datatype="html">
+        <source>No realized gains or losses yet.</source>
+      </trans-unit>
+      <trans-unit id="yearByYearBreakdown" datatype="html">
+        <source>Year-by-Year Breakdown</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderYear" datatype="html">
+        <source>Year</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderRealizedGainLoss" datatype="html">
+        <source>Realized Gain / Loss</source>
+      </trans-unit>
+      <trans-unit id="openLotsByTicker" datatype="html">
+        <source>Open Lots by Ticker</source>
+      </trans-unit>
+      <trans-unit id="noOpenPositions" datatype="html">
+        <source>No open positions.</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderQuantityHeld" datatype="html">
+        <source>Quantity Held</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderAvgCostBasis" datatype="html">
+        <source>Avg. Cost Basis</source>
+      </trans-unit>
+      <trans-unit id="fifoMatchingDetails" datatype="html">
+        <source>FIFO Matching Details</source>
+      </trans-unit>
+      <trans-unit id="hideButton" datatype="html">
+        <source>Hide</source>
+      </trans-unit>
+      <trans-unit id="showButton" datatype="html">
+        <source>Show</source>
+      </trans-unit>
+      <trans-unit id="lotsLabel" datatype="html">
+        <source>lots</source>
+      </trans-unit>
+      <trans-unit id="noRealizedTransactions" datatype="html">
+        <source>No realized transactions to display.</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderSellNum" datatype="html">
+        <source>Sell #</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderBuyNum" datatype="html">
+        <source>Buy #</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderSellDate" datatype="html">
+        <source>Sell Date</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderBuyDate" datatype="html">
+        <source>Buy Date</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderAvailableUnits" datatype="html">
+        <source>Available Units</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderMatchedUnits" datatype="html">
+        <source>Matched Units</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderEffBuyPrice" datatype="html">
+        <source>Eff. Buy Price</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderEffSellPrice" datatype="html">
+        <source>Eff. Sell Price</source>
+      </trans-unit>
+      <trans-unit id="tableHeaderTaxableGain" datatype="html">
+        <source>Taxable Gain</source>
+      </trans-unit>
+      <trans-unit id="totalsLabel" datatype="html">
+        <source>Totals</source>
+      </trans-unit>
+      <trans-unit id="verifiedBadge" datatype="html">
+        <source>✓ Matches Total Realized Gain / Loss</source>
+      </trans-unit>
+
+      <!-- CSV Importer -->
+      <trans-unit id="imporCsvTitle" datatype="html">
+        <source>Import CSV</source>
+      </trans-unit>
+      <trans-unit id="importer_subtitle" datatype="html">
+        <source>Supports Interactive Brokers, DEGIRO, and generic CSV formats.</source>
+      </trans-unit>
+      <trans-unit id="dragCsvHere" datatype="html">
+        <source>Drag a CSV file here or click to select</source>
+      </trans-unit>
+      <trans-unit id="chooseFile" datatype="html">
+        <source>Choose File</source>
+      </trans-unit>
+      <trans-unit id="detectedFormat" datatype="html">
+        <source>Detected format:</source>
+      </trans-unit>
+      <trans-unit id="filePreview" datatype="html">
+        <source>File Preview (first 5 rows)</source>
+      </trans-unit>
+      <trans-unit id="useThisFormat" datatype="html">
+        <source>Yes, use this format →</source>
+      </trans-unit>
+      <trans-unit id="cancelButton" datatype="html">
+        <source>Cancel</source>
+      </trans-unit>
+      <trans-unit id="backButton" datatype="html">
+        <source>Back</source>
+      </trans-unit>
+      <trans-unit id="parsedTransactions" datatype="html">
+        <source>Parsed transactions.</source>
+      </trans-unit>
+      <trans-unit id="transactionPreview" datatype="html">
+        <source>Transaction Preview</source>
+      </trans-unit>
+      <trans-unit id="andMoreLabel" datatype="html">
+        <source>… and more</source>
+      </trans-unit>
+      <trans-unit id="checkForDuplicates" datatype="html">
+        <source>Check for Duplicates →</source>
+      </trans-unit>
+      <trans-unit id="duplicateCheck" datatype="html">
+        <source>Duplicate Check</source>
+      </trans-unit>
+      <trans-unit id="duplicateFound" datatype="html">
+        <source>Found duplicate transaction(s) that already exist.</source>
+      </trans-unit>
+      <trans-unit id="newTransactionsWillImport" datatype="html">
+        <source>new transaction(s) will be imported.</source>
+      </trans-unit>
+      <trans-unit id="importSkipDuplicates" datatype="html">
+        <source>Import (skip duplicates)</source>
+      </trans-unit>
+      <trans-unit id="importAll" datatype="html">
+        <source>Import all (include duplicates)</source>
+      </trans-unit>
+      <trans-unit id="noDuplicatesFound" datatype="html">
+        <source>No duplicates found. transaction(s) ready to import.</source>
+      </trans-unit>
+      <trans-unit id="importing" datatype="html">
+        <source>Importing…</source>
+      </trans-unit>
+      <trans-unit id="importNow" datatype="html">
+        <source>Import Now</source>
+      </trans-unit>
+      <trans-unit id="importComplete" datatype="html">
+        <source>Import Complete</source>
+      </trans-unit>
+      <trans-unit id="transactionsImported" datatype="html">
+        <source>✅ transactions imported successfully.</source>
+      </trans-unit>
+      <trans-unit id="transactionsSkipped" datatype="html">
+        <source>⏭ transactions skipped (duplicates).</source>
+      </trans-unit>
+      <trans-unit id="errorsEncountered" datatype="html">
+        <source>❌ error(s) encountered.</source>
+      </trans-unit>
+      <trans-unit id="importAnother" datatype="html">
+        <source>Import Another</source>
+      </trans-unit>
+      <trans-unit id="viewTransactions" datatype="html">
+        <source>View Transactions →</source>
+      </trans-unit>
+
+      <!-- Transaction Form -->
+      <trans-unit id="editTransaction" datatype="html">
+        <source>Edit Transaction</source>
+      </trans-unit>
+      <trans-unit id="addTransactionForm" datatype="html">
+        <source>Add Transaction</source>
+      </trans-unit>
+      <trans-unit id="formLabelDate" datatype="html">
+        <source>Date</source>
+      </trans-unit>
+      <trans-unit id="formLabelTime" datatype="html">
+        <source>Time (HH:MM:SS[.mmm])</source>
+      </trans-unit>
+      <trans-unit id="formLabelTicker" datatype="html">
+        <source>Ticker</source>
+      </trans-unit>
+      <trans-unit id="formLabelType" datatype="html">
+        <source>Type</source>
+      </trans-unit>
+      <trans-unit id="formLabelQuantity" datatype="html">
+        <source>Quantity</source>
+      </trans-unit>
+      <trans-unit id="formLabelPrice" datatype="html">
+        <source>Price</source>
+      </trans-unit>
+      <trans-unit id="formLabelFee" datatype="html">
+        <source>Commission Fee</source>
+      </trans-unit>
+      <trans-unit id="formLabelNotes" datatype="html">
+        <source>Notes</source>
+      </trans-unit>
+      <trans-unit id="formPlaceholderTime" datatype="html">
+        <source>e.g. 10:54:05.300</source>
+      </trans-unit>
+      <trans-unit id="formPlaceholderTicker" datatype="html">
+        <source>e.g. AAPL</source>
+      </trans-unit>
+      <trans-unit id="formPlaceholderFee" datatype="html">
+        <source>e.g. 5.00</source>
+      </trans-unit>
+      <trans-unit id="formPlaceholderNotes" datatype="html">
+        <source>Optional notes</source>
+      </trans-unit>
+      <trans-unit id="formErrorDate" datatype="html">
+        <source>Date is required.</source>
+      </trans-unit>
+      <trans-unit id="formErrorTime" datatype="html">
+        <source>Invalid time format. Use HH:MM:SS or HH:MM:SS.mmm</source>
+      </trans-unit>
+      <trans-unit id="formErrorTicker" datatype="html">
+        <source>Ticker is required.</source>
+      </trans-unit>
+      <trans-unit id="formErrorType" datatype="html">
+        <source>Type is required.</source>
+      </trans-unit>
+      <trans-unit id="formErrorQuantity" datatype="html">
+        <source>Quantity must be greater than 0.</source>
+      </trans-unit>
+      <trans-unit id="formErrorPrice" datatype="html">
+        <source>Price must be greater than 0.</source>
+      </trans-unit>
+      <trans-unit id="formErrorFee" datatype="html">
+        <source>Fee must be 0 or greater.</source>
+      </trans-unit>
+      <trans-unit id="saveButton" datatype="html">
+        <source>Save</source>
+      </trans-unit>
+      <trans-unit id="saving" datatype="html">
+        <source>Saving…</source>
+      </trans-unit>
+      <trans-unit id="requiredField" datatype="html">
+        <source>*</source>
       </trans-unit>
     </body>
   </file>

@@ -7,10 +7,12 @@
   "packageManager": "npm@10.9.3",
   "scripts": {
     "ng": "ng",
-    "start": "ng build && ANGULAR_BUILT=1 cordova run browser",
-    "build": "ng build && ANGULAR_BUILT=1 cordova build browser",
+    "i18n:extract": "ng extract-i18n --output-path src/locale",
+    "i18n:bundle": "node scripts/xlif-to-json.js",
+    "start": "npm run build:ng && ANGULAR_BUILT=1 cordova run browser",
+    "build": "npm run build:ng && ANGULAR_BUILT=1 cordova build browser",
     "start:ng": "ng serve",
-    "build:ng": "ng build",
+    "build:ng": "npm run i18n:bundle && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "cordova:run": "cordova run browser",
@@ -52,7 +54,8 @@
     "cordova-browser": "^7.0.0",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.8",
+    "xml2js": "^0.6.2"
   },
   "cordova": {
     "platforms": [

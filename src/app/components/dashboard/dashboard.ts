@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { StateService } from '../../services/state.service';
+import { I18nService } from '../../services/i18n.service';
 import { MatchingDetailsRow } from '../../models/fifo.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -32,6 +33,7 @@ export class DashboardComponent {
   private readonly state = inject(StateService);
   private readonly router = inject(Router);
   private readonly fifoState = toSignal(this.state.fifoState$, { initialValue: null });
+  readonly i18n = inject(I18nService);
 
   readonly totalGainLoss = computed(() => this.fifoState()?.totalRealizedGainLoss ?? 0);
 

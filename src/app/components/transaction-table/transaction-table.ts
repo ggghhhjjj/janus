@@ -9,6 +9,7 @@ import {
 import { TitleCasePipe, DecimalPipe, CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { StateService } from '../../services/state.service';
+import { I18nService } from '../../services/i18n.service';
 import { Transaction } from '../../models/transaction.model';
 import { TransactionFormComponent } from '../transaction-form/transaction-form';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -28,6 +29,7 @@ export class TransactionTableComponent {
   private readonly state = inject(StateService);
   private readonly router = inject(Router);
   private readonly allTransactions = toSignal(this.state.transactions$, { initialValue: [] });
+  readonly i18n = inject(I18nService);
 
   readonly transactionCount = computed(() => this.allTransactions().length);
 
