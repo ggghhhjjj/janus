@@ -14,15 +14,39 @@ export class StateService {
   readonly transactions$ = this._transactions$.asObservable();
   readonly fifoState$ = this._fifoState$.asObservable();
 
-  // Stable sequential number for each transaction (1-based, sorted by date asc)
+  // Stable sequential number for each transaction (1-based, sorted by date asc → time asc → seqNo asc → id asc)
   private readonly _txSignal = toSignal(this._transactions$, { initialValue: [] as Transaction[] });
   readonly transactionNumbers = computed<Map<number, number>>(() => {
-    const sorted = [...this._txSignal()].sort((a, b) =>
-      a.date < b.date ? -1 : a.date > b.date ? 1 : a.id - b.id
-    );
+    const sorted = [...this._txSignal()].sort((a, b) => {
+      if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+      if (a.time !== b.time) return a.time < b.time ? -1 : 1;
+      const aSeqNo = a.seqNo ?? 0;
+      const bSeqNo = b.seqNo ?? 0;
+      if (aSeqNo !== bSeqNo) return aSeqNo - bSeqNo;
+      return a.id - b.id;
+    });
     const map = new Map<number, number>();
     sorted.forEach((tx, i) => map.set(tx.id, i + 1));
     return map;
+  });
+
+  // Identify all transaction IDs that belong to a conflict group (2+ transactions with same date+time+ticker)
+  readonly conflictTransactionIds = computed<Set<number>>(() => {
+    const txList = this._txSignal();
+    const groupKey = (tx: Transaction) => `${tx.date}|${tx.time}|${tx.ticker}`;
+    const groups = new Map<string, Transaction[]>();
+    txList.forEach((tx) => {
+      const key = groupKey(tx);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(tx);
+    });
+    const conflicts = new Set<number>();
+    groups.forEach((group) => {
+      if (group.length >= 2) {
+        group.forEach((tx) => conflicts.add(tx.id));
+      }
+    });
+    return conflicts;
   });
 
   // Cross-view navigation highlight state
@@ -77,6 +101,46 @@ export class StateService {
 
   get transactions(): Transaction[] {
     return this._transactions$.value;
+  }
+
+  async swapSeqNos(id1: number, id2: number): Promise<void> {
+    const tx1 = this._transactions$.value.find((t) => t.id === id1);
+    const tx2 = this._transactions$.value.find((t) => t.id === id2);
+    if (!tx1 || !tx2) throw new Error('One or both transactions not found');
+    if (tx1.date !== tx2.date || tx1.time !== tx2.time || tx1.ticker !== tx2.ticker) {
+      throw new Error('Transactions must be in the same conflict group (same date+time+ticker)');
+    }
+
+    // Collect all transactions in the same group
+    const groupKey = `${tx1.date}|${tx1.time}|${tx1.ticker}`;
+    const group = this._transactions$.value.filter(
+      (t) => `${t.date}|${t.time}|${t.ticker}` === groupKey
+    );
+
+    // Check if any need auto-assigned seqNo; if so, assign sequentially by id order
+    const needsAssignment = group.some((t) => t.seqNo === undefined);
+    if (needsAssignment) {
+      const sorted = [...group].sort((a, b) => a.id - b.id);
+      sorted.forEach((t, i) => {
+        if (t.seqNo === undefined) t.seqNo = i + 1;
+      });
+    }
+
+    // Swap the seqNos of id1 and id2
+    const temp = tx1.seqNo;
+    tx1.seqNo = tx2.seqNo;
+    tx2.seqNo = temp;
+
+    // Update both transactions in the database
+    await this.db.update(tx1);
+    await this.db.update(tx2);
+
+    // Update local state
+    const list = this._transactions$.value.map((t) =>
+      t.id === id1 ? tx1 : t.id === id2 ? tx2 : t
+    );
+    this._transactions$.next(list);
+    this._recalculate(list);
   }
 
   private _recalculate(transactions: Transaction[]): void {

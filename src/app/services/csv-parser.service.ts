@@ -112,6 +112,23 @@ export class CsvParserService {
     return 'unknown';
   }
 
+  /**
+   * Normalize time to HH:MM:SS.mmm format.
+   * Accepts HH:MM:SS, HH:MM:SS.mmm, HH:MM, or empty string.
+   * Returns HH:MM:SS.mmm; defaults to 00:00:00.000 if invalid or empty.
+   */
+  private normalizeTime(raw: string): string {
+    if (!raw || !raw.trim()) return '00:00:00.000';
+    const match = raw.trim().match(/^(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?(?:\.(\d{1,3}))?$/);
+    if (!match) return '00:00:00.000';
+    const [, h, m, s = '0', ms = '0'] = match;
+    const hour = String(parseInt(h)).padStart(2, '0');
+    const min = String(parseInt(m)).padStart(2, '0');
+    const sec = String(parseInt(s)).padStart(2, '0');
+    const msec = String(parseInt(ms)).padStart(3, '0').substring(0, 3);
+    return `${hour}:${min}:${sec}.${msec}`;
+  }
+
   normalize(rows: string[][], format: CsvFormat): NewTransaction[] {
     if (rows.length < 2) return [];
 
@@ -145,6 +162,7 @@ export class CsvParserService {
 
       try {
         let rawDate = '';
+        let rawTime = '';
         let ticker = '';
         let typeStr = '';
         let quantityStr = '';
@@ -154,6 +172,7 @@ export class CsvParserService {
 
         if (format === 'ibkr') {
           rawDate = col(row, 'tradedate');
+          rawTime = col(row, 'tradetime') || col(row, 'time') || '';
           ticker = col(row, 'symbol').toUpperCase();
           const buySell = col(row, 'buysell') || col(row, 'buy/sell');
           typeStr = buySell.toLowerCase().startsWith('b') ? 'buy' : 'sell';
@@ -163,6 +182,7 @@ export class CsvParserService {
           notes = col(row, 'description') || col(row, 'notes') || '';
         } else if (format === 'degiro') {
           rawDate = col(row, 'date');
+          rawTime = col(row, 'time') || '';
           ticker = (col(row, 'product') || col(row, 'isin')).toUpperCase();
           // DEGIRO doesn't always have a type column; infer from quantity sign
           const rawQty = col(row, 'aantal') || col(row, 'quantity');
@@ -175,6 +195,7 @@ export class CsvParserService {
         } else {
           // generic
           rawDate = col(row, 'date');
+          rawTime = col(row, 'time') || '';
           ticker = (col(row, 'ticker') || col(row, 'symbol')).toUpperCase();
           typeStr = col(row, 'type').toLowerCase();
           quantityStr = col(row, 'quantity');
@@ -184,6 +205,7 @@ export class CsvParserService {
         }
 
         const date = parseDate(rawDate);
+        const time = this.normalizeTime(rawTime);
         const quantity = parseFloat(quantityStr.replace(',', '.'));
         const price = parseFloat(priceStr.replace(',', '.').replace(/[^0-9.\-]/g, ''));
         const fee = feeStr ? parseFloat(feeStr.replace(',', '.').replace(/[^0-9.\-]/g, '')) : undefined;
@@ -193,7 +215,7 @@ export class CsvParserService {
           continue; // skip invalid rows silently
         }
 
-        results.push({ date, ticker, type, quantity, price, ...(fee && !isNaN(fee) ? { fee } : {}), notes });
+        results.push({ date, time, ticker, type, quantity, price, ...(fee && !isNaN(fee) ? { fee } : {}), notes });
       } catch {
         // skip malformed rows
         continue;

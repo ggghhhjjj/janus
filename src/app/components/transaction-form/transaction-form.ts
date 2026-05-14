@@ -53,6 +53,7 @@ export class TransactionFormComponent implements OnChanges {
     const tx = this.transaction;
     return this.fb.group({
       date: [tx?.date ?? '', Validators.required],
+      time: [tx?.time ?? '', []],
       ticker: [tx?.ticker ?? '', [Validators.required, Validators.minLength(1)]],
       type: [tx?.type ?? 'buy', Validators.required],
       quantity: [
@@ -83,6 +84,7 @@ export class TransactionFormComponent implements OnChanges {
     const raw = this.form.value;
     const payload = {
       date: raw.date as string,
+      time: this.normalizeTime(raw.time as string),
       ticker: (raw.ticker as string).toUpperCase().trim(),
       type: raw.type as TransactionType,
       quantity: Number(raw.quantity),
@@ -129,5 +131,17 @@ export class TransactionFormComponent implements OnChanges {
   isFeeApplicable(): boolean {
     const typeCtrl = this.form.get('type');
     return typeCtrl?.value === 'buy' || typeCtrl?.value === 'sell';
+  }
+
+  private normalizeTime(raw: string): string {
+    if (!raw || !raw.trim()) return '00:00:00.000';
+    const match = raw.trim().match(/^(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?(?:\.(\d{1,3}))?$/);
+    if (!match) return '00:00:00.000';
+    const [, h, m, s = '0', ms = '0'] = match;
+    const hour = String(parseInt(h)).padStart(2, '0');
+    const min = String(parseInt(m)).padStart(2, '0');
+    const sec = String(parseInt(s)).padStart(2, '0');
+    const msec = String(parseInt(ms)).padStart(3, '0').substring(0, 3);
+    return `${hour}:${min}:${sec}.${msec}`;
   }
 }

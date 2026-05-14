@@ -21,6 +21,7 @@
         <thead>
           <tr>
             <th scope="col" class="col-num text-center">#</th>
+            <th scope="col" class="col-issues text-center">Issues</th>
             <th scope="col">
               <button class="sort-btn" (click)="sort('date')" [attr.aria-label]="'Sort by Date ' + sortIcon('date')">
                 Date {{ sortIcon('date') }}
@@ -60,9 +61,15 @@
             <tr
               [attr.data-tx-id]="tx.id"
               [class.highlighted]="highlightedTransactionId() === tx.id"
+              [class.tx-row--conflict]="conflictTransactionIds().has(tx.id)"
             >
               <td class="col-num text-center num-cell">{{ transactionNumbers().get(tx.id) ?? '' }}</td>
-              <td>{{ tx.date }}</td>
+              <td class="col-issues text-center">
+                @if (conflictTransactionIds().has(tx.id)) {
+                  <span class="issue-badge" aria-label="Conflict: Multiple transactions with same date, time, and ticker" title="Conflict: Multiple transactions with same date, time, and ticker">⚠</span>
+                }
+              </td>
+              <td>{{ tx.date }} {{ tx.time }}</td>
               <td><strong>{{ tx.ticker }}</strong></td>
               <td>
                 <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
@@ -71,7 +78,17 @@
               <td class="text-right">{{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }}</td>
               <td class="text-right">@if (tx.fee) { {{ tx.fee | currency: 'USD' : 'symbol' : '1.2-4' }} } @else { — }</td>
               <td class="notes-cell">{{ tx.notes }}</td>
-              <td class="text-right">
+              <td class="text-right actions-cell">
+                @if (conflictTransactionIds().has(tx.id)) {
+                  <button
+                    type="button"
+                    class="btn btn--warn-ghost btn--sm"
+                    (click)="openSwapModal(tx)"
+                    [attr.aria-label]="'Reorder conflicting transaction ' + tx.id"
+                  >
+                    ⇄ Reorder
+                  </button>
+                }
                 <button
                   type="button"
                   class="btn btn--ghost btn--sm"
@@ -96,6 +113,88 @@
     </div>
   }
 </div>
+
+@if (swapModalOpen()) {
+  <div
+    class="modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Reorder Conflicting Transactions"
+    (click)="closeSwapModal()"
+    tabindex="-1"
+  >
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Reorder Conflicting Transactions</h2>
+
+      <div class="swap-modal-content">
+        <div class="swap-section">
+          <h3 class="swap-section__title">Source Transaction (will swap with selected target)</h3>
+          @for (tx of swapGroupTransactions(); track tx.id) {
+            @if (tx.id === swapSourceId()) {
+              <div class="swap-transaction-summary">
+                <span class="swap-tx-num">#{{ transactionNumbers().get(tx.id) ?? '' }}</span>
+                <span class="swap-tx-datetime">{{ tx.date }} {{ tx.time }}</span>
+                <span class="swap-tx-ticker"><strong>{{ tx.ticker }}</strong></span>
+                <span class="swap-tx-type">
+                  <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
+                </span>
+                <span class="swap-tx-qty">{{ tx.quantity | number: '1.0-4' }}</span>
+                <span class="swap-tx-price">{{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }}</span>
+                <span class="swap-tx-fee">
+                  @if (tx.fee) { {{ tx.fee | currency: 'USD' : 'symbol' : '1.2-4' }} } @else { — }
+                </span>
+              </div>
+            }
+          }
+        </div>
+
+        <div class="swap-section">
+          <h3 class="swap-section__title">Swap with (select one)</h3>
+          <div class="swap-radio-group">
+            @for (tx of swapGroupTransactions(); track tx.id) {
+              @if (tx.id !== swapSourceId()) {
+                <label class="swap-radio-label">
+                  <input
+                    type="radio"
+                    name="swap-target"
+                    [value]="tx.id"
+                    [checked]="swapTargetId() === tx.id"
+                    (change)="selectSwapTarget(tx.id)"
+                  />
+                  <div class="swap-transaction-row">
+                    <span class="swap-tx-num">#{{ transactionNumbers().get(tx.id) ?? '' }}</span>
+                    <span class="swap-tx-datetime">{{ tx.date }} {{ tx.time }}</span>
+                    <span class="swap-tx-ticker"><strong>{{ tx.ticker }}</strong></span>
+                    <span class="swap-tx-type">
+                      <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
+                    </span>
+                    <span class="swap-tx-qty">{{ tx.quantity | number: '1.0-4' }}</span>
+                    <span class="swap-tx-price">{{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }}</span>
+                    <span class="swap-tx-fee">
+                      @if (tx.fee) { {{ tx.fee | currency: 'USD' : 'symbol' : '1.2-4' }} } @else { — }
+                    </span>
+                  </div>
+                </label>
+              }
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn--secondary" (click)="closeSwapModal()">Close</button>
+        <button
+          type="button"
+          class="btn btn--primary"
+          (click)="confirmSwap()"
+          [disabled]="!swapTargetId()"
+        >
+          Swap Numbers
+        </button>
+      </div>
+    </div>
+  </div>
+}
 
 @if (formOpen()) {
   <app-transaction-form
