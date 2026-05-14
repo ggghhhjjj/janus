@@ -9,6 +9,8 @@
     "ng": "ng",
     "start": "npm run build && ANGULAR_BUILT=1 cordova run browser",
     "build": "ng build && ANGULAR_BUILT=1 cordova build browser",
+    "build:web": "ng build --configuration production",
+    "serve:web": "ng serve",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "cordova:run": "cordova run browser",
