@@ -393,6 +393,10 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
     "en": "Price",
     "bg": "Цена"
   },
+  "formLabelAmount": {
+    "en": "Amount",
+    "bg": "Сума"
+  },
   "formLabelFee": {
     "en": "Commission Fee",
     "bg": "Комисионна такса"
@@ -441,9 +445,17 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
     "en": "Price must be greater than 0.",
     "bg": "Цената трябва да е по-голяма от 0."
   },
+  "formErrorAmount": {
+    "en": "Amount must be greater than 0.",
+    "bg": "Сумата трябва да е по-голяма от 0."
+  },
   "formErrorFee": {
     "en": "Fee must be 0 or greater.",
     "bg": "Такса трябва да е 0 или по-голяма."
+  },
+  "formErrorCurrency": {
+    "en": "Currency is required.",
+    "bg": "Валутата е задължителна."
   },
   "saveButton": {
     "en": "Save",
@@ -456,5 +468,41 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
   "requiredField": {
     "en": "*",
     "bg": "*"
+  },
+  "funding": {
+    "en": "Funding",
+    "bg": "Депозит"
+  },
+  "withdrawal": {
+    "en": "Withdrawal",
+    "bg": "Теглене"
+  },
+  "brokerAccountBalance": {
+    "en": "Broker Account Balance",
+    "bg": "Баланс на брокерския счет"
+  },
+  "brokerAccountEmpty": {
+    "en": "No funding or withdrawal transactions yet.",
+    "bg": "Все още няма депозитни или теглителни транзакции."
+  },
+  "totalFunded": {
+    "en": "Total Funded",
+    "bg": "Общо депозирано"
+  },
+  "totalWithdrawn": {
+    "en": "Total Withdrawn",
+    "bg": "Общо теглено"
+  },
+  "netBalance": {
+    "en": "Net Balance",
+    "bg": "Нетен баланс"
+  },
+  "currency": {
+    "en": "Currency",
+    "bg": "Валута"
+  },
+  "tableHeaderCurrency": {
+    "en": "Currency",
+    "bg": "Валута"
   }
 };

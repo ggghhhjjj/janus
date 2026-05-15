@@ -44,24 +44,26 @@
         }
       </div>
 
-      <!-- Ticker -->
-      <div class="field">
-        <label class="field__label" for="tx-ticker">{{ i18n.translate('formLabelTicker') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
-        <input
-          id="tx-ticker"
-          type="text"
-          class="field__input"
-          [class.field__input--error]="hasError('ticker')"
-          formControlName="ticker"
-          [placeholder]="i18n.translate('formPlaceholderTicker')"
-          aria-required="true"
-          autocomplete="off"
-          autocapitalize="characters"
-        />
-        @if (hasError('ticker')) {
-          <span class="field__error" role="alert">{{ i18n.translate('formErrorTicker') }}</span>
-        }
-      </div>
+      <!-- Ticker (not required for funding/withdrawal) -->
+      @if (!isCashTransaction()) {
+        <div class="field">
+          <label class="field__label" for="tx-ticker">{{ i18n.translate('formLabelTicker') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
+          <input
+            id="tx-ticker"
+            type="text"
+            class="field__input"
+            [class.field__input--error]="hasError('ticker')"
+            formControlName="ticker"
+            [placeholder]="i18n.translate('formPlaceholderTicker')"
+            aria-required="true"
+            autocomplete="off"
+            autocapitalize="characters"
+          />
+          @if (hasError('ticker')) {
+            <span class="field__error" role="alert">{{ i18n.translate('formErrorTicker') }}</span>
+          }
+        </div>
+      }
 
       <!-- Type -->
       <div class="field">
@@ -82,41 +84,85 @@
         }
       </div>
 
-      <!-- Quantity -->
+      <!-- Currency -->
       <div class="field">
-        <label class="field__label" for="tx-quantity">{{ i18n.translate('formLabelQuantity') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
-        <input
-          id="tx-quantity"
-          type="number"
+        <label class="field__label" for="tx-currency">{{ i18n.translate('currency') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
+        <select
+          id="tx-currency"
           class="field__input"
-          [class.field__input--error]="hasError('quantity')"
-          formControlName="quantity"
-          min="0.0000001"
-          step="any"
+          [class.field__input--error]="hasError('currency')"
+          formControlName="currency"
           aria-required="true"
-        />
-        @if (hasError('quantity')) {
-          <span class="field__error" role="alert">{{ i18n.translate('formErrorQuantity') }}</span>
+        >
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="JPY">JPY</option>
+          <option value="CHF">CHF</option>
+          <option value="CAD">CAD</option>
+          <option value="AUD">AUD</option>
+        </select>
+        @if (hasError('currency')) {
+          <span class="field__error" role="alert">{{ i18n.translate('formErrorCurrency') }}</span>
         }
       </div>
 
-      <!-- Price -->
-      <div class="field">
-        <label class="field__label" for="tx-price">{{ i18n.translate('formLabelPrice') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
-        <input
-          id="tx-price"
-          type="number"
-          class="field__input"
-          [class.field__input--error]="hasError('price')"
-          formControlName="price"
-          min="0.0000001"
-          step="any"
-          aria-required="true"
-        />
-        @if (hasError('price')) {
-          <span class="field__error" role="alert">{{ i18n.translate('formErrorPrice') }}</span>
-        }
-      </div>
+      <!-- Quantity (for non-cash transactions) or Amount (for funding/withdrawal) -->
+      @if (!isCashTransaction()) {
+        <div class="field">
+          <label class="field__label" for="tx-quantity">{{ i18n.translate('formLabelQuantity') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
+          <input
+            id="tx-quantity"
+            type="number"
+            class="field__input"
+            [class.field__input--error]="hasError('quantity')"
+            formControlName="quantity"
+            min="0.0000001"
+            step="any"
+            aria-required="true"
+          />
+          @if (hasError('quantity')) {
+            <span class="field__error" role="alert">{{ i18n.translate('formErrorQuantity') }}</span>
+          }
+        </div>
+      } @else {
+        <div class="field">
+          <label class="field__label" for="tx-amount">{{ i18n.translate('formLabelAmount') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
+          <input
+            id="tx-amount"
+            type="number"
+            class="field__input"
+            [class.field__input--error]="hasError('quantity')"
+            formControlName="quantity"
+            min="0.0000001"
+            step="any"
+            aria-required="true"
+          />
+          @if (hasError('quantity')) {
+            <span class="field__error" role="alert">{{ i18n.translate('formErrorAmount') }}</span>
+          }
+        </div>
+      }
+
+      <!-- Price (for non-cash transactions only) -->
+      @if (!isCashTransaction()) {
+        <div class="field">
+          <label class="field__label" for="tx-price">{{ i18n.translate('formLabelPrice') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
+          <input
+            id="tx-price"
+            type="number"
+            class="field__input"
+            [class.field__input--error]="hasError('price')"
+            formControlName="price"
+            min="0.0000001"
+            step="any"
+            aria-required="true"
+          />
+          @if (hasError('price')) {
+            <span class="field__error" role="alert">{{ i18n.translate('formErrorPrice') }}</span>
+          }
+        </div>
+      }
 
       <!-- Fee (conditional: only for buy/sell) -->
       @if (isFeeApplicable()) {

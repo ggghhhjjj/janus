@@ -173,25 +173,55 @@ export class CsvParserService {
         if (format === 'ibkr') {
           rawDate = col(row, 'tradedate');
           rawTime = col(row, 'tradetime') || col(row, 'time') || '';
-          ticker = col(row, 'symbol').toUpperCase();
+          const symbol = col(row, 'symbol').toUpperCase();
+          const description = col(row, 'description') || col(row, 'notes') || '';
           const buySell = col(row, 'buysell') || col(row, 'buy/sell');
-          typeStr = buySell.toLowerCase().startsWith('b') ? 'buy' : 'sell';
+          
+          // Check for cash operations
+          const descLower = description.toLowerCase();
+          if (descLower.includes('deposit') || descLower.includes('wire in')) {
+            ticker = 'CASH';
+            typeStr = 'funding';
+          } else if (descLower.includes('withdrawal') || descLower.includes('wire out')) {
+            ticker = 'CASH';
+            typeStr = 'withdrawal';
+          } else {
+            ticker = symbol;
+            typeStr = buySell.toLowerCase().startsWith('b') ? 'buy' : 'sell';
+          }
+          
           quantityStr = col(row, 'quantity');
           priceStr = col(row, 'tradeprice');
           feeStr = col(row, 'fee') || col(row, 'commission') || col(row, 'commissionfee') || '';
-          notes = col(row, 'description') || col(row, 'notes') || '';
+          notes = description;
         } else if (format === 'degiro') {
           rawDate = col(row, 'date');
           rawTime = col(row, 'time') || '';
-          ticker = (col(row, 'product') || col(row, 'isin')).toUpperCase();
-          // DEGIRO doesn't always have a type column; infer from quantity sign
+          const product = col(row, 'product') || col(row, 'isin');
+          const description = col(row, 'omschrijving') || col(row, 'description') || '';
+          
+          // Check for cash deposit/withdrawal
+          const descLower = description.toLowerCase();
+          if (descLower.includes('cash deposit') || descLower.includes('deposit')) {
+            ticker = 'CASH';
+            typeStr = 'funding';
+          } else if (descLower.includes('cash withdrawal') || descLower.includes('withdrawal')) {
+            ticker = 'CASH';
+            typeStr = 'withdrawal';
+          } else {
+            ticker = product.toUpperCase();
+            // DEGIRO doesn't always have a type column; infer from quantity sign
+            const rawQty = col(row, 'aantal') || col(row, 'quantity');
+            const qtyNum = parseFloat(rawQty.replace(',', '.'));
+            typeStr = qtyNum >= 0 ? 'buy' : 'sell';
+          }
+          
           const rawQty = col(row, 'aantal') || col(row, 'quantity');
           const qtyNum = parseFloat(rawQty.replace(',', '.'));
-          typeStr = qtyNum >= 0 ? 'buy' : 'sell';
           quantityStr = String(Math.abs(qtyNum));
           priceStr = col(row, 'koers') || col(row, 'price');
           feeStr = col(row, 'fee') || col(row, 'commission') || col(row, 'cost') || col(row, 'commissionfee') || '';
-          notes = col(row, 'omschrijving') || col(row, 'description') || col(row, 'notes') || '';
+          notes = description || col(row, 'notes') || '';
         } else {
           // generic
           rawDate = col(row, 'date');
@@ -211,11 +241,11 @@ export class CsvParserService {
         const fee = feeStr ? parseFloat(feeStr.replace(',', '.').replace(/[^0-9.\-]/g, '')) : undefined;
         const type = typeStr as TransactionType;
 
-        if (!date || !ticker || !['buy', 'sell', 'dividend', 'split'].includes(type) || isNaN(quantity) || isNaN(price)) {
+        if (!date || !ticker || !['buy', 'sell', 'dividend', 'split', 'funding', 'withdrawal'].includes(type) || isNaN(quantity) || isNaN(price)) {
           continue; // skip invalid rows silently
         }
 
-        results.push({ date, time, ticker, type, quantity, price, ...(fee && !isNaN(fee) ? { fee } : {}), notes });
+        results.push({ date, time, ticker, type, quantity, price, currency: 'USD', ...(fee && !isNaN(fee) ? { fee } : {}), notes });
       } catch {
         // skip malformed rows
         continue;

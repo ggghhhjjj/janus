@@ -1,0 +1,82 @@
+.broker-account__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.broker-account__title {
+  margin: 0;
+  flex: 1;
+}
+
+.broker-account__summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 1rem 0 0 0;
+}
+
+.broker-account__balance {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.broker-account__balance--positive {
+  color: #16a34a;
+}
+
+.broker-account__balance--negative {
+  color: #dc2626;
+}
+
+.broker-account__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.broker-account__table thead {
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.broker-account__table th {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.broker-account__table th.text-right {
+  text-align: right;
+}
+
+.broker-account__table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.broker-account__table td.text-right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.broker-account__table td.text-positive {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.broker-account__table td.text-negative {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.empty-state {
+  padding: 1rem 0;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.95rem;
+}

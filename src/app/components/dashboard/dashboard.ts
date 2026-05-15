@@ -5,6 +5,7 @@ import { StateService } from '../../services/state.service';
 import { I18nService } from '../../services/i18n.service';
 import { MatchingDetailsRow } from '../../models/fifo.model';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { BrokerAccountComponent } from '../broker-account/broker-account';
 
 interface OpenLotSummary {
   ticker: string;
@@ -24,7 +25,7 @@ function r2(n: number): number {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe],
+  imports: [CurrencyPipe, DecimalPipe, BrokerAccountComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +37,12 @@ export class DashboardComponent {
   readonly i18n = inject(I18nService);
 
   readonly totalGainLoss = computed(() => this.fifoState()?.totalRealizedGainLoss ?? 0);
+
+  readonly hasFundingTransactions = computed(() => {
+    return (
+      this.state.transactions.some((t) => t.type === 'funding' || t.type === 'withdrawal')
+    );
+  });
 
   readonly yearlyBreakdown = computed<YearlyRow[]>(() => {
     const yearly = this.fifoState()?.yearlyGainLoss ?? {};

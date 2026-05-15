@@ -1,4 +1,4 @@
-export type TransactionType = 'buy' | 'sell' | 'dividend' | 'split';
+export type TransactionType = 'buy' | 'sell' | 'dividend' | 'split' | 'funding' | 'withdrawal';
 
 export interface Transaction {
   id: number;
@@ -8,7 +8,8 @@ export interface Transaction {
   type: TransactionType;
   quantity: number;
   price: number;
-  fee?: number; // Commission fee in USD (optional, for buy/sell transactions)
+  currency: string; // ISO 4217 code (e.g., 'USD', 'EUR', 'GBP')
+  fee?: number; // Optional fee (applicable for all transaction types)
   notes: string;
   seqNo?: number; // Tie-breaker for reordering within a same date+time+ticker conflict group
 }

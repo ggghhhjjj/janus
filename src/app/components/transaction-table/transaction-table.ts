@@ -105,6 +105,10 @@ export class TransactionTableComponent {
     return this.sortDir() === 'asc' ? '↑' : '↓';
   }
 
+  isCashTransaction(type: string): boolean {
+    return type === 'funding' || type === 'withdrawal';
+  }
+
   openAdd(): void {
     this.editingTransaction.set(null);
     this.formOpen.set(true);

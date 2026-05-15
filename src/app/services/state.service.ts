@@ -53,6 +53,32 @@ export class StateService {
   readonly highlightedTransactionId = signal<number | null>(null);
   readonly highlightedMatchingTransactionId = signal<number | null>(null);
 
+  // Broker account balance: sum of (funding - withdrawal - fees) grouped by currency
+  readonly brokerAccountBalances = computed<Map<string, number>>(() => {
+    const txList = this._txSignal();
+    const balances = new Map<string, number>();
+
+    for (const tx of txList) {
+      if (tx.type !== 'funding' && tx.type !== 'withdrawal') continue;
+
+      const currency = tx.currency || 'USD';
+      const current = balances.get(currency) ?? 0;
+      let delta = 0;
+
+      if (tx.type === 'funding') {
+        delta = tx.quantity;
+      } else if (tx.type === 'withdrawal') {
+        delta = -tx.quantity;
+      }
+
+      // Subtract fees from balance
+      const fee = tx.fee ?? 0;
+      balances.set(currency, current + delta - fee);
+    }
+
+    return balances;
+  });
+
   constructor(
     private readonly db: DatabaseService,
     private readonly fifo: FifoService

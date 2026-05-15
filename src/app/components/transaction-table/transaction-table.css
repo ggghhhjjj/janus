@@ -70,6 +70,27 @@
   color: #7c3aed;
 }
 
+.type-badge--funding {
+  background: rgba(20, 184, 166, 0.12);
+  color: #0d9488;
+}
+
+.type-badge--withdrawal {
+  background: rgba(249, 115, 22, 0.12);
+  color: #d97706;
+}
+
+.currency-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
 .notes-cell {
   max-width: 200px;
   overflow: hidden;

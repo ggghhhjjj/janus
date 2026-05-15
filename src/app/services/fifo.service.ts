@@ -100,7 +100,7 @@ export class FifoService {
         };
         result.sellResults.push(sellResult);
       }
-      // dividend: no FIFO impact; skip
+      // dividend, funding, withdrawal: no FIFO impact; skip
     }
 
     // Build final FifoResults with only non-zero open lots
