@@ -1,0 +1,10 @@
+<section class="card">
+  <h2 class="card__title">{{ i18n.translate('totalRealizedGainLoss') }}</h2>
+  <p
+    class="card__value"
+    [class.card__value--positive]="totalGainLoss() > 0"
+    [class.card__value--negative]="totalGainLoss() < 0"
+  >
+    {{ totalGainLoss() | currency: 'USD' : 'symbol' : '1.2-2' }}
+  </p>
+</section>

@@ -1,0 +1,76 @@
+<section class="card matching-section">
+  <div class="matching-header">
+    <h2 class="card__title matching-title">{{ i18n.translate('fifoMatchingDetails') }}</h2>
+    <button type="button" class="btn btn--ghost btn--sm" (click)="isMatchingExpanded.set(!isMatchingExpanded())">
+      {{ isMatchingExpanded() ? i18n.translate('hideButton') : i18n.translate('showButton') + ' (' + matchingDetails().length + ' ' + i18n.translate('lotsLabel') + ')' }}
+    </button>
+  </div>
+
+  @if (isMatchingExpanded()) {
+    @if (matchingDetails().length === 0) {
+      <p class="empty-state">{{ i18n.translate('noRealizedTransactions') }}</p>
+    } @else {
+      <div class="table-wrapper" role="region" [attr.aria-label]="i18n.translate('fifoMatchingDetails')" tabindex="0">
+        <table class="data-table matching-table" [attr.aria-label]="i18n.translate('fifoMatchingDetails')">
+          <thead>
+            <tr>
+              <th scope="col" class="text-center col-num">{{ i18n.translate('tableHeaderSellNum') }}</th>
+              <th scope="col" class="text-center col-num">{{ i18n.translate('tableHeaderBuyNum') }}</th>
+              <th scope="col">{{ i18n.translate('tableHeaderSellDate') }}</th>
+              <th scope="col">{{ i18n.translate('tableHeaderBuyDate') }}</th>
+              <th scope="col">{{ i18n.translate('tableHeaderTicker') }}</th>
+              <th scope="col" class="text-right">{{ i18n.translate('tableHeaderAvailableUnits') }}</th>
+              <th scope="col" class="text-right">{{ i18n.translate('tableHeaderMatchedUnits') }}</th>
+              <th scope="col" class="text-right">{{ i18n.translate('tableHeaderEffBuyPrice') }}</th>
+              <th scope="col" class="text-right">{{ i18n.translate('tableHeaderEffSellPrice') }}</th>
+              <th scope="col" class="text-right">{{ i18n.translate('tableHeaderTaxableGain') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of matchingDetails(); track $index) {
+              <tr [class.matching-row--highlighted]="highlightedMatchingSet().has(row.sellTransactionId) || highlightedMatchingSet().has(row.buyTransactionId)">
+                <td class="text-center">
+                  <button class="tx-link" (click)="navigateToTransaction(row.sellTransactionId)"
+                    [attr.aria-label]="'Go to sell transaction #' + (transactionNumbers().get(row.sellTransactionId) ?? '?')">
+                    #{{ transactionNumbers().get(row.sellTransactionId) ?? '?' }}
+                  </button>
+                </td>
+                <td class="text-center">
+                  <button class="tx-link" (click)="navigateToTransaction(row.buyTransactionId)"
+                    [attr.aria-label]="'Go to buy transaction #' + (transactionNumbers().get(row.buyTransactionId) ?? '?')">
+                    #{{ transactionNumbers().get(row.buyTransactionId) ?? '?' }}
+                  </button>
+                </td>
+                <td>{{ row.sellDate }}</td>
+                <td>{{ row.buyDate }}</td>
+                <td><strong>{{ row.ticker }}</strong></td>
+                <td class="text-right">{{ row.availableUnits | number: '1.0-6' }}</td>
+                <td class="text-right">{{ row.matchedUnits | number: '1.0-6' }}</td>
+                <td class="text-right">{{ row.effectiveBuyPrice | currency: 'USD' : 'symbol' : '1.2-4' }}</td>
+                <td class="text-right">{{ row.effectiveSellPrice | currency: 'USD' : 'symbol' : '1.2-4' }}</td>
+                <td class="text-right" [class.text-positive]="row.totalGain > 0" [class.text-negative]="row.totalGain < 0">
+                  {{ row.totalGain | currency: 'USD' : 'symbol' : '1.2-2' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr class="matching-footer">
+              <td colspan="6" class="text-right matching-footer__label">{{ i18n.translate('totalsLabel') }}</td>
+              <td class="text-right">{{ matchingTotals().matchedUnits | number: '1.0-6' }}</td>
+              <td colspan="2"></td>
+              <td class="text-right" [class.text-positive]="matchingTotals().totalGain > 0" [class.text-negative]="matchingTotals().totalGain < 0">
+                {{ matchingTotals().totalGain | currency: 'USD' : 'symbol' : '1.2-2' }}
+                @if (isTotalVerified()) {
+                  <span class="verified-badge" [attr.title]="i18n.translate('verifiedBadge')">{{ i18n.translate('verifiedBadge') }}</span>
+                } @else {
+                  <span class="unverified-badge" title="Mismatch with Total Realized Gain / Loss">✗</span>
+                }
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    }
+  }
+</section>
