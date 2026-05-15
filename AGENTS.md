@@ -23,6 +23,12 @@ Apache Cordova app targeting the **browser** platform, with **Angular 21** as th
 | `src/app/services/database.service.ts` | Persistence layer |
 | `src/app/services/fifo.service.ts` | FIFO calculation logic |
 | `src/app/models/` | Shared TypeScript interfaces |
+| `src/app/components/dashboard/` | Layout-only container — orchestrates widgets, no data logic |
+| `src/app/components/broker-account/` | Widget — broker account balance |
+| `src/app/components/total-gain-loss-widget/` | Widget — total realized gain/loss |
+| `src/app/components/yearly-breakdown-widget/` | Widget — year-by-year gain/loss table |
+| `src/app/components/open-lots-widget/` | Widget — open positions by ticker |
+| `src/app/components/fifo-matching-widget/` | Widget — FIFO lot matching detail table |
 | `public/` | Static assets copied verbatim into `www/` |
 | `angular.json` | Angular CLI config — output path is `www/` |
 | `hooks/before_prepare/build_angular.js` | Cordova hook — runs `npm run build` before prepare/build/run |
@@ -50,6 +56,36 @@ npm run clean        # Delete www/ output directory
 - **Signals** for reactive state: `signal()`, `computed()`. No manual subscriptions for local state.
 - Component naming: `app.ts`, `app.html`, `app.css` (no `.component.` infix).
 - `CordovaService.deviceReady$` is the only entry point for Cordova plugin access.
+
+## Widget Architecture
+
+Dashboard sections are **self-sufficient widgets** — each widget owns its data, presentation, and styles without receiving inputs from its host.
+
+**Rules:**
+- Widgets inject `StateService` (or other services) directly — **never use `@input()` to pass data that could be fetched from a service**.
+- Use `toSignal(inject(StateService).fifoState$, { initialValue: null })` as the standard pattern to subscribe to reactive state.
+- Widget CSS files are **self-contained** — include `.card`, `.card__title`, utility classes like `.text-right` etc. if used in the template.
+- `.card` base styles are defined globally in `src/styles.css` — no need to redeclare; declare only widget-specific overrides.
+- The `DashboardComponent` is **layout-only**: it may contain conditional rendering (`@if`) but no data-derivation logic.
+
+**Template for a new widget:**
+```typescript
+@Component({
+  selector: 'app-my-widget',
+  standalone: true,
+  imports: [CurrencyPipe],  // only what the template uses
+  templateUrl: './my-widget.html',
+  styleUrl: './my-widget.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class MyWidgetComponent {
+  private readonly fifoState = toSignal(inject(StateService).fifoState$, { initialValue: null });
+  readonly i18n = inject(I18nService);
+  readonly myData = computed(() => this.fifoState()?.someField ?? defaultValue);
+}
+```
+
+See `src/app/components/total-gain-loss-widget/` for the simplest widget example.
 
 ## i18n Conventions
 
