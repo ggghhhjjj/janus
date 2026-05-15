@@ -10,62 +10,10 @@
   <app-total-gain-loss-widget />
 
   <!-- Year-by-Year Breakdown -->
-  <section class="dashboard__section card">
-    <h2 class="card__title">{{ i18n.translate('yearByYearBreakdown') }}</h2>
-    @if (yearlyBreakdown().length === 0) {
-      <p class="empty-state">{{ i18n.translate('noRealizedGainsYet') }}</p>
-    } @else {
-      <table class="data-table" [attr.aria-label]="i18n.translate('yearByYearBreakdown')">
-        <thead>
-          <tr>
-            <th scope="col">{{ i18n.translate('tableHeaderYear') }}</th>
-            <th scope="col" class="text-right">{{ i18n.translate('tableHeaderRealizedGainLoss') }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of yearlyBreakdown(); track row.year) {
-            <tr>
-              <td>{{ row.year }}</td>
-              <td
-                class="text-right"
-                [class.text-positive]="row.gainLoss > 0"
-                [class.text-negative]="row.gainLoss < 0"
-              >
-                {{ row.gainLoss | currency: 'USD' : 'symbol' : '1.2-2' }}
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    }
-  </section>
+  <app-yearly-breakdown-widget />
 
   <!-- Open Lots by Ticker -->
-  <section class="dashboard__section card">
-    <h2 class="card__title">{{ i18n.translate('openLotsByTicker') }}</h2>
-    @if (openLotsByTicker().length === 0) {
-      <p class="empty-state">{{ i18n.translate('noOpenPositions') }}</p>
-    } @else {
-      <table class="data-table" [attr.aria-label]="i18n.translate('openLotsByTicker')">
-        <thead>
-          <tr>
-            <th scope="col">{{ i18n.translate('tableHeaderTicker') }}</th>
-            <th scope="col" class="text-right">{{ i18n.translate('tableHeaderQuantityHeld') }}</th>
-            <th scope="col" class="text-right">{{ i18n.translate('tableHeaderAvgCostBasis') }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (lot of openLotsByTicker(); track lot.ticker) {
-            <tr>
-              <td><strong>{{ lot.ticker }}</strong></td>
-              <td class="text-right">{{ lot.totalQty | number: '1.0-4' }}</td>
-              <td class="text-right">{{ lot.avgCostBasis | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    }
-  </section>
+  <app-open-lots-widget />
 
   <!-- FIFO Matching Details (Verification) -->
   <app-fifo-matching-widget />

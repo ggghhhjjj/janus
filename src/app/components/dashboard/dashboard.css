@@ -10,20 +10,6 @@
   margin: 0 0 0.5rem;
 }
 
-.text-right {
-  text-align: right;
-}
-
-.text-positive {
-  color: var(--color-success);
-  font-weight: 600;
-}
-
-.text-negative {
-  color: var(--color-danger);
-  font-weight: 600;
-}
-
 @media (min-width: 768px) {
   .dashboard {
     display: grid;

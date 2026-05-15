@@ -1,0 +1,29 @@
+<section class="card">
+  <h2 class="card__title">{{ i18n.translate('yearByYearBreakdown') }}</h2>
+  @if (yearlyBreakdown().length === 0) {
+    <p class="empty-state">{{ i18n.translate('noRealizedGainsYet') }}</p>
+  } @else {
+    <table class="data-table" [attr.aria-label]="i18n.translate('yearByYearBreakdown')">
+      <thead>
+        <tr>
+          <th scope="col">{{ i18n.translate('tableHeaderYear') }}</th>
+          <th scope="col" class="text-right">{{ i18n.translate('tableHeaderRealizedGainLoss') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of yearlyBreakdown(); track row.year) {
+          <tr>
+            <td>{{ row.year }}</td>
+            <td
+              class="text-right"
+              [class.text-positive]="row.gainLoss > 0"
+              [class.text-negative]="row.gainLoss < 0"
+            >
+              {{ row.gainLoss | currency: 'USD' : 'symbol' : '1.2-2' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
