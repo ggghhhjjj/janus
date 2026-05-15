@@ -23,10 +23,10 @@ export class I18nService {
     }
 
     // Check browser language
-    const browserLang = navigator.language.split('-')[0];
-    if (this.SUPPORTED_LOCALES.includes(browserLang)) {
-      return browserLang;
-    }
+    // const browserLang = navigator.language.split('-')[0];
+    // if (this.SUPPORTED_LOCALES.includes(browserLang)) {
+    //   return browserLang;
+    // }
 
     // Default to Bulgarian
     return this.DEFAULT_LOCALE;
