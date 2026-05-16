@@ -66,9 +66,9 @@ export class StateService {
       let delta = 0;
 
       if (tx.type === 'funding') {
-        delta = tx.quantity;
+        delta = tx.price;
       } else if (tx.type === 'withdrawal') {
-        delta = -tx.quantity;
+        delta = -tx.price;
       }
 
       // Subtract fees from balance
