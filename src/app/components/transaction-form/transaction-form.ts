@@ -9,8 +9,7 @@ import {
   SimpleChanges,
   inject,
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
-import { TitleCasePipe } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Transaction, TransactionType } from '../../models/transaction.model';
 import { StateService } from '../../services/state.service';
 import { I18nService } from '../../services/i18n.service';
@@ -18,7 +17,7 @@ import { I18nService } from '../../services/i18n.service';
 @Component({
   selector: 'app-transaction-form',
   standalone: true,
-  imports: [ReactiveFormsModule, TitleCasePipe],
+  imports: [ReactiveFormsModule],
   templateUrl: './transaction-form.html',
   styleUrl: './transaction-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

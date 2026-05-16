@@ -7,7 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { CommonModule, TitleCasePipe, DecimalPipe, CurrencyPipe } from '@angular/common';
+import { CommonModule, DecimalPipe, CurrencyPipe } from '@angular/common';
 import { Signal } from '@angular/core';
 import { StateService } from '../../services/state.service';
 import { I18nService } from '../../services/i18n.service';
@@ -16,7 +16,7 @@ import { Transaction } from '../../models/transaction.model';
 @Component({
   selector: 'app-swap-modal',
   standalone: true,
-  imports: [CommonModule, TitleCasePipe, DecimalPipe, CurrencyPipe],
+  imports: [CommonModule, DecimalPipe, CurrencyPipe],
   templateUrl: './swap-modal.html',
   styleUrl: './swap-modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

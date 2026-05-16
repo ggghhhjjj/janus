@@ -6,7 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { TitleCasePipe, DecimalPipe, CurrencyPipe } from '@angular/common';
+import { DecimalPipe, CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { StateService } from '../../services/state.service';
 import { I18nService } from '../../services/i18n.service';
@@ -21,7 +21,7 @@ type SortDir = 'asc' | 'desc';
 @Component({
   selector: 'app-transaction-table',
   standalone: true,
-  imports: [TitleCasePipe, DecimalPipe, CurrencyPipe, TransactionFormComponent, SwapModalComponent],
+  imports: [DecimalPipe, CurrencyPipe, TransactionFormComponent, SwapModalComponent],
   templateUrl: './transaction-table.html',
   styleUrl: './transaction-table.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
