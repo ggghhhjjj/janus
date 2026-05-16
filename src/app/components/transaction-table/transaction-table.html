@@ -16,7 +16,7 @@
       <p>{{ i18n.translate('noTransactionsYet') }} <strong>"{{ i18n.translate('addTransaction') }}"</strong> {{ i18n.translate('toBegin') }}</p>
     </div>
   } @else {
-    <div class="table-wrapper" role="region" [attr.aria-label]="i18n.translate('transactions') + ' ' + i18n.translate('tableHeaderActions')" tabindex="0" (click)="closeActionMenu()">
+    <div class="table-wrapper" role="region" [attr.aria-label]="i18n.translate('transactions') + ' ' + i18n.translate('tableHeaderActions')" tabindex="0">
       <table class="data-table" [attr.aria-label]="i18n.translate('transactions')">
         <thead>
           <tr>
@@ -51,55 +51,10 @@
               <td class="col-num text-left num-cell">
                 <div class="num-cell__content">
                   <div class="num-cell__number">{{ transactionNumbers().get(tx.id) ?? '' }}</div>
-                  <button
-                    type="button"
-                    class="num-cell__menu-btn"
-                    (click)="toggleActionMenu(tx.id); $event.stopPropagation()"
-                    (keydown)="onActionMenuKeydown($event, tx.id, tx, conflictTransactionIds().has(tx.id), 2 + (conflictTransactionIds().has(tx.id) ? 1 : 0))"
-                    [attr.aria-label]="i18n.translate('tableHeaderActions') + ' ' + i18n.translate('transactions') + ' ' + tx.id"
-                    [attr.aria-expanded]="menuOpenForTxId() === tx.id"
-                    [attr.aria-haspopup]="true"
-                  >
-                    ⋮
-                  </button>
-                  @if (menuOpenForTxId() === tx.id) {
-                    <div 
-                      class="num-cell__menu" 
-                      role="menu" 
-                      (click)="$event.stopPropagation()"
-                      [style]="menuPosition() ? 'position: fixed; ' + 'top: ' + menuPosition()!.top + '; left: ' + menuPosition()!.left + ';' : ''"
-                    >
-                      @if (conflictTransactionIds().has(tx.id)) {
-                        <button
-                          type="button"
-                          class="num-cell__menu-item"
-                          (click)="openSwapModal(tx)"
-                          role="menuitem"
-                          [attr.aria-label]="i18n.translate('reorderButton') + ' ' + i18n.translate('transactions') + ' ' + tx.id"
-                        >
-                          {{ i18n.translate('reorderButton') }}
-                        </button>
-                      }
-                      <button
-                        type="button"
-                        class="num-cell__menu-item"
-                        (click)="openEdit(tx)"
-                        role="menuitem"
-                        [attr.aria-label]="i18n.translate('editButton') + ' ' + i18n.translate('transactions') + ' ' + tx.id"
-                      >
-                        {{ i18n.translate('editButton') }}
-                      </button>
-                      <button
-                        type="button"
-                        class="num-cell__menu-item num-cell__menu-item--danger"
-                        (click)="onDelete(tx)"
-                        role="menuitem"
-                        [attr.aria-label]="i18n.translate('deleteButton') + ' ' + i18n.translate('transactions') + ' ' + tx.id"
-                      >
-                        {{ i18n.translate('deleteButton') }}
-                      </button>
-                    </div>
-                  }
+                  <app-action-menu
+                    [items]="getMenuItems(tx, conflictTransactionIds().has(tx.id))"
+                    [triggerAriaLabel]="i18n.translate('tableHeaderActions') + ' ' + tx.id"
+                  />
                 </div>
               </td>
               <td class="col-date" [attr.aria-label]="tx.date + ' ' + tx.time">

@@ -13,6 +13,7 @@ import { I18nService } from '../../services/i18n.service';
 import { Transaction } from '../../models/transaction.model';
 import { TransactionFormComponent } from '../transaction-form/transaction-form';
 import { SwapModalComponent } from '../swap-modal/swap-modal';
+import { ActionMenuComponent, ActionMenuItem } from '../action-menu/action-menu';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 type SortColumn = 'date' | 'ticker' | 'quantity' | 'price' | 'fee';
@@ -21,7 +22,7 @@ type SortDir = 'asc' | 'desc';
 @Component({
   selector: 'app-transaction-table',
   standalone: true,
-  imports: [DecimalPipe, CurrencyPipe, TransactionFormComponent, SwapModalComponent],
+  imports: [DecimalPipe, CurrencyPipe, TransactionFormComponent, SwapModalComponent, ActionMenuComponent],
   templateUrl: './transaction-table.html',
   styleUrl: './transaction-table.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,14 +92,6 @@ type SortDir = 'asc' | 'desc';
       });
     });
 
-    // Action menu state
-    /** Transaction ID whose action menu is currently open, or `null` if no menu is open. */
-    readonly menuOpenForTxId = signal<number | null>(null);
-    /** Computed: true if the action menu for a specific transaction is open. */
-    readonly isActionMenuOpen = (txId: number) => computed(() => this.menuOpenForTxId() === txId);
-    /** Menu position styles for dynamic positioning to keep within viewport. */
-    readonly menuPosition = signal<{ top: string; left: string } | null>(null);
-
     // Modal state
     /** Whether the add/edit transaction form modal is open. */
     readonly formOpen = signal(false);
@@ -166,12 +159,10 @@ type SortDir = 'asc' | 'desc';
     openEdit(tx: Transaction): void {
       this.editingTransaction.set(tx);
       this.formOpen.set(true);
-      this.closeActionMenu();
     }
 
     /** Delete a transaction after user confirmation. */
     async onDelete(tx: Transaction): Promise<void> {
-      this.closeActionMenu();
       const confirmed = window.confirm(
         `Delete transaction: ${this.i18n.translate(tx.type)} ${tx.quantity} ${tx.ticker} on ${tx.date}?`
       );
@@ -202,79 +193,28 @@ type SortDir = 'asc' | 'desc';
       this.router.navigate(['/']);
     }
 
-    /** Toggle the action menu for the given transaction. */
-    toggleActionMenu(txId: number): void {
-      const current = this.menuOpenForTxId();
-      if (current === txId) {
-        this.menuOpenForTxId.set(null);
-        this.menuPosition.set(null);
-      } else {
-        this.menuOpenForTxId.set(txId);
-        // Schedule positioning calculation after DOM update
-        setTimeout(() => this.calculateMenuPosition(txId), 0);
+    /** Build the action menu items for the given transaction row. */
+    getMenuItems(tx: Transaction, isConflict: boolean): ActionMenuItem[] {
+      const items: ActionMenuItem[] = [];
+      if (isConflict) {
+        items.push({
+          label: this.i18n.translate('reorderButton'),
+          ariaLabel: `${this.i18n.translate('reorderButton')} ${this.i18n.translate('transactions')} ${tx.id}`,
+          action: () => this.openSwapModal(tx),
+        });
       }
-    }
-
-    /** Calculate and update the menu position to keep it within viewport. */
-    private calculateMenuPosition(txId: number): void {
-      // Find the menu button for this transaction
-      const button = document.querySelector(`[data-tx-id="${txId}"] .num-cell__menu-btn`) as HTMLElement;
-      if (!button) return;
-
-      const row = document.querySelector(`[data-tx-id="${txId}"]`) as HTMLElement;
-      if (!row) return;
-
-      const buttonRect = button.getBoundingClientRect();
-      const rowRect = row.getBoundingClientRect();
-      const menuWidth = 120; // min-width of .num-cell__menu
-      const menuHeight = 140; // estimated height: 2-3 items * 38px + padding
-      const menuMargin = 4; // small margin from viewport edge
-      const viewportHeight = window.innerHeight;
-      const viewportWidth = window.innerWidth;
-
-      // Calculate vertical position: prefer below button, position at row's bottom if not enough space
-      let menuTop = buttonRect.bottom + 4; // 4px below button
-      if (menuTop + menuHeight + menuMargin > viewportHeight) {
-        // Not enough space below, position near the row's bottom edge instead
-        menuTop = rowRect.bottom - menuHeight - 4;
-      }
-
-      // Calculate horizontal position: try to position to the right, adjust if it would overflow
-      let menuLeft = buttonRect.right - 10; // Start from button's right edge minus 10px
-      const rightEdge = menuLeft + menuWidth + menuMargin;
-
-      if (rightEdge > viewportWidth) {
-        // Would overflow on the right, position to the left instead
-        menuLeft = Math.max(menuMargin, buttonRect.left - menuWidth);
-      }
-
-      this.menuPosition.set({
-        top: `${menuTop}px`,
-        left: `${menuLeft}px`,
+      items.push({
+        label: this.i18n.translate('editButton'),
+        ariaLabel: `${this.i18n.translate('editButton')} ${this.i18n.translate('transactions')} ${tx.id}`,
+        action: () => this.openEdit(tx),
       });
-    }
-
-    /** Close the action menu. */
-    closeActionMenu(): void {
-      this.menuOpenForTxId.set(null);
-      this.menuPosition.set(null);
-    }
-
-    /** Handle keyboard navigation for the action menu. */
-    onActionMenuKeydown(event: KeyboardEvent, txId: number, tx: Transaction, isConflict: boolean, menuItems: number): void {
-      const isOpen = this.menuOpenForTxId() === txId;
-
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        if (!isOpen) {
-          this.menuOpenForTxId.set(txId);
-          // Schedule positioning calculation after DOM update
-          setTimeout(() => this.calculateMenuPosition(txId), 0);
-        }
-      } else if (event.key === 'Escape') {
-        event.preventDefault();
-        this.closeActionMenu();
-      }
+      items.push({
+        label: this.i18n.translate('deleteButton'),
+        ariaLabel: `${this.i18n.translate('deleteButton')} ${this.i18n.translate('transactions')} ${tx.id}`,
+        danger: true,
+        action: () => this.onDelete(tx),
+      });
+      return items;
     }
 
     /**
@@ -282,7 +222,6 @@ type SortDir = 'asc' | 'desc';
      * transactions that share date/time/ticker and preparing the swap UI.
      */
     openSwapModal(tx: Transaction): void {
-      this.closeActionMenu();
       // Collect all transactions in the same conflict group (date + time + ticker)
       const groupKey = `${tx.date}|${tx.time}|${tx.ticker}`;
       const group = this.allTransactions().filter(
