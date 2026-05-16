@@ -89,6 +89,7 @@ export class TransactionFormComponent implements OnChanges, OnInit {
   private updateValidatorsForType(type: TransactionType): void {
     const isCash = type === 'funding' || type === 'withdrawal';
     const tickerCtrl = this.form.get('ticker');
+    const quantityCtrl = this.form.get('quantity');
     const priceCtrl = this.form.get('price');
 
     // Update ticker validators
@@ -104,12 +105,24 @@ export class TransactionFormComponent implements OnChanges, OnInit {
       tickerCtrl.updateValueAndValidity({ emitEvent: false });
     }
 
-    // Update price validators
+    // Update quantity validators (1 for cash, editable for trades)
+    if (quantityCtrl) {
+      if (isCash) {
+        quantityCtrl.clearValidators();
+        quantityCtrl.setValue(1);
+        console.debug('[TransactionForm] Cash transaction: quantity set to 1, not required');
+      } else {
+        quantityCtrl.setValidators([Validators.required, Validators.min(0.0000001)]);
+        console.debug('[TransactionForm] Trading transaction: quantity required');
+      }
+      quantityCtrl.updateValueAndValidity({ emitEvent: false });
+    }
+
+    // Update price validators (amount required for cash, per-unit price for trades)
     if (priceCtrl) {
       if (isCash) {
-        priceCtrl.clearValidators();
-        priceCtrl.setValue(1);
-        console.debug('[TransactionForm] Cash transaction: price set to 1, not required');
+        priceCtrl.setValidators([Validators.required, Validators.min(0.0000001)]);
+        console.debug('[TransactionForm] Cash transaction: price (amount) required');
       } else {
         priceCtrl.setValidators([Validators.required, Validators.min(0.0000001)]);
         console.debug('[TransactionForm] Trading transaction: price required');
@@ -130,12 +143,12 @@ export class TransactionFormComponent implements OnChanges, OnInit {
       ticker: [isFundingOrWithdrawal ? 'CASH' : (tx?.ticker ?? ''), isFundingOrWithdrawal ? [] : [Validators.required, Validators.minLength(1)]],
       type: [tx?.type ?? 'buy', Validators.required],
       quantity: [
-        isFundingOrWithdrawal ? (tx?.quantity ?? '') : (tx?.quantity ?? ''),
-        [Validators.required, Validators.min(0.0000001)],
+        isFundingOrWithdrawal ? 1 : (tx?.quantity ?? ''),
+        isFundingOrWithdrawal ? [] : [Validators.required, Validators.min(0.0000001)],
       ],
       price: [
-        isFundingOrWithdrawal ? 1 : (tx?.price ?? ''),
-        isFundingOrWithdrawal ? [] : [Validators.required, Validators.min(0.0000001)],
+        tx?.price ?? '',
+        [Validators.required, Validators.min(0.0000001)],
       ],
       currency: [tx?.currency ?? 'USD', Validators.required],
       fee: [

@@ -122,8 +122,8 @@
                 <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
               </td>
               <td><span class="currency-badge">{{ tx.currency }}</span></td>
-              <td class="text-right">{{ tx.quantity | number: '1.0-4' }}</td>
-              <td class="text-right">@if (isCashTransaction(tx.type)) { — } @else { {{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }} }</td>
+              <td class="text-right">@if (isCashTransaction(tx.type)) { 1.00 } @else { {{ tx.quantity | number: '1.0-4' }} }</td>
+              <td class="text-right">{{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }}</td>
               <td class="text-right">@if (tx.fee) { {{ tx.fee | currency: 'USD' : 'symbol' : '1.2-4' }} } @else { — }</td>
               <td class="notes-cell">{{ tx.notes }}</td>
             </tr>

@@ -133,14 +133,14 @@
             id="tx-amount"
             type="number"
             class="field__input"
-            [class.field__input--error]="hasError('quantity')"
-            formControlName="quantity"
+            [class.field__input--error]="hasError('price')"
+            formControlName="price"
             min="0.0000001"
             step="any"
             aria-required="true"
           />
-          @if (hasError('quantity')) {
-            <span class="field__error" role="alert">{{ i18n.translate('formErrorAmount') }}</span>
+          @if (hasError('price')) {
+            <span class="field__error" role="alert">{{ i18n.translate('formErrorPrice') }}</span>
           }
         </div>
       }

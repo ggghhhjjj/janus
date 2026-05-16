@@ -236,10 +236,17 @@ export class CsvParserService {
 
         const date = parseDate(rawDate);
         const time = this.normalizeTime(rawTime);
-        const quantity = parseFloat(quantityStr.replace(',', '.'));
-        const price = parseFloat(priceStr.replace(',', '.').replace(/[^0-9.\-]/g, ''));
+        let quantity = parseFloat(quantityStr.replace(',', '.'));
+        let price = parseFloat(priceStr.replace(',', '.').replace(/[^0-9.\-]/g, ''));
         const fee = feeStr ? parseFloat(feeStr.replace(',', '.').replace(/[^0-9.\-]/g, '')) : undefined;
         const type = typeStr as TransactionType;
+
+        // For funding/withdrawal, swap quantity and price: amount goes to price, quantity set to 1
+        if (type === 'funding' || type === 'withdrawal') {
+          const amount = quantity;
+          quantity = 1;
+          price = amount;
+        }
 
         if (!date || !ticker || !['buy', 'sell', 'dividend', 'split', 'funding', 'withdrawal'].includes(type) || isNaN(quantity) || isNaN(price)) {
           continue; // skip invalid rows silently
