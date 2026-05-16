@@ -127,18 +127,6 @@
   white-space: nowrap;
 }
 
-/* Issues column */
-.col-issues {
-  width: 2.5rem;
-  min-width: 2.5rem;
-}
-
-.issue-badge {
-  color: #fbbf24;
-  font-size: 1rem;
-  font-weight: 700;
-}
-
 /* Conflict row styling */
 .tx-row--conflict {
   border-left: 4px solid #fbbf24;
@@ -311,8 +299,94 @@
   animation: tx-highlight-fade 4s ease-out forwards;
 }
 
-@media (max-width: 600px) {
-  .notes-cell {
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet view (768px–1199px): Hide Fee, Currency, Notes */
+@media (min-width: 768px) and (max-width: 1199px) {
+  /* Hide currency column (6th column) */
+  thead th:nth-child(6),
+  tbody td:nth-child(6) {
     display: none;
+  }
+
+  /* Hide fee column (9th column) */
+  thead th:nth-child(9),
+  tbody td:nth-child(9) {
+    display: none;
+  }
+
+  /* Hide notes column (10th column) */
+  thead th:nth-child(10),
+  tbody td:nth-child(10) {
+    display: none;
+  }
+}
+
+/* Mobile view (<768px): Hide Date, Currency, Fee, Notes; stack action buttons */
+@media (max-width: 767px) {
+  /* Hide date column (3rd column) */
+  thead th:nth-child(3),
+  tbody td:nth-child(3) {
+    display: none;
+  }
+
+  /* Hide currency column (6th column) */
+  thead th:nth-child(6),
+  tbody td:nth-child(6) {
+    display: none;
+  }
+
+  /* Hide fee column (9th column) */
+  thead th:nth-child(9),
+  tbody td:nth-child(9) {
+    display: none;
+  }
+
+  /* Hide notes column (10th column) */
+  thead th:nth-child(10),
+  tbody td:nth-child(10) {
+    display: none;
+  }
+
+  /* Increase cell padding for touch targets */
+  table td,
+  table th {
+    padding: 0.75rem 0.5rem;
+  }
+
+  /* Stack action buttons vertically and make them full-width */
+  .actions-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .actions-cell .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Increase button touch target size */
+  .btn--sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    min-height: 44px;
+  }
+
+  /* Adjust number cell and ticker for mobile */
+  .num-cell {
+    font-size: 0.75rem;
+  }
+
+  /* Table header font for mobile */
+  table thead {
+    font-size: 0.875rem;
+  }
+
+  /* Adjust table wrapper scrolling */
+  .table-wrapper {
+    border-radius: 8px;
   }
 }

@@ -21,7 +21,7 @@
         <thead>
           <tr>
             <th scope="col" class="col-num text-center">{{ i18n.translate('tableHeaderNum') }}</th>
-            <th scope="col" class="col-issues text-center">{{ i18n.translate('tableHeaderIssues') }}</th>
+            <th scope="col" class="text-right">{{ i18n.translate('tableHeaderActions') }}</th>
             <th scope="col">
               <button class="sort-btn" (click)="sort('date')" [attr.aria-label]="i18n.translate('sortByDate') + ' ' + sortIcon('date')">
                 {{ i18n.translate('tableHeaderDate') }} {{ sortIcon('date') }}
@@ -54,7 +54,6 @@
               </button>
             </th>
             <th scope="col">{{ i18n.translate('tableHeaderNotes') }}</th>
-            <th scope="col" class="text-right">{{ i18n.translate('tableHeaderActions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -65,22 +64,7 @@
               [class.tx-row--conflict]="conflictTransactionIds().has(tx.id)"
             >
               <td class="col-num text-center num-cell">{{ transactionNumbers().get(tx.id) ?? '' }}</td>
-              <td class="col-issues text-center">
-                @if (conflictTransactionIds().has(tx.id)) {
-                  <span class="issue-badge" [attr.aria-label]="i18n.translate('conflictLabel')" [attr.title]="i18n.translate('conflictLabel')">⚠</span>
-                }
-              </td>
-              <td>{{ tx.date }} {{ tx.time }}</td>
-              <td><strong>{{ tx.ticker }}</strong></td>
-              <td>
-                <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
-              </td>
-              <td><span class="currency-badge">{{ tx.currency }}</span></td>
-              <td class="text-right">{{ tx.quantity | number: '1.0-4' }}</td>
-              <td class="text-right">@if (isCashTransaction(tx.type)) { — } @else { {{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }} }</td>
-              <td class="text-right">@if (tx.fee) { {{ tx.fee | currency: 'USD' : 'symbol' : '1.2-4' }} } @else { — }</td>
-              <td class="notes-cell">{{ tx.notes }}</td>
-              <td class="text-right actions-cell">
+              <td class="actions-cell">
                 @if (conflictTransactionIds().has(tx.id)) {
                   <button
                     type="button"
@@ -108,6 +92,16 @@
                   {{ i18n.translate('deleteButton') }}
                 </button>
               </td>
+              <td>{{ tx.date }} {{ tx.time }}</td>
+              <td><strong>{{ tx.ticker }}</strong></td>
+              <td>
+                <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
+              </td>
+              <td><span class="currency-badge">{{ tx.currency }}</span></td>
+              <td class="text-right">{{ tx.quantity | number: '1.0-4' }}</td>
+              <td class="text-right">@if (isCashTransaction(tx.type)) { — } @else { {{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }} }</td>
+              <td class="text-right">@if (tx.fee) { {{ tx.fee | currency: 'USD' : 'symbol' : '1.2-4' }} } @else { — }</td>
+              <td class="notes-cell">{{ tx.notes }}</td>
             </tr>
           }
         </tbody>
