@@ -32,7 +32,7 @@
                 [class.text-positive]="isPositive(balance[1])"
                 [class.text-negative]="isNegative(balance[1])"
               >
-                {{ getCurrencySymbol(balance[0]) }}{{ balance[1] | number: '1.2-2' }}
+                {{ balance[1] | currency: balance[0] : 'symbol' : '1.2-2' }}
               </td>
             </tr>
           }

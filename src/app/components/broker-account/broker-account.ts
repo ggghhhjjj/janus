@@ -77,23 +77,6 @@ import { I18nService } from '../../services/i18n.service';
       this.isExpanded.set(!this.isExpanded());
     }
 
-    /**
-     * Return a human-friendly currency symbol for known currencies.
-     * Falls back to the currency code when unknown.
-     */
-    getCurrencySymbol(currency: string): string {
-      const symbols: { [key: string]: string } = {
-        USD: '$',
-        EUR: '€',
-        GBP: '£',
-        JPY: '¥',
-        CHF: 'Fr',
-        CAD: 'C$',
-        AUD: 'A$',
-      };
-      return symbols[currency] || currency;
-    }
-
     /** Utility: true when the balance is positive. */
     isPositive(balance: number): boolean {
       return balance > 0;
