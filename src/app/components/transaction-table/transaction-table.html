@@ -36,7 +36,6 @@
                 {{ i18n.translate('tableHeaderType') }} {{ sortIcon('type') }}
               </button>
             </th>
-            <th scope="col">{{ i18n.translate('tableHeaderCurrency') }}</th>
             <th scope="col" class="text-right">
               <button class="sort-btn" (click)="sort('quantity')" [attr.aria-label]="i18n.translate('sortByQuantity') + ' ' + sortIcon('quantity')">
                 {{ i18n.translate('tableHeaderQuantity') }} {{ sortIcon('quantity') }}
@@ -121,10 +120,9 @@
               <td>
                 <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
               </td>
-              <td><span class="currency-badge">{{ tx.currency }}</span></td>
               <td class="text-right">@if (isCashTransaction(tx.type)) { 1.00 } @else { {{ tx.quantity | number: '1.0-4' }} }</td>
-              <td class="text-right">{{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }}</td>
-              <td class="text-right">@if (tx.fee) { {{ tx.fee | currency: 'USD' : 'symbol' : '1.2-4' }} } @else { — }</td>
+              <td class="text-right">@if (tx.price) { {{ tx.price | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }</td>
+              <td class="text-right">@if (tx.fee) { {{ tx.fee | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }</td>
               <td class="notes-cell">{{ tx.notes }}</td>
             </tr>
           }

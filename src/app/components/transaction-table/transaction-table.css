@@ -240,28 +240,22 @@
 
 /* ===== RESPONSIVE DESIGN ===== */
 
-/* Tablet view (768px–1199px): Hide Currency, Fee, Notes */
+/* Tablet view (768px–1199px): Hide Fee and Notes for compact layout */
 @media (min-width: 768px) and (max-width: 1199px) {
-  /* Hide currency column (5th column) */
-  thead th:nth-child(5),
-  tbody td:nth-child(5) {
+  /* Hide fee column (7th column after removing Currency) */
+  thead th:nth-child(7),
+  tbody td:nth-child(7) {
     display: none;
   }
 
-  /* Hide fee column (8th column) */
+  /* Hide notes column (8th column after removing Currency) */
   thead th:nth-child(8),
   tbody td:nth-child(8) {
     display: none;
   }
-
-  /* Hide notes column (9th column) */
-  thead th:nth-child(9),
-  tbody td:nth-child(9) {
-    display: none;
-  }
 }
 
-/* Mobile view (<768px): Hide Date, Currency, Fee, Notes */
+/* Mobile view (<768px): Hide Date, Fee, Notes */
 @media (max-width: 767px) {
   /* Hide date column (2nd column) */
   thead th:nth-child(2),
@@ -269,21 +263,15 @@
     display: none;
   }
 
-  /* Hide currency column (5th column) */
-  thead th:nth-child(5),
-  tbody td:nth-child(5) {
+  /* Hide fee column (7th column after removing Currency) */
+  thead th:nth-child(7),
+  tbody td:nth-child(7) {
     display: none;
   }
 
-  /* Hide fee column (8th column) */
+  /* Hide notes column (8th column after removing Currency) */
   thead th:nth-child(8),
   tbody td:nth-child(8) {
-    display: none;
-  }
-
-  /* Hide notes column (9th column) */
-  thead th:nth-child(9),
-  tbody td:nth-child(9) {
     display: none;
   }
 

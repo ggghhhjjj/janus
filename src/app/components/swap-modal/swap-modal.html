@@ -22,9 +22,9 @@
                 <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
               </span>
               <span class="swap-tx-qty">{{ tx.quantity | number: '1.0-4' }}</span>
-              <span class="swap-tx-price">@if (isCashTransaction(tx.type)) { — } @else { {{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }} }</span>
+              <span class="swap-tx-price">@if (isCashTransaction(tx.type)) { — } @else { {{ tx.price | currency: tx.currency : 'symbol' : '1.2-4' }} }</span>
               <span class="swap-tx-fee">
-                @if (tx.fee) { {{ tx.fee | currency: 'USD' : 'symbol' : '1.2-4' }} } @else { — }
+                @if (tx.fee) { {{ tx.fee | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }
               </span>
             </div>
           }
@@ -52,9 +52,9 @@
                     <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
                   </span>
                   <span class="swap-tx-qty">{{ tx.quantity | number: '1.0-4' }}</span>
-                  <span class="swap-tx-price">@if (isCashTransaction(tx.type)) { — } @else { {{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }} }</span>
+                  <span class="swap-tx-price">@if (isCashTransaction(tx.type)) { — } @else { {{ tx.price | currency: tx.currency : 'symbol' : '1.2-4' }} }</span>
                   <span class="swap-tx-fee">
-                    @if (tx.fee) { {{ tx.fee | currency: 'USD' : 'symbol' : '1.2-4' }} } @else { — }
+                    @if (tx.fee) { {{ tx.fee | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }
                   </span>
                 </div>
               </label>
