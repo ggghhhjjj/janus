@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Transaction } from '../models/transaction.model';
 import { FifoState, FifoResult, Lot, SellResult, MatchedLot } from '../models/fifo.model';
-
-function round2(n: number): number {
-  return Math.round(n * 100) / 100;
-}
+import { round2 } from '../utils/number-utils';
 
 @Injectable({ providedIn: 'root' })
 export class FifoService {

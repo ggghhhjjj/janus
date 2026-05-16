@@ -11,6 +11,8 @@ function makeTx(overrides: Partial<Transaction> & { id: number }): Transaction {
     type: 'buy',
     quantity: 0,
     price: 0,
+    time: '00:00:00.000',
+    currency: 'USD',
     notes: '',
     ...overrides,
   };
@@ -118,9 +120,9 @@ describe('FifoService.calculate', () => {
 
   it('handles multiple tickers independently', () => {
     const txs: Transaction[] = [
-      { id: 1, date: '2024-01-01', ticker: 'AAPL', type: 'buy', quantity: 100, price: 150, notes: '' },
-      { id: 2, date: '2024-01-01', ticker: 'MSFT', type: 'buy', quantity: 75, price: 300, notes: '' },
-      { id: 3, date: '2024-06-01', ticker: 'AAPL', type: 'sell', quantity: 50, price: 160, notes: '' },
+      { id: 1, date: '2024-01-01', ticker: 'AAPL', type: 'buy', quantity: 100, price: 150, time: '00:00:00.000', currency: 'USD', notes: '' },
+      { id: 2, date: '2024-01-01', ticker: 'MSFT', type: 'buy', quantity: 75, price: 300, time: '00:00:00.000', currency: 'USD', notes: '' },
+      { id: 3, date: '2024-06-01', ticker: 'AAPL', type: 'sell', quantity: 50, price: 160, time: '00:00:00.000', currency: 'USD', notes: '' },
     ];
     const state = svc.calculate(txs);
     expect(state.results['AAPL'].sellResults[0].totalGainLoss).toBe(500);
@@ -131,11 +133,11 @@ describe('FifoService.calculate', () => {
   // Full appendix example from spec (Section 12)
   it('matches spec appendix example exactly', () => {
     const txs: Transaction[] = [
-      { id: 1, date: '2024-01-15', ticker: 'AAPL', type: 'buy', quantity: 100, price: 150.0, notes: '' },
-      { id: 2, date: '2024-02-20', ticker: 'AAPL', type: 'buy', quantity: 50, price: 155.0, notes: '' },
-      { id: 3, date: '2024-03-10', ticker: 'AAPL', type: 'sell', quantity: 120, price: 160.0, notes: '' },
-      { id: 4, date: '2024-04-05', ticker: 'MSFT', type: 'buy', quantity: 75, price: 300.0, notes: '' },
-      { id: 5, date: '2024-05-15', ticker: 'AAPL', type: 'sell', quantity: 30, price: 165.0, notes: '' },
+      { id: 1, date: '2024-01-15', ticker: 'AAPL', type: 'buy', quantity: 100, price: 150.0, time: '00:00:00.000', currency: 'USD', notes: '' },
+      { id: 2, date: '2024-02-20', ticker: 'AAPL', type: 'buy', quantity: 50, price: 155.0, time: '00:00:00.000', currency: 'USD', notes: '' },
+      { id: 3, date: '2024-03-10', ticker: 'AAPL', type: 'sell', quantity: 120, price: 160.0, time: '00:00:00.000', currency: 'USD', notes: '' },
+      { id: 4, date: '2024-04-05', ticker: 'MSFT', type: 'buy', quantity: 75, price: 300.0, time: '00:00:00.000', currency: 'USD', notes: '' },
+      { id: 5, date: '2024-05-15', ticker: 'AAPL', type: 'sell', quantity: 30, price: 165.0, time: '00:00:00.000', currency: 'USD', notes: '' },
     ];
 
     const state = svc.calculate(txs);

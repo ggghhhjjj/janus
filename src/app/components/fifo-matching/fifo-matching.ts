@@ -3,12 +3,10 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { StateService } from '../../services/state.service';
 import { I18nService } from '../../services/i18n.service';
+import { MatchingService } from '../../services/matching.service';
 import { MatchingDetailsRow } from '../../models/fifo.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 
-function r2(n: number): number {
-  return Math.round(n * 100) / 100;
-}
 
 @Component({
   selector: 'app-fifo-matching',
@@ -53,6 +51,9 @@ export class FifoMatchingComponent {
    */
   private readonly fifoState = toSignal(this.state.fifoState$, { initialValue: null });
 
+  /** Matching service that transforms `FifoState` into UI-friendly rows/totals. */
+  private readonly matching = inject(MatchingService);
+
   /** Runtime i18n service for translating UI strings in the template. */
   readonly i18n = inject(I18nService);
 
@@ -64,61 +65,22 @@ export class FifoMatchingComponent {
    * Business purpose: flatten internal FIFO matching results into a template-
    * friendly row structure including effective buy/sell prices and realized gain.
    */
-  readonly matchingDetails = computed<MatchingDetailsRow[]>(() => {
-    const results = this.fifoState()?.results ?? {};
-    const rows: MatchingDetailsRow[] = [];
+  readonly matchingResult = computed(() => this.matching.computeMatching(this.fifoState()));
 
-    for (const result of Object.values(results)) {
-      for (const sell of result.sellResults) {
-        const totalSellQty = sell.matchedLots.reduce((s, m) => s + m.qtyMatched, 0);
-        for (const lot of sell.matchedLots) {
-          const propSellFee = sell.totalSellFee
-            ? r2((lot.qtyMatched / totalSellQty) * sell.totalSellFee)
-            : 0;
-          const adjCostBasis = r2(lot.costBasis + lot.proportionalBuyFee);
-          const adjProceeds = r2(lot.proceeds - propSellFee);
-          const effectiveBuyPrice = lot.qtyMatched > 0 ? adjCostBasis / lot.qtyMatched : 0;
-          const effectiveSellPrice = lot.qtyMatched > 0 ? adjProceeds / lot.qtyMatched : 0;
-          rows.push({
-            sellDate: sell.sellDate,
-            sellTransactionId: sell.sellTransactionId,
-            buyDate: lot.buyDate,
-            buyTransactionId: lot.lotId,
-            ticker: result.ticker,
-            availableUnits: lot.availableUnits,
-            matchedUnits: lot.qtyMatched,
-            effectiveBuyPrice,
-            effectiveSellPrice,
-            totalGain: r2(adjProceeds - adjCostBasis),
-          });
-        }
-      }
-    }
-
-    return rows.sort((a, b) => b.sellDate.localeCompare(a.sellDate));
-  });
+  readonly matchingDetails = computed<MatchingDetailsRow[]>(() => this.matchingResult().rows);
 
   /**
    * Totals aggregated from `matchingDetails`.
    * Business purpose: provide a quick verification and summary for the UI.
    */
-  readonly matchingTotals = computed(() => {
-    const rows = this.matchingDetails();
-    return {
-      matchedUnits: rows.reduce((s, r) => s + r.matchedUnits, 0),
-      totalGain: r2(rows.reduce((s, r) => s + r.totalGain, 0)),
-    };
-  });
+  readonly matchingTotals = computed(() => this.matchingResult().totals);
 
   /**
    * Indicates whether the computed matching total aligns with the canonical
    * `totalRealizedGainLoss` produced by the FIFO calculation. Used to flag
    * verification warnings in the UI when numbers diverge.
    */
-  readonly isTotalVerified = computed(() => {
-    const totalGainLoss = this.fifoState()?.totalRealizedGainLoss ?? 0;
-    return Math.abs(this.matchingTotals().totalGain - totalGainLoss) < 0.01;
-  });
+  readonly isTotalVerified = computed(() => this.matchingResult().isTotalVerified);
 
   /** Transaction number map used by the template for compact references. */
   readonly transactionNumbers = this.state.transactionNumbers;
