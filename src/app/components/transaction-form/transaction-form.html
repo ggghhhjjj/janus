@@ -77,7 +77,7 @@
           aria-required="true"
         >
           @for (t of transactionTypes; track t) {
-            <option [value]="t">{{ t | titlecase }}</option>
+            <option [value]="t">{{ i18n.translate(t) }}</option>
           }
         </select>
         @if (hasError('type')) {

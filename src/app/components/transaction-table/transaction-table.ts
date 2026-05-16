@@ -174,7 +174,7 @@ type SortDir = 'asc' | 'desc';
     async onDelete(tx: Transaction): Promise<void> {
       this.closeActionMenu();
       const confirmed = window.confirm(
-        `Delete transaction: ${tx.type.toUpperCase()} ${tx.quantity} ${tx.ticker} on ${tx.date}?`
+        `Delete transaction: ${this.i18n.translate(tx.type)} ${tx.quantity} ${tx.ticker} on ${tx.date}?`
       );
       if (!confirmed) return;
       await this.state.deleteTransaction(tx.id);

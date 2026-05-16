@@ -469,6 +469,22 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
     "en": "*",
     "bg": "*"
   },
+  "buy": {
+    "en": "Buy",
+    "bg": "Покупка"
+  },
+  "sell": {
+    "en": "Sell",
+    "bg": "Продажба"
+  },
+  "dividend": {
+    "en": "Dividend",
+    "bg": "Дивидент"
+  },
+  "split": {
+    "en": "Split",
+    "bg": "Сплит"
+  },
   "funding": {
     "en": "Funding",
     "bg": "Депозит"

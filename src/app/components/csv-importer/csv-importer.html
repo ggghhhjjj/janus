@@ -92,7 +92,7 @@
               <tr>
                 <td>{{ tx.date }}</td>
                 <td><strong>{{ tx.ticker }}</strong></td>
-                <td>{{ tx.type }}</td>
+                <td>{{ i18n.translate(tx.type) }}</td>
                 <td class="text-right">{{ tx.quantity | number: '1.0-4' }}</td>
                 <td class="text-right">{{ tx.price | number: '1.2-4' }}</td>
               </tr>

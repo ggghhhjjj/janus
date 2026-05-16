@@ -118,7 +118,7 @@
               <td>{{ tx.date }} {{ tx.time }}</td>
               <td><strong>{{ tx.ticker }}</strong></td>
               <td>
-                <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
+                <span class="type-badge type-badge--{{ tx.type }}">{{ i18n.translate(tx.type) }}</span>
               </td>
               <td class="text-right">@if (isCashTransaction(tx.type)) { 1.00 } @else { {{ tx.quantity | number: '1.0-4' }} }</td>
               <td class="text-right">@if (tx.price) { {{ tx.price | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }</td>
