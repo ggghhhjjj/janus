@@ -118,6 +118,22 @@
   min-width: 2.5rem;
 }
 
+/* Date column stacked layout (date on top, time below) */
+.col-date__date {
+  display: block;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.col-date__time {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.12rem;
+  white-space: nowrap;
+}
+
 .num-cell {
   color: var(--color-text-secondary);
   font-size: 0.8rem;
@@ -257,10 +273,14 @@
 
 /* Mobile view (<768px): Hide Date, Fee, Notes */
 @media (max-width: 767px) {
-  /* Hide date column (2nd column) */
-  thead th:nth-child(2),
-  tbody td:nth-child(2) {
-    display: none;
+  /* Date column: keep visible and compact on mobile */
+  thead th.col-date,
+  tbody td.col-date {
+    display: table-cell;
+    width: 80px;
+    min-width: 64px;
+    vertical-align: top;
+    padding: 0.5rem 0.5rem;
   }
 
   /* Hide fee column (7th column after removing Currency) */

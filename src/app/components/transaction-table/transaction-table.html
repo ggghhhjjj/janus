@@ -21,7 +21,7 @@
         <thead>
           <tr>
             <th scope="col" class="col-num text-center">{{ i18n.translate('tableHeaderNum') }}</th>
-            <th scope="col">
+            <th scope="col" class="col-date">
               <button class="sort-btn" (click)="sort('date')" [attr.aria-label]="i18n.translate('sortByDate') + ' ' + sortIcon('date')">
                 {{ i18n.translate('tableHeaderDate') }} {{ sortIcon('date') }}
               </button>
@@ -115,7 +115,10 @@
                   }
                 </div>
               </td>
-              <td>{{ tx.date }} {{ tx.time }}</td>
+              <td class="col-date" [attr.aria-label]="tx.date + ' ' + tx.time">
+                <div class="col-date__date">{{ tx.date }}</div>
+                <div class="col-date__time">{{ tx.time }}</div>
+              </td>
               <td><strong>{{ tx.ticker }}</strong></td>
               <td>
                 <span class="type-badge type-badge--{{ tx.type }}">{{ i18n.translate(tx.type) }}</span>
