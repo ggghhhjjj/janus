@@ -3,7 +3,7 @@ import { StateService } from '../../services/state.service';
 import { I18nService } from '../../services/i18n.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BrokerAccountComponent } from '../broker-account/broker-account';
-import { TotalGainLossWidgetComponent } from '../total-gain-loss-widget/total-gain-loss-widget';
+import { TotalGainLossComponent } from '../total-gain-loss/total-gain-loss';
 import { FifoMatchingComponent } from '../fifo-matching/fifo-matching';
 import { YearlyBreakdownComponent } from '../yearly-breakdown/yearly-breakdown';
 import { OpenLotsWidgetComponent } from '../open-lots-widget/open-lots-widget';
@@ -13,7 +13,7 @@ import { OpenLotsWidgetComponent } from '../open-lots-widget/open-lots-widget';
   standalone: true,
   imports: [
     BrokerAccountComponent,
-    TotalGainLossWidgetComponent,
+    TotalGainLossComponent,
     YearlyBreakdownComponent,
     OpenLotsWidgetComponent,
     FifoMatchingComponent,

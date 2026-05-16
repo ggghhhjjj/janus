@@ -25,7 +25,7 @@ Apache Cordova app targeting the **browser** platform, with **Angular 21** as th
 | `src/app/models/` | Shared TypeScript interfaces |
 | `src/app/components/dashboard/` | Layout-only container — orchestrates components, no data logic |
 | `src/app/components/broker-account/` | Component — broker account balance |
-| `src/app/components/total-gain-loss-widget/` | Component — total realized gain/loss |
+| `src/app/components/total-gain-loss/` | Component — total realized gain/loss |
 | `src/app/components/yearly-breakdown/` | Component — year-by-year gain/loss table |
 | `src/app/components/open-lots-widget/` | Component — open positions by ticker |
 | `src/app/components/fifo-matching/` | Component — FIFO lot matching detail table |
@@ -85,7 +85,7 @@ export class MyWidgetComponent {
 }
 ```
 
-See `src/app/components/total-gain-loss-widget/` for the simplest widget example.
+See `src/app/components/total-gain-loss/` for the simplest widget example.
 
 ## i18n Conventions
 

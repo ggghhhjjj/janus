@@ -5,14 +5,14 @@ import { StateService } from '../../services/state.service';
 import { I18nService } from '../../services/i18n.service';
 
 @Component({
-  selector: 'app-total-gain-loss-widget',
+  selector: 'app-total-gain-loss',
   standalone: true,
   imports: [CurrencyPipe],
-  templateUrl: './total-gain-loss-widget.html',
-  styleUrl: './total-gain-loss-widget.css',
+  templateUrl: './total-gain-loss.html',
+  styleUrl: './total-gain-loss.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TotalGainLossWidgetComponent {
+export class TotalGainLossComponent {
   private readonly fifoState = toSignal(inject(StateService).fifoState$, { initialValue: null });
   readonly i18n = inject(I18nService);
   readonly totalGainLoss = computed(() => this.fifoState()?.totalRealizedGainLoss ?? 0);
