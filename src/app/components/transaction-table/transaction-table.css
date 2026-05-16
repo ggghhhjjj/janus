@@ -19,6 +19,7 @@
 }
 
 .table-wrapper {
+  overflow-y: auto;
   overflow-x: auto;
   border: 1px solid var(--color-border);
   border-radius: 10px;
@@ -121,6 +122,95 @@
   color: var(--color-text-secondary);
   font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
+  position: relative;
+  padding: 0 !important;
+  overflow: visible;
+}
+
+.num-cell__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.6rem 0.5rem;
+}
+
+.num-cell__number {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  min-height: 1.2em;
+}
+
+.num-cell__menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.num-cell__menu-btn:hover:not(:disabled) {
+  background-color: var(--color-hover);
+  color: var(--color-text);
+}
+
+.num-cell__menu-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.num-cell__menu {
+  position: absolute;
+  margin-top: 0.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 120px;
+  max-width: calc(100vw - 1rem);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.num-cell__menu-item {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 0.15s;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.num-cell__menu-item:hover {
+  background-color: var(--color-hover);
+}
+
+.num-cell__menu-item:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.num-cell__menu-item--danger {
+  color: var(--color-danger);
+}
+
+.num-cell__menu-item--danger:hover {
+  background-color: rgba(220, 38, 38, 0.08);
 }
 
 .back-btn {
@@ -135,24 +225,6 @@
 
 .tx-row--conflict:hover {
   background-color: rgba(251, 191, 36, 0.12);
-}
-
-/* Action buttons */
-.actions-cell {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.btn--warn-ghost {
-  color: #fbbf24;
-  border-color: transparent;
-  background: transparent;
-}
-
-.btn--warn-ghost:hover:not(:disabled) {
-  background-color: rgba(251, 191, 36, 0.1);
 }
 
 /* Swap modal */
@@ -302,78 +374,79 @@
 
 /* ===== RESPONSIVE DESIGN ===== */
 
-/* Tablet view (768px–1199px): Hide Fee, Currency, Notes */
+/* Tablet view (768px–1199px): Hide Currency, Fee, Notes */
 @media (min-width: 768px) and (max-width: 1199px) {
-  /* Hide currency column (6th column) */
-  thead th:nth-child(6),
-  tbody td:nth-child(6) {
+  /* Hide currency column (5th column) */
+  thead th:nth-child(5),
+  tbody td:nth-child(5) {
     display: none;
   }
 
-  /* Hide fee column (9th column) */
+  /* Hide fee column (8th column) */
+  thead th:nth-child(8),
+  tbody td:nth-child(8) {
+    display: none;
+  }
+
+  /* Hide notes column (9th column) */
   thead th:nth-child(9),
   tbody td:nth-child(9) {
-    display: none;
-  }
-
-  /* Hide notes column (10th column) */
-  thead th:nth-child(10),
-  tbody td:nth-child(10) {
     display: none;
   }
 }
 
-/* Mobile view (<768px): Hide Date, Currency, Fee, Notes; stack action buttons */
+/* Mobile view (<768px): Hide Date, Currency, Fee, Notes */
 @media (max-width: 767px) {
-  /* Hide date column (3rd column) */
-  thead th:nth-child(3),
-  tbody td:nth-child(3) {
+  /* Hide date column (2nd column) */
+  thead th:nth-child(2),
+  tbody td:nth-child(2) {
     display: none;
   }
 
-  /* Hide currency column (6th column) */
-  thead th:nth-child(6),
-  tbody td:nth-child(6) {
+  /* Hide currency column (5th column) */
+  thead th:nth-child(5),
+  tbody td:nth-child(5) {
     display: none;
   }
 
-  /* Hide fee column (9th column) */
+  /* Hide fee column (8th column) */
+  thead th:nth-child(8),
+  tbody td:nth-child(8) {
+    display: none;
+  }
+
+  /* Hide notes column (9th column) */
   thead th:nth-child(9),
   tbody td:nth-child(9) {
     display: none;
   }
 
-  /* Hide notes column (10th column) */
-  thead th:nth-child(10),
-  tbody td:nth-child(10) {
-    display: none;
+  /* Ensure num-cell menu button is accessible on mobile */
+  .num-cell {
+    padding: 0 !important;
+  }
+
+  .num-cell__content {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .num-cell__menu-btn {
+    width: 40px;
+    height: 40px;
+    min-height: 44px;
+  }
+
+  /* Ensure menu doesn't overflow on small screens */
+  .num-cell__menu {
+    max-width: 90vw;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   /* Increase cell padding for touch targets */
   table td,
   table th {
     padding: 0.75rem 0.5rem;
-  }
-
-  /* Stack action buttons vertically and make them full-width */
-  .actions-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    justify-content: flex-start;
-    width: 100%;
-  }
-
-  .actions-cell .btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  /* Increase button touch target size */
-  .btn--sm {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
-    min-height: 44px;
   }
 
   /* Adjust number cell and ticker for mobile */
@@ -391,3 +464,4 @@
     border-radius: 8px;
   }
 }
+
