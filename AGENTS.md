@@ -22,6 +22,8 @@ Apache Cordova app targeting the **browser** platform, with **Angular 21** as th
 | `src/app/services/state.service.ts` | Global app state |
 | `src/app/services/database.service.ts` | Persistence layer |
 | `src/app/services/fifo.service.ts` | FIFO calculation logic |
+| `src/app/services/matching.service.ts` | Transforms `FifoState` → `MatchingDetailsRow[]`, totals, and verification flag |
+| `src/app/utils/number-utils.ts` | Shared rounding helpers — **always use `round2()` from here, never redefine it** |
 | `src/app/models/` | Shared TypeScript interfaces |
 | `src/app/components/dashboard/` | Layout-only container — orchestrates components, no data logic |
 | `src/app/components/broker-account/` | Component — broker account balance |
@@ -87,6 +89,25 @@ export class MyWidgetComponent {
 
 See `src/app/components/total-gain-loss/` for the simplest widget example.
 
+## Service Conventions
+
+- **Pure/sync services**: Business-logic services (`FifoService`, `MatchingService`) are stateless and synchronous — no `async`, no RxJS, no Angular injection needed to instantiate them in tests.
+- **Rounding**: always import `round2` from `src/app/utils/number-utils.ts`. Never redefine a local rounding helper.
+- **Responsibilities**:
+  - `FifoService` — canonical FIFO math, produces `FifoState` (single source of truth for numbers).
+  - `MatchingService` — presentation transform only: flattens `FifoState` → rows/totals/verification. No DB or state writes.
+  - `StateService` — reactive bridge; calls `FifoService.calculate()` and exposes `fifoState$` to the UI.
+- **Testing**: pure services can be unit-tested by `new FifoService()` / `new MatchingService()` directly — no `TestBed`.
+
+## Tests
+
+- Runner: **Vitest** (`npm test` → `ng test`). Watch mode starts automatically.
+- Location: co-located spec files (`*.spec.ts`) next to the source they test.
+- Style: `describe` / `it` / `expect` from `vitest` — see [`src/app/services/fifo.service.spec.ts`](src/app/services/fifo.service.spec.ts) for reference.
+- `Transaction` factory pattern: use a `makeTx(overrides)` helper that spreads defaults (including required `time: '00:00:00.000'` and `currency: 'USD'`) before overrides.
+- For `MatchingService` tests compose `FifoService.calculate(txs)` to produce canonical `FifoState`, then assert `MatchingService.computeMatching(state)` — see [`src/app/services/matching.service.spec.ts`](src/app/services/matching.service.spec.ts).
+- No Angular `TestBed` is needed for pure service tests.
+
 ## i18n Conventions
 
 See full documentation in [I18N.md](I18N.md). Use `/add-i18n` skill for step-by-step help.
@@ -117,6 +138,4 @@ See full documentation in [I18N.md](I18N.md). Use `/add-i18n` skill for step-by-
 - **CSP failures are silent** — if an API call fails, check `src/index.html` CSP header.
 - **`cordova` object undefined in dev** — always guard with `typeof cordova !== 'undefined'`.
 
-## No Tests
 
-No test files exist yet. `npm test` runs `ng test` (Vitest) but will find nothing.
