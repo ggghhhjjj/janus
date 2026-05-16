@@ -25,180 +25,240 @@ type SortDir = 'asc' | 'desc';
   styleUrl: './transaction-table.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TransactionTableComponent {
-  private readonly state = inject(StateService);
-  private readonly router = inject(Router);
-  private readonly allTransactions = toSignal(this.state.transactions$, { initialValue: [] });
-  readonly i18n = inject(I18nService);
+  /**
+   * TransactionTableComponent
+   *
+   * Business purpose:
+   * - Display and manage the application's transaction list with sorting,
+   *   editing, deletion, and conflict-resolution (swap sequence numbers).
+   * - Provide the primary CRUD surface for transactions and navigation back to
+   *   the dashboard while coordinating transient UI state (modals, highlights).
+   *
+   * Responsibilities:
+   * - Expose a sorted view of transactions (`sorted`) and lightweight UI state
+   *   signals used by templates (modal visibility, editing state, swap UI).
+   * - Delegate persistence and sequence-swapping operations to `StateService`.
+   */
+  export class TransactionTableComponent {
+    /** Global application state for reading and mutating transactions. */
+    private readonly state = inject(StateService);
 
-  readonly transactionCount = computed(() => this.allTransactions().length);
+    /** Router used for navigation (dashboard, transaction screens). */
+    private readonly router = inject(Router);
 
-  readonly sortColumn = signal<SortColumn>('date');
-  readonly sortDir = signal<SortDir>('desc');
+    /** Signal-wrapped observable of all transactions for reactive templates. */
+    private readonly allTransactions = toSignal(this.state.transactions$, { initialValue: [] });
 
-  readonly sorted = computed(() => {
-    const col = this.sortColumn();
-    const dir = this.sortDir();
-    return [...this.allTransactions()].sort((a, b) => {
-      let cmp = 0;
-      if (col === 'date') {
-        // Primary sort by date DESC (applied regardless of dir to match default user expectation)
-        cmp = a.date.localeCompare(b.date);
-        if (cmp !== 0) return dir === 'desc' ? -cmp : cmp;
-        // Tie-break: time ASC, seqNo ASC, id ASC
-        if (a.time !== b.time) return a.time.localeCompare(b.time);
-        const aSeqNo = a.seqNo ?? 0;
-        const bSeqNo = b.seqNo ?? 0;
-        if (aSeqNo !== bSeqNo) return aSeqNo - bSeqNo;
-        return a.id - b.id;
-      } else {
-        // Other columns: apply normal sort direction
-        if (col === 'ticker') cmp = a.ticker.localeCompare(b.ticker);
-        else if (col === 'type') cmp = a.type.localeCompare(b.type);
-        else if (col === 'quantity') cmp = a.quantity - b.quantity;
-        else if (col === 'price') cmp = a.price - b.price;
-        else if (col === 'fee') cmp = (a.fee ?? 0) - (b.fee ?? 0);
-        return dir === 'asc' ? cmp : -cmp;
-      }
-    });
-  });
+    /** Runtime i18n helper for templates. */
+    readonly i18n = inject(I18nService);
 
-  // Modal state
-  readonly formOpen = signal(false);
-  readonly editingTransaction = signal<Transaction | null>(null);
+    /** Number of transactions currently in the list. */
+    readonly transactionCount = computed(() => this.allTransactions().length);
 
-  // Swap modal state
-  readonly swapModalOpen = signal(false);
-  readonly swapGroupTransactions = signal<Transaction[]>([]);
-  readonly swapSourceId = signal<number | null>(null);
-  readonly swapTargetId = signal<number | null>(null);
+    /** Current active sort column and direction for the table. */
+    readonly sortColumn = signal<SortColumn>('date');
+    readonly sortDir = signal<SortDir>('desc');
 
-  // Navigation / highlight (exposed from StateService for template)
-  readonly highlightedTransactionId = this.state.highlightedTransactionId;
-  readonly transactionNumbers = this.state.transactionNumbers;
-  readonly conflictTransactionIds = this.state.conflictTransactionIds;
-  readonly showBackButton = computed(() => this.highlightedTransactionId() != null);
-
-  constructor() {
-    // Scroll to the highlighted row after Angular renders
-    effect(() => {
-      const id = this.highlightedTransactionId();
-      if (id == null) return;
-      setTimeout(() => {
-        document.querySelector<HTMLElement>(`[data-tx-id="${id}"]`)
-          ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
-    });
-  }
-
-  sort(col: SortColumn): void {
-    if (this.sortColumn() === col) {
-      this.sortDir.update((d) => (d === 'asc' ? 'desc' : 'asc'));
-    } else {
-      this.sortColumn.set(col);
-      this.sortDir.set('asc');
-    }
-  }
-
-  sortIcon(col: SortColumn): string {
-    if (this.sortColumn() !== col) return '↕';
-    return this.sortDir() === 'asc' ? '↑' : '↓';
-  }
-
-  isCashTransaction(type: string): boolean {
-    return type === 'funding' || type === 'withdrawal';
-  }
-
-  openAdd(): void {
-    this.editingTransaction.set(null);
-    this.formOpen.set(true);
-  }
-
-  openEdit(tx: Transaction): void {
-    this.editingTransaction.set(tx);
-    this.formOpen.set(true);
-  }
-
-  async onDelete(tx: Transaction): Promise<void> {
-    const confirmed = window.confirm(
-      `Delete transaction: ${tx.type.toUpperCase()} ${tx.quantity} ${tx.ticker} on ${tx.date}?`
-    );
-    if (!confirmed) return;
-    await this.state.deleteTransaction(tx.id);
-  }
-
-  onFormSaved(): void {
-    this.formOpen.set(false);
-    this.editingTransaction.set(null);
-  }
-
-  onFormCancelled(): void {
-    this.formOpen.set(false);
-    this.editingTransaction.set(null);
-  }
-
-  navigateBackToDashboard(): void {
-    const id = this.state.highlightedTransactionId();
-    this.state.highlightedMatchingTransactionId.set(id);
-    this.state.highlightedTransactionId.set(null);
-    this.router.navigate(['/']);
-  }
-
-  openSwapModal(tx: Transaction): void {
-    // Collect all transactions in the same conflict group (date + time + ticker)
-    const groupKey = `${tx.date}|${tx.time}|${tx.ticker}`;
-    const group = this.allTransactions().filter(
-      (t) => `${t.date}|${t.time}|${t.ticker}` === groupKey
-    );
-    // Sort by seqNo/id for display
-    const sorted = [...group].sort((a, b) => {
-      const aSeqNo = a.seqNo ?? 0;
-      const bSeqNo = b.seqNo ?? 0;
-      if (aSeqNo !== bSeqNo) return aSeqNo - bSeqNo;
-      return a.id - b.id;
-    });
-    this.swapGroupTransactions.set(sorted);
-    this.swapSourceId.set(tx.id);
-    this.swapTargetId.set(null);
-    this.swapModalOpen.set(true);
-  }
-
-  selectSwapTarget(id: number): void {
-    this.swapTargetId.set(id);
-  }
-
-  async confirmSwap(): Promise<void> {
-    const sourceId = this.swapSourceId();
-    const targetId = this.swapTargetId();
-    if (!sourceId || !targetId) return;
-    try {
-      await this.state.swapSeqNos(sourceId, targetId);
-      // Refresh the conflict group display
-      const source = this.allTransactions().find((t) => t.id === sourceId);
-      if (source) {
-        const groupKey = `${source.date}|${source.time}|${source.ticker}`;
-        const group = this.allTransactions().filter(
-          (t) => `${t.date}|${t.time}|${t.ticker}` === groupKey
-        );
-        const sorted = [...group].sort((a, b) => {
+    /**
+     * Computed sorted transactions array. Applies specialized date tie-breakers
+     * and supports other column sorts while preserving the user-requested
+     * directionality.
+     */
+    readonly sorted = computed(() => {
+      const col = this.sortColumn();
+      const dir = this.sortDir();
+      return [...this.allTransactions()].sort((a, b) => {
+        let cmp = 0;
+        if (col === 'date') {
+          // Primary sort by date DESC (applied regardless of dir to match default user expectation)
+          cmp = a.date.localeCompare(b.date);
+          if (cmp !== 0) return dir === 'desc' ? -cmp : cmp;
+          // Tie-break: time ASC, seqNo ASC, id ASC
+          if (a.time !== b.time) return a.time.localeCompare(b.time);
           const aSeqNo = a.seqNo ?? 0;
           const bSeqNo = b.seqNo ?? 0;
           if (aSeqNo !== bSeqNo) return aSeqNo - bSeqNo;
           return a.id - b.id;
-        });
-        this.swapGroupTransactions.set(sorted);
+        } else {
+          // Other columns: apply normal sort direction
+          if (col === 'ticker') cmp = a.ticker.localeCompare(b.ticker);
+          else if (col === 'type') cmp = a.type.localeCompare(b.type);
+          else if (col === 'quantity') cmp = a.quantity - b.quantity;
+          else if (col === 'price') cmp = a.price - b.price;
+          else if (col === 'fee') cmp = (a.fee ?? 0) - (b.fee ?? 0);
+          return dir === 'asc' ? cmp : -cmp;
+        }
+      });
+    });
+
+    // Modal state
+    /** Whether the add/edit transaction form modal is open. */
+    readonly formOpen = signal(false);
+    /** Transaction currently being edited, or `null` when adding. */
+    readonly editingTransaction = signal<Transaction | null>(null);
+
+    // Swap modal state
+    /** Whether the swap (conflict-resolution) modal is open. */
+    readonly swapModalOpen = signal(false);
+    /** Transactions belonging to the currently selected conflict group. */
+    readonly swapGroupTransactions = signal<Transaction[]>([]);
+    /** Source transaction id for swapping sequence numbers. */
+    readonly swapSourceId = signal<number | null>(null);
+    /** Target transaction id selected as swap destination. */
+    readonly swapTargetId = signal<number | null>(null);
+
+    // Navigation / highlight (exposed from StateService for template)
+    /** ID of the highlighted transaction (used by templates to focus a row). */
+    readonly highlightedTransactionId = this.state.highlightedTransactionId;
+    /** Map of human-friendly transaction numbers used by templates. */
+    readonly transactionNumbers = this.state.transactionNumbers;
+    /** Set of transaction IDs that are flagged as conflicts. */
+    readonly conflictTransactionIds = this.state.conflictTransactionIds;
+    /** Whether to show a back button when a transaction is highlighted. */
+    readonly showBackButton = computed(() => this.highlightedTransactionId() != null);
+
+    constructor() {
+      // Scroll to the highlighted row after Angular renders
+      effect(() => {
+        const id = this.highlightedTransactionId();
+        if (id == null) return;
+        setTimeout(() => {
+          document.querySelector<HTMLElement>(`[data-tx-id="${id}"]`)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      });
+    }
+
+    /** Toggle sorting for a column; reverses direction when selecting same column. */
+    sort(col: SortColumn): void {
+      if (this.sortColumn() === col) {
+        this.sortDir.update((d) => (d === 'asc' ? 'desc' : 'asc'));
+      } else {
+        this.sortColumn.set(col);
+        this.sortDir.set('asc');
       }
-      // Reset target, keep modal open for more swaps
+    }
+
+    /** Return a simple glyph representing sort state for column headers. */
+    sortIcon(col: SortColumn): string {
+      if (this.sortColumn() !== col) return '↕';
+      return this.sortDir() === 'asc' ? '↑' : '↓';
+    }
+
+    /** True when a transaction type is a cash movement (funding/withdrawal). */
+    isCashTransaction(type: string): boolean {
+      return type === 'funding' || type === 'withdrawal';
+    }
+
+    /** Open the add-transaction modal. */
+    openAdd(): void {
+      this.editingTransaction.set(null);
+      this.formOpen.set(true);
+    }
+
+    /** Open the edit modal for the provided transaction. */
+    openEdit(tx: Transaction): void {
+      this.editingTransaction.set(tx);
+      this.formOpen.set(true);
+    }
+
+    /** Delete a transaction after user confirmation. */
+    async onDelete(tx: Transaction): Promise<void> {
+      const confirmed = window.confirm(
+        `Delete transaction: ${tx.type.toUpperCase()} ${tx.quantity} ${tx.ticker} on ${tx.date}?`
+      );
+      if (!confirmed) return;
+      await this.state.deleteTransaction(tx.id);
+    }
+
+    /** Close form modal after save and clear editing state. */
+    onFormSaved(): void {
+      this.formOpen.set(false);
+      this.editingTransaction.set(null);
+    }
+
+    /** Close form modal without saving and clear editing state. */
+    onFormCancelled(): void {
+      this.formOpen.set(false);
+      this.editingTransaction.set(null);
+    }
+
+    /**
+     * Navigate back to the dashboard from a focused transaction view, carrying
+     * a transient highlight into the FIFO matching view for cross-reference.
+     */
+    navigateBackToDashboard(): void {
+      const id = this.state.highlightedTransactionId();
+      this.state.highlightedMatchingTransactionId.set(id);
+      this.state.highlightedTransactionId.set(null);
+      this.router.navigate(['/']);
+    }
+
+    /**
+     * Open the swap modal for conflict resolution by collecting the group of
+     * transactions that share date/time/ticker and preparing the swap UI.
+     */
+    openSwapModal(tx: Transaction): void {
+      // Collect all transactions in the same conflict group (date + time + ticker)
+      const groupKey = `${tx.date}|${tx.time}|${tx.ticker}`;
+      const group = this.allTransactions().filter(
+        (t) => `${t.date}|${t.time}|${t.ticker}` === groupKey
+      );
+      // Sort by seqNo/id for display
+      const sorted = [...group].sort((a, b) => {
+        const aSeqNo = a.seqNo ?? 0;
+        const bSeqNo = b.seqNo ?? 0;
+        if (aSeqNo !== bSeqNo) return aSeqNo - bSeqNo;
+        return a.id - b.id;
+      });
+      this.swapGroupTransactions.set(sorted);
+      this.swapSourceId.set(tx.id);
       this.swapTargetId.set(null);
-    } catch (err) {
-      alert('Failed to swap transactions. Please try again.');
+      this.swapModalOpen.set(true);
+    }
+
+    /** Select a transaction ID as the swap target in the modal. */
+    selectSwapTarget(id: number): void {
+      this.swapTargetId.set(id);
+    }
+
+    /**
+     * Confirm and execute a swap of sequence numbers between two transactions.
+     * On success, refresh the swap group display; on failure, alert the user.
+     */
+    async confirmSwap(): Promise<void> {
+      const sourceId = this.swapSourceId();
+      const targetId = this.swapTargetId();
+      if (!sourceId || !targetId) return;
+      try {
+        await this.state.swapSeqNos(sourceId, targetId);
+        // Refresh the conflict group display
+        const source = this.allTransactions().find((t) => t.id === sourceId);
+        if (source) {
+          const groupKey = `${source.date}|${source.time}|${source.ticker}`;
+          const group = this.allTransactions().filter(
+            (t) => `${t.date}|${t.time}|${t.ticker}` === groupKey
+          );
+          const sorted = [...group].sort((a, b) => {
+            const aSeqNo = a.seqNo ?? 0;
+            const bSeqNo = b.seqNo ?? 0;
+            if (aSeqNo !== bSeqNo) return aSeqNo - bSeqNo;
+            return a.id - b.id;
+          });
+          this.swapGroupTransactions.set(sorted);
+        }
+        // Reset target, keep modal open for more swaps
+        this.swapTargetId.set(null);
+      } catch (err) {
+        alert('Failed to swap transactions. Please try again.');
+      }
+    }
+
+    /** Close the swap modal and clear all transient swap state. */
+    closeSwapModal(): void {
+      this.swapModalOpen.set(false);
+      this.swapGroupTransactions.set([]);
+      this.swapSourceId.set(null);
+      this.swapTargetId.set(null);
     }
   }
-
-  closeSwapModal(): void {
-    this.swapModalOpen.set(false);
-    this.swapGroupTransactions.set([]);
-    this.swapSourceId.set(null);
-    this.swapTargetId.set(null);
-  }
-}

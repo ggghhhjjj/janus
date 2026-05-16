@@ -24,20 +24,39 @@ import { I18nService } from '../../services/i18n.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionFormComponent implements OnChanges, OnInit {
+  /**
+   * Transaction to edit. When `null` the form functions in "add" mode.
+   */
   @Input() transaction: Transaction | null = null;
+
+  /** Emitted when a transaction is successfully saved. */
   @Output() saved = new EventEmitter<void>();
+
+  /** Emitted when the user cancels the form. */
   @Output() cancelled = new EventEmitter<void>();
 
+  /** Supported transaction types for the `type` field (drives the UI select). */
   readonly transactionTypes: TransactionType[] = ['buy', 'sell', 'dividend', 'split', 'funding', 'withdrawal'];
 
+  /** Reactive form backing the transaction editor. */
   form: FormGroup;
+
+  /** True while a save operation is in progress. */
   saving = false;
+
+  /** Human-facing error message displayed when save fails. */
   errorMessage = '';
 
+  /** True when `transaction` input is provided (edit mode). */
   get isEditMode(): boolean {
     return this.transaction != null;
   }
 
+  /**
+   * @param fb FormBuilder used to construct the reactive form
+   * @param state StateService used to persist and edit transactions
+   * @param i18n Runtime i18n helper exposed to templates
+   */
   constructor(
     private readonly fb: FormBuilder,
     private readonly state: StateService,
@@ -131,8 +150,10 @@ export class TransactionFormComponent implements OnChanges, OnInit {
   }
 
   async onSave(): Promise<void> {
+    /** Validate form and persist the transaction via StateService.
+     * Emits `saved` on success. Handles both add and edit modes. */
     console.debug('[TransactionForm] Save clicked. Form valid:', this.form.valid);
-    
+
     if (this.form.invalid) {
       console.warn('[TransactionForm] Form is invalid. Errors:', this.getFormErrors());
       this.form.markAllAsTouched();

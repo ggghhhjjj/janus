@@ -18,14 +18,52 @@ function r2(n: number): number {
   styleUrl: './fifo-matching.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+/**
+ * FifoMatchingComponent
+ *
+ * Business purpose:
+ * - Render per-lot FIFO matching details and provide aggregated totals and
+ *   verification for the UI.
+ * - Transform FIFO results produced by the calculation service into a
+ *   template-friendly list of rows (`matchingDetails`) and summary totals.
+ * - Coordinate presentation concerns: expand/collapse state, transient
+ *   highlighting of rows, scrolling, and navigation to transaction details.
+ *
+ * Responsibilities:
+ * - Expose computed signals (`matchingDetails`, `matchingTotals`, `isTotalVerified`)
+ *   for templates and keep the component focused on presentation and UI
+ *   interactions while delegating heavy calculations to `StateService`.
+ */
 export class FifoMatchingComponent {
+  /**
+   * Global application state service used to read transactions and writable
+   * signals that coordinate highlighting and navigation.
+   * @private
+   */
   private readonly state = inject(StateService);
+
+  /** Router used to navigate to the transactions page when a row is clicked. */
   private readonly router = inject(Router);
+
+  /**
+   * Signal form of the FIFO calculation observable (`StateService.fifoState$`).
+   * Exposed as a private signal so computed values can synchronously derive
+   * matching rows and totals for the template.
+   * @private
+   */
   private readonly fifoState = toSignal(this.state.fifoState$, { initialValue: null });
+
+  /** Runtime i18n service for translating UI strings in the template. */
   readonly i18n = inject(I18nService);
 
+  /** Controls whether the matching detail section is expanded in the UI. */
   readonly isMatchingExpanded = signal(true);
 
+  /**
+   * Derived list of per-lot matching rows used to render the matching table.
+   * Business purpose: flatten internal FIFO matching results into a template-
+   * friendly row structure including effective buy/sell prices and realized gain.
+   */
   readonly matchingDetails = computed<MatchingDetailsRow[]>(() => {
     const results = this.fifoState()?.results ?? {};
     const rows: MatchingDetailsRow[] = [];
@@ -60,6 +98,10 @@ export class FifoMatchingComponent {
     return rows.sort((a, b) => b.sellDate.localeCompare(a.sellDate));
   });
 
+  /**
+   * Totals aggregated from `matchingDetails`.
+   * Business purpose: provide a quick verification and summary for the UI.
+   */
   readonly matchingTotals = computed(() => {
     const rows = this.matchingDetails();
     return {
@@ -68,20 +110,34 @@ export class FifoMatchingComponent {
     };
   });
 
+  /**
+   * Indicates whether the computed matching total aligns with the canonical
+   * `totalRealizedGainLoss` produced by the FIFO calculation. Used to flag
+   * verification warnings in the UI when numbers diverge.
+   */
   readonly isTotalVerified = computed(() => {
     const totalGainLoss = this.fifoState()?.totalRealizedGainLoss ?? 0;
     return Math.abs(this.matchingTotals().totalGain - totalGainLoss) < 0.01;
   });
 
+  /** Transaction number map used by the template for compact references. */
   readonly transactionNumbers = this.state.transactionNumbers;
+
+  /** Writable signal from state used to mark a matching transaction as highlighted. */
   readonly highlightedMatchingTransactionId = this.state.highlightedMatchingTransactionId;
 
+  /** Convenience computed set for fast membership checks when rendering rows. */
   readonly highlightedMatchingSet = computed(() => {
     const id = this.highlightedMatchingTransactionId();
     return id != null ? new Set([id]) : new Set<number>();
   });
 
   constructor() {
+    /**
+     * Side-effect: when a matching transaction is highlighted elsewhere in the
+     * app, expand the matching view, scroll the highlighted row into view,
+     * then clear the transient highlight after a short delay.
+     */
     effect(() => {
       const id = this.highlightedMatchingTransactionId();
       if (id == null) return;
@@ -96,6 +152,10 @@ export class FifoMatchingComponent {
     });
   }
 
+  /**
+   * Navigate to the transactions page and mark the given transaction ID as
+   * highlighted so other components or lists can focus it.
+   */
   navigateToTransaction(id: number): void {
     this.state.highlightedTransactionId.set(id);
     this.router.navigate(['/transactions']);
