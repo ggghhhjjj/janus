@@ -1,9 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
@@ -22,7 +24,7 @@ import { I18nService } from '../../services/i18n.service';
   styleUrl: './transaction-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TransactionFormComponent implements OnChanges, OnInit {
+export class TransactionFormComponent implements OnChanges, OnInit, OnDestroy {
   /**
    * Transaction to edit. When `null` the form functions in "add" mode.
    */
@@ -55,11 +57,13 @@ export class TransactionFormComponent implements OnChanges, OnInit {
    * @param fb FormBuilder used to construct the reactive form
    * @param state StateService used to persist and edit transactions
    * @param i18n Runtime i18n helper exposed to templates
+   * @param elementRef Reference to the component's host element
    */
   constructor(
     private readonly fb: FormBuilder,
     private readonly state: StateService,
-    readonly i18n: I18nService
+    readonly i18n: I18nService,
+    private readonly elementRef: ElementRef
   ) {
     this.form = this.buildForm();
   }
@@ -74,6 +78,21 @@ export class TransactionFormComponent implements OnChanges, OnInit {
 
   ngOnInit(): void {
     this.setupTypeChangeListener();
+    this.setupEscapeKeyListener();
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('keydown', this.handleEscapeKey);
+  }
+
+  private handleEscapeKey = (event: KeyboardEvent): void => {
+    if (event.key === 'Escape') {
+      this.cancelled.emit();
+    }
+  };
+
+  private setupEscapeKeyListener(): void {
+    document.addEventListener('keydown', this.handleEscapeKey);
   }
 
   private setupTypeChangeListener(): void {
@@ -225,12 +244,6 @@ export class TransactionFormComponent implements OnChanges, OnInit {
 
   onBackdropClick(event: MouseEvent): void {
     if ((event.target as HTMLElement).classList.contains('modal-backdrop')) {
-      this.cancelled.emit();
-    }
-  }
-
-  onKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Escape') {
       this.cancelled.emit();
     }
   }

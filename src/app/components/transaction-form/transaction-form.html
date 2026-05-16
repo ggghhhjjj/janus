@@ -4,8 +4,6 @@
   aria-modal="true"
   [attr.aria-label]="isEditMode ? i18n.translate('editTransaction') : i18n.translate('addTransactionForm')"
   (click)="onBackdropClick($event)"
-  (keydown)="onKeydown($event)"
-  tabindex="-1"
 >
   <div class="modal-card">
     <div class="sheet-handle" aria-hidden="true"></div>
