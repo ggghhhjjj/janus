@@ -10,14 +10,14 @@ interface YearlyRow {
 }
 
 @Component({
-  selector: 'app-yearly-breakdown-widget',
+  selector: 'app-yearly-breakdown',
   standalone: true,
   imports: [CurrencyPipe],
-  templateUrl: './yearly-breakdown-widget.html',
-  styleUrl: './yearly-breakdown-widget.css',
+  templateUrl: './yearly-breakdown.html',
+  styleUrl: './yearly-breakdown.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class YearlyBreakdownWidgetComponent {
+export class YearlyBreakdownComponent {
   private readonly fifoState = toSignal(inject(StateService).fifoState$, { initialValue: null });
   readonly i18n = inject(I18nService);
 

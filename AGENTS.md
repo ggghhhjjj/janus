@@ -23,12 +23,12 @@ Apache Cordova app targeting the **browser** platform, with **Angular 21** as th
 | `src/app/services/database.service.ts` | Persistence layer |
 | `src/app/services/fifo.service.ts` | FIFO calculation logic |
 | `src/app/models/` | Shared TypeScript interfaces |
-| `src/app/components/dashboard/` | Layout-only container — orchestrates widgets, no data logic |
-| `src/app/components/broker-account/` | Widget — broker account balance |
-| `src/app/components/total-gain-loss-widget/` | Widget — total realized gain/loss |
-| `src/app/components/yearly-breakdown-widget/` | Widget — year-by-year gain/loss table |
-| `src/app/components/open-lots-widget/` | Widget — open positions by ticker |
-| `src/app/components/fifo-matching/` | Widget — FIFO lot matching detail table |
+| `src/app/components/dashboard/` | Layout-only container — orchestrates components, no data logic |
+| `src/app/components/broker-account/` | Component — broker account balance |
+| `src/app/components/total-gain-loss-widget/` | Component — total realized gain/loss |
+| `src/app/components/yearly-breakdown/` | Component — year-by-year gain/loss table |
+| `src/app/components/open-lots-widget/` | Component — open positions by ticker |
+| `src/app/components/fifo-matching/` | Component — FIFO lot matching detail table |
 | `public/` | Static assets copied verbatim into `www/` |
 | `angular.json` | Angular CLI config — output path is `www/` |
 | `hooks/before_prepare/build_angular.js` | Cordova hook — runs `npm run build` before prepare/build/run |

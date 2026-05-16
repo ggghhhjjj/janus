@@ -5,7 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { BrokerAccountComponent } from '../broker-account/broker-account';
 import { TotalGainLossWidgetComponent } from '../total-gain-loss-widget/total-gain-loss-widget';
 import { FifoMatchingComponent } from '../fifo-matching/fifo-matching';
-import { YearlyBreakdownWidgetComponent } from '../yearly-breakdown-widget/yearly-breakdown-widget';
+import { YearlyBreakdownComponent } from '../yearly-breakdown/yearly-breakdown';
 import { OpenLotsWidgetComponent } from '../open-lots-widget/open-lots-widget';
 
 @Component({
@@ -14,7 +14,7 @@ import { OpenLotsWidgetComponent } from '../open-lots-widget/open-lots-widget';
   imports: [
     BrokerAccountComponent,
     TotalGainLossWidgetComponent,
-    YearlyBreakdownWidgetComponent,
+    YearlyBreakdownComponent,
     OpenLotsWidgetComponent,
     FifoMatchingComponent,
   ],
