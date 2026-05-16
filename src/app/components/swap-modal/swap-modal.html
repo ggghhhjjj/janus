@@ -1,0 +1,79 @@
+<div
+  class="modal-backdrop"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="i18n.translate('reorderTitle')"
+  (click)="closeSwapModal()"
+  tabindex="-1"
+>
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <h2 class="modal-title">{{ i18n.translate('reorderTitle') }}</h2>
+
+    <div class="swap-modal-content">
+      <div class="swap-section">
+        <h3 class="swap-section__title">{{ i18n.translate('sourceTransaction') }}</h3>
+        @for (tx of swapGroupTransactions(); track tx.id) {
+          @if (tx.id === swapSourceId()) {
+            <div class="swap-transaction-summary">
+              <span class="swap-tx-num">#{{ transactionNumbers().get(tx.id) ?? '' }}</span>
+              <span class="swap-tx-datetime">{{ tx.date }} {{ tx.time }}</span>
+              <span class="swap-tx-ticker"><strong>{{ tx.ticker }}</strong></span>
+              <span class="swap-tx-type">
+                <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
+              </span>
+              <span class="swap-tx-qty">{{ tx.quantity | number: '1.0-4' }}</span>
+              <span class="swap-tx-price">@if (isCashTransaction(tx.type)) { — } @else { {{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }} }</span>
+              <span class="swap-tx-fee">
+                @if (tx.fee) { {{ tx.fee | currency: 'USD' : 'symbol' : '1.2-4' }} } @else { — }
+              </span>
+            </div>
+          }
+        }
+      </div>
+
+      <div class="swap-section">
+        <h3 class="swap-section__title">{{ i18n.translate('swapWith') }}</h3>
+        <div class="swap-radio-group">
+          @for (tx of swapGroupTransactions(); track tx.id) {
+            @if (tx.id !== swapSourceId()) {
+              <label class="swap-radio-label">
+                <input
+                  type="radio"
+                  name="swap-target"
+                  [value]="tx.id"
+                  [checked]="swapTargetId() === tx.id"
+                  (change)="selectSwapTarget(tx.id)"
+                />
+                <div class="swap-transaction-row">
+                  <span class="swap-tx-num">#{{ transactionNumbers().get(tx.id) ?? '' }}</span>
+                  <span class="swap-tx-datetime">{{ tx.date }} {{ tx.time }}</span>
+                  <span class="swap-tx-ticker"><strong>{{ tx.ticker }}</strong></span>
+                  <span class="swap-tx-type">
+                    <span class="type-badge type-badge--{{ tx.type }}">{{ tx.type | titlecase }}</span>
+                  </span>
+                  <span class="swap-tx-qty">{{ tx.quantity | number: '1.0-4' }}</span>
+                  <span class="swap-tx-price">@if (isCashTransaction(tx.type)) { — } @else { {{ tx.price | currency: 'USD' : 'symbol' : '1.2-4' }} }</span>
+                  <span class="swap-tx-fee">
+                    @if (tx.fee) { {{ tx.fee | currency: 'USD' : 'symbol' : '1.2-4' }} } @else { — }
+                  </span>
+                </div>
+              </label>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn--secondary" (click)="closeSwapModal()">{{ i18n.translate('closeButton') }}</button>
+      <button
+        type="button"
+        class="btn btn--primary"
+        (click)="confirmSwap()"
+        [disabled]="!swapTargetId()"
+      >
+        {{ i18n.translate('swapNumbers') }}
+      </button>
+    </div>
+  </div>
+</div>

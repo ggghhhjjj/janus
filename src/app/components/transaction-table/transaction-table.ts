@@ -12,6 +12,7 @@ import { StateService } from '../../services/state.service';
 import { I18nService } from '../../services/i18n.service';
 import { Transaction } from '../../models/transaction.model';
 import { TransactionFormComponent } from '../transaction-form/transaction-form';
+import { SwapModalComponent } from '../swap-modal/swap-modal';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 type SortColumn = 'date' | 'ticker' | 'type' | 'quantity' | 'price' | 'fee';
@@ -20,7 +21,7 @@ type SortDir = 'asc' | 'desc';
 @Component({
   selector: 'app-transaction-table',
   standalone: true,
-  imports: [TitleCasePipe, DecimalPipe, CurrencyPipe, TransactionFormComponent],
+  imports: [TitleCasePipe, DecimalPipe, CurrencyPipe, TransactionFormComponent, SwapModalComponent],
   templateUrl: './transaction-table.html',
   styleUrl: './transaction-table.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -106,14 +107,12 @@ type SortDir = 'asc' | 'desc';
     readonly editingTransaction = signal<Transaction | null>(null);
 
     // Swap modal state
-    /** Whether the swap (conflict-resolution) modal is open. */
+    /** Whether the swap (conflict-resolution) modal is visible. */
     readonly swapModalOpen = signal(false);
     /** Transactions belonging to the currently selected conflict group. */
     readonly swapGroupTransactions = signal<Transaction[]>([]);
     /** Source transaction id for swapping sequence numbers. */
     readonly swapSourceId = signal<number | null>(null);
-    /** Target transaction id selected as swap destination. */
-    readonly swapTargetId = signal<number | null>(null);
 
     // Navigation / highlight (exposed from StateService for template)
     /** ID of the highlighted transaction (used by templates to focus a row). */
@@ -299,45 +298,7 @@ type SortDir = 'asc' | 'desc';
       });
       this.swapGroupTransactions.set(sorted);
       this.swapSourceId.set(tx.id);
-      this.swapTargetId.set(null);
       this.swapModalOpen.set(true);
-    }
-
-    /** Select a transaction ID as the swap target in the modal. */
-    selectSwapTarget(id: number): void {
-      this.swapTargetId.set(id);
-    }
-
-    /**
-     * Confirm and execute a swap of sequence numbers between two transactions.
-     * On success, refresh the swap group display; on failure, alert the user.
-     */
-    async confirmSwap(): Promise<void> {
-      const sourceId = this.swapSourceId();
-      const targetId = this.swapTargetId();
-      if (!sourceId || !targetId) return;
-      try {
-        await this.state.swapSeqNos(sourceId, targetId);
-        // Refresh the conflict group display
-        const source = this.allTransactions().find((t) => t.id === sourceId);
-        if (source) {
-          const groupKey = `${source.date}|${source.time}|${source.ticker}`;
-          const group = this.allTransactions().filter(
-            (t) => `${t.date}|${t.time}|${t.ticker}` === groupKey
-          );
-          const sorted = [...group].sort((a, b) => {
-            const aSeqNo = a.seqNo ?? 0;
-            const bSeqNo = b.seqNo ?? 0;
-            if (aSeqNo !== bSeqNo) return aSeqNo - bSeqNo;
-            return a.id - b.id;
-          });
-          this.swapGroupTransactions.set(sorted);
-        }
-        // Reset target, keep modal open for more swaps
-        this.swapTargetId.set(null);
-      } catch (err) {
-        alert('Failed to swap transactions. Please try again.');
-      }
     }
 
     /** Close the swap modal and clear all transient swap state. */
@@ -345,6 +306,5 @@ type SortDir = 'asc' | 'desc';
       this.swapModalOpen.set(false);
       this.swapGroupTransactions.set([]);
       this.swapSourceId.set(null);
-      this.swapTargetId.set(null);
     }
   }
