@@ -27,7 +27,7 @@ Apache Cordova app targeting the **browser** platform, with **Angular 21** as th
 | `src/app/components/broker-account/` | Component — broker account balance |
 | `src/app/components/total-gain-loss/` | Component — total realized gain/loss |
 | `src/app/components/yearly-breakdown/` | Component — year-by-year gain/loss table |
-| `src/app/components/open-lots-widget/` | Component — open positions by ticker |
+| `src/app/components/open-lots/` | Component — open positions by ticker |
 | `src/app/components/fifo-matching/` | Component — FIFO lot matching detail table |
 | `public/` | Static assets copied verbatim into `www/` |
 | `angular.json` | Angular CLI config — output path is `www/` |

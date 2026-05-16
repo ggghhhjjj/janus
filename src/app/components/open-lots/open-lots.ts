@@ -11,14 +11,14 @@ interface OpenLotSummary {
 }
 
 @Component({
-  selector: 'app-open-lots-widget',
+  selector: 'app-open-lots',
   standalone: true,
   imports: [CurrencyPipe, DecimalPipe],
-  templateUrl: './open-lots-widget.html',
-  styleUrl: './open-lots-widget.css',
+  templateUrl: './open-lots.html',
+  styleUrl: './open-lots.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OpenLotsWidgetComponent {
+export class OpenLotsComponent {
   private readonly fifoState = toSignal(inject(StateService).fifoState$, { initialValue: null });
   readonly i18n = inject(I18nService);
 

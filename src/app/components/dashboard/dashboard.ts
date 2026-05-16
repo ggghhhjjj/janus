@@ -6,7 +6,7 @@ import { BrokerAccountComponent } from '../broker-account/broker-account';
 import { TotalGainLossComponent } from '../total-gain-loss/total-gain-loss';
 import { FifoMatchingComponent } from '../fifo-matching/fifo-matching';
 import { YearlyBreakdownComponent } from '../yearly-breakdown/yearly-breakdown';
-import { OpenLotsWidgetComponent } from '../open-lots-widget/open-lots-widget';
+import { OpenLotsComponent } from '../open-lots/open-lots';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,7 +15,7 @@ import { OpenLotsWidgetComponent } from '../open-lots-widget/open-lots-widget';
     BrokerAccountComponent,
     TotalGainLossComponent,
     YearlyBreakdownComponent,
-    OpenLotsWidgetComponent,
+    OpenLotsComponent,
     FifoMatchingComponent,
   ],
   templateUrl: './dashboard.html',
