@@ -31,11 +31,7 @@
                 {{ i18n.translate('tableHeaderTicker') }} {{ sortIcon('ticker') }}
               </button>
             </th>
-            <th scope="col">
-              <button class="sort-btn" (click)="sort('type')" [attr.aria-label]="i18n.translate('sortByType') + ' ' + sortIcon('type')">
-                {{ i18n.translate('tableHeaderType') }} {{ sortIcon('type') }}
-              </button>
-            </th>
+            <!-- Type column removed for mobile optimization; moved under ticker cell -->
             <th scope="col" class="text-right">
               <button class="sort-btn" (click)="sort('quantity')" [attr.aria-label]="i18n.translate('sortByQuantity') + ' ' + sortIcon('quantity')">
                 {{ i18n.translate('tableHeaderQuantity') }} {{ sortIcon('quantity') }}
@@ -119,9 +115,11 @@
                 <div class="col-date__date">{{ tx.date }}</div>
                 <div class="col-date__time">{{ tx.time }}</div>
               </td>
-              <td><strong>{{ tx.ticker }}</strong></td>
               <td>
-                <span class="type-badge type-badge--{{ tx.type }}">{{ i18n.translate(tx.type) }}</span>
+                <strong>{{ tx.ticker }}</strong>
+                <div class="tx-ticker__meta">
+                  <span class="type-badge type-badge--{{ tx.type }}">{{ i18n.translate(tx.type) }}</span>
+                </div>
               </td>
               <td class="text-right">@if (isCashTransaction(tx.type)) { 1.00 } @else { {{ tx.quantity | number: '1.0-4' }} }</td>
               <td class="text-right">@if (tx.price) { {{ tx.price | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }</td>

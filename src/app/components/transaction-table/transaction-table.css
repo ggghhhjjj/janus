@@ -81,6 +81,15 @@
   color: #d97706;
 }
 
+.tx-ticker__meta {
+  margin-top: 0.12rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .currency-badge {
   display: inline-block;
   padding: 0.25rem 0.5rem;
@@ -258,15 +267,15 @@
 
 /* Tablet view (768px–1199px): Hide Fee and Notes for compact layout */
 @media (min-width: 768px) and (max-width: 1199px) {
-  /* Hide fee column (7th column after removing Currency) */
-  thead th:nth-child(7),
-  tbody td:nth-child(7) {
+  /* Hide fee column (now 6th column after removing Type) */
+  thead th:nth-child(6),
+  tbody td:nth-child(6) {
     display: none;
   }
 
-  /* Hide notes column (8th column after removing Currency) */
-  thead th:nth-child(8),
-  tbody td:nth-child(8) {
+  /* Hide notes column (now 7th column after removing Type) */
+  thead th:nth-child(7),
+  tbody td:nth-child(7) {
     display: none;
   }
 }
@@ -283,15 +292,14 @@
     padding: 0.5rem 0.5rem;
   }
 
-  /* Hide fee column (7th column after removing Currency) */
-  thead th:nth-child(7),
-  tbody td:nth-child(7) {
+  /* Hide fee column (now 6th column after removing Type) */
+  thead th:nth-child(6),
+  tbody td:nth-child(6) {
     display: none;
   }
-
-  /* Hide notes column (8th column after removing Currency) */
-  thead th:nth-child(8),
-  tbody td:nth-child(8) {
+  /* Hide notes column (now 7th column after removing Type) */
+  thead th:nth-child(7),
+  tbody td:nth-child(7) {
     display: none;
   }
 

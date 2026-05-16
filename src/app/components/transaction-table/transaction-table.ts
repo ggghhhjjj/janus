@@ -15,7 +15,7 @@ import { TransactionFormComponent } from '../transaction-form/transaction-form';
 import { SwapModalComponent } from '../swap-modal/swap-modal';
 import { toSignal } from '@angular/core/rxjs-interop';
 
-type SortColumn = 'date' | 'ticker' | 'type' | 'quantity' | 'price' | 'fee';
+type SortColumn = 'date' | 'ticker' | 'quantity' | 'price' | 'fee';
 type SortDir = 'asc' | 'desc';
 
 @Component({
@@ -83,7 +83,6 @@ type SortDir = 'asc' | 'desc';
         } else {
           // Other columns: apply normal sort direction
           if (col === 'ticker') cmp = a.ticker.localeCompare(b.ticker);
-          else if (col === 'type') cmp = a.type.localeCompare(b.type);
           else if (col === 'quantity') cmp = a.quantity - b.quantity;
           else if (col === 'price') cmp = a.price - b.price;
           else if (col === 'fee') cmp = (a.fee ?? 0) - (b.fee ?? 0);
