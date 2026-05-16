@@ -20,7 +20,7 @@
       <table class="data-table" [attr.aria-label]="i18n.translate('transactions')">
         <thead>
           <tr>
-            <th scope="col" class="col-num text-center">{{ i18n.translate('tableHeaderNum') }}</th>
+            <th scope="col" class="col-num text-left">{{ i18n.translate('tableHeaderNum') }}</th>
             <th scope="col" class="col-date">
               <button class="sort-btn" (click)="sort('date')" [attr.aria-label]="i18n.translate('sortByDate') + ' ' + sortIcon('date')">
                 {{ i18n.translate('tableHeaderDate') }} {{ sortIcon('date') }}
@@ -32,17 +32,17 @@
               </button>
             </th>
             <!-- Type column removed for mobile optimization; moved under ticker cell -->
-            <th scope="col" class="text-right">
+            <th scope="col" class="text-left">
               <button class="sort-btn" (click)="sort('quantity')" [attr.aria-label]="i18n.translate('sortByQuantity') + ' ' + sortIcon('quantity')">
                 {{ i18n.translate('tableHeaderQuantity') }} {{ sortIcon('quantity') }}
               </button>
             </th>
-            <th scope="col" class="text-right">
+            <th scope="col" class="text-left">
               <button class="sort-btn" (click)="sort('price')" [attr.aria-label]="i18n.translate('sortByPrice') + ' ' + sortIcon('price')">
                 {{ i18n.translate('tableHeaderPrice') }} {{ sortIcon('price') }}
               </button>
             </th>
-            <th scope="col" class="text-right">
+            <th scope="col" class="text-left">
               <button class="sort-btn" (click)="sort('fee')" [attr.aria-label]="i18n.translate('sortByFee') + ' ' + sortIcon('fee')">
                 {{ i18n.translate('tableHeaderFee') }} {{ sortIcon('fee') }}
               </button>
@@ -57,7 +57,7 @@
               [class.highlighted]="highlightedTransactionId() === tx.id"
               [class.tx-row--conflict]="conflictTransactionIds().has(tx.id)"
             >
-              <td class="col-num text-center num-cell">
+              <td class="col-num text-left num-cell">
                 <div class="num-cell__content">
                   <div class="num-cell__number">{{ transactionNumbers().get(tx.id) ?? '' }}</div>
                   <button
@@ -121,9 +121,9 @@
                   <span class="type-badge type-badge--{{ tx.type }}">{{ i18n.translate(tx.type) }}</span>
                 </div>
               </td>
-              <td class="text-right">@if (isCashTransaction(tx.type)) { 1.00 } @else { {{ tx.quantity | number: '1.0-4' }} }</td>
-              <td class="text-right">@if (tx.price) { {{ tx.price | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }</td>
-              <td class="text-right">@if (tx.fee) { {{ tx.fee | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }</td>
+              <td class="text-left">@if (isCashTransaction(tx.type)) { 1.00 } @else { {{ tx.quantity | number: '1.0-4' }} }</td>
+              <td class="text-left">@if (tx.price) { {{ tx.price | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }</td>
+              <td class="text-left">@if (tx.fee) { {{ tx.fee | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }</td>
               <td class="notes-cell">{{ tx.notes }}</td>
             </tr>
           }
