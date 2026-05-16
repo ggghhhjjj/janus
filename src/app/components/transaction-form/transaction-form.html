@@ -8,6 +8,7 @@
   tabindex="-1"
 >
   <div class="modal-card">
+    <div class="sheet-handle" aria-hidden="true"></div>
     <h2 class="modal-title">{{ isEditMode ? i18n.translate('editTransaction') : i18n.translate('addTransactionForm') }}</h2>
 
     <form [formGroup]="form" (ngSubmit)="onSave()" novalidate>

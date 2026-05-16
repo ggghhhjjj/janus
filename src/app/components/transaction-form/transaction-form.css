@@ -16,6 +16,8 @@
   padding: 2rem;
   width: 100%;
   max-width: 480px;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   position: relative;
 }
@@ -92,10 +94,38 @@
   margin-top: 1.5rem;
 }
 
-@media (max-width: 480px) {
+.sheet-handle {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
   .modal-card {
-    padding: 1.25rem;
-    border-radius: 8px;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 90dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: env(safe-area-inset-bottom, 1.25rem);
+    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .sheet-handle {
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: #d1d5db;
+    border-radius: 2px;
+    margin: 0.75rem auto 1rem;
+  }
+
+  .modal-title {
+    margin-top: 0.75rem;
   }
 
   .modal-actions {
