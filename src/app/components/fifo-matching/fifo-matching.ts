@@ -11,14 +11,14 @@ function r2(n: number): number {
 }
 
 @Component({
-  selector: 'app-fifo-matching-widget',
+  selector: 'app-fifo-matching',
   standalone: true,
   imports: [CurrencyPipe, DecimalPipe],
-  templateUrl: './fifo-matching-widget.html',
-  styleUrl: './fifo-matching-widget.css',
+  templateUrl: './fifo-matching.html',
+  styleUrl: './fifo-matching.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FifoMatchingWidgetComponent {
+export class FifoMatchingComponent {
   private readonly state = inject(StateService);
   private readonly router = inject(Router);
   private readonly fifoState = toSignal(this.state.fifoState$, { initialValue: null });

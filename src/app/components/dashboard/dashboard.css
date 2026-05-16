@@ -21,7 +21,7 @@
     grid-column: 1 / -1;
   }
 
-  app-fifo-matching-widget {
+  app-fifo-matching {
     grid-column: 1 / -1;
   }
 }

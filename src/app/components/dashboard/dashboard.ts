@@ -4,7 +4,7 @@ import { I18nService } from '../../services/i18n.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BrokerAccountComponent } from '../broker-account/broker-account';
 import { TotalGainLossWidgetComponent } from '../total-gain-loss-widget/total-gain-loss-widget';
-import { FifoMatchingWidgetComponent } from '../fifo-matching-widget/fifo-matching-widget';
+import { FifoMatchingComponent } from '../fifo-matching/fifo-matching';
 import { YearlyBreakdownWidgetComponent } from '../yearly-breakdown-widget/yearly-breakdown-widget';
 import { OpenLotsWidgetComponent } from '../open-lots-widget/open-lots-widget';
 
@@ -16,7 +16,7 @@ import { OpenLotsWidgetComponent } from '../open-lots-widget/open-lots-widget';
     TotalGainLossWidgetComponent,
     YearlyBreakdownWidgetComponent,
     OpenLotsWidgetComponent,
-    FifoMatchingWidgetComponent,
+    FifoMatchingComponent,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',

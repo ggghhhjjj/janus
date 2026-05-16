@@ -28,7 +28,7 @@ Apache Cordova app targeting the **browser** platform, with **Angular 21** as th
 | `src/app/components/total-gain-loss-widget/` | Widget — total realized gain/loss |
 | `src/app/components/yearly-breakdown-widget/` | Widget — year-by-year gain/loss table |
 | `src/app/components/open-lots-widget/` | Widget — open positions by ticker |
-| `src/app/components/fifo-matching-widget/` | Widget — FIFO lot matching detail table |
+| `src/app/components/fifo-matching/` | Widget — FIFO lot matching detail table |
 | `public/` | Static assets copied verbatim into `www/` |
 | `angular.json` | Angular CLI config — output path is `www/` |
 | `hooks/before_prepare/build_angular.js` | Cordova hook — runs `npm run build` before prepare/build/run |
