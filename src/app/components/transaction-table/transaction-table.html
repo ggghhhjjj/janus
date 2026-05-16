@@ -37,11 +37,7 @@
                 {{ i18n.translate('tableHeaderPrice') }} {{ sortIcon('price') }}
               </button>
             </th>
-            <th scope="col" class="text-left">
-              <button class="sort-btn" (click)="sort('fee')" [attr.aria-label]="i18n.translate('sortByFee') + ' ' + sortIcon('fee')">
-                {{ i18n.translate('tableHeaderFee') }} {{ sortIcon('fee') }}
-              </button>
-            </th>
+            <!-- Fee column removed for mobile; fee shown under Price cell -->
             <th scope="col">{{ i18n.translate('tableHeaderNotes') }}</th>
           </tr>
         </thead>
@@ -121,8 +117,20 @@
                   </div>
                 </div>
               </td>
-              <td class="text-left">@if (tx.price) { {{ tx.price | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }</td>
-              <td class="text-left">@if (tx.fee) { {{ tx.fee | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }</td>
+              <td class="text-left">
+                @if (tx.price) { {{ tx.price | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }
+                @if (tx.price && tx.quantity) {
+                  <div class="tx-total" style="font-size:0.95em; margin-top:0.25rem;">
+                    <strong>{{ i18n.translate('totalLabel') }}: {{ (tx.quantity * tx.price) | currency: tx.currency : 'symbol' : '1.2-4' }}</strong>
+                  </div>
+                }
+                @if (tx.fee) {
+                  <div class="tx-fee" style="font-size:0.85em; color:var(--text-muted); margin-top:0.25rem;">
+                    <span class="tx-fee__label">{{ i18n.translate('feeLabel') }}:</span>
+                    <span class="tx-fee__value">{{ tx.fee | currency: tx.currency : 'symbol' : '1.2-4' }}</span>
+                  </div>
+                }
+              </td>
               <td class="notes-cell">{{ tx.notes }}</td>
             </tr>
           }

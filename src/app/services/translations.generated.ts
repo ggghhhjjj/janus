@@ -81,9 +81,13 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
     "en": "Price",
     "bg": "Цена"
   },
-  "tableHeaderFee": {
+  "feeLabel": {
     "en": "Fee",
     "bg": "Комисион"
+  },
+  "totalLabel": {
+    "en": "Total",
+    "bg": "Общо"
   },
   "tableHeaderNotes": {
     "en": "Notes",
