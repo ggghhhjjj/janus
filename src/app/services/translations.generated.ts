@@ -122,8 +122,8 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
     "bg": "Конфликт: Множество транзакции с същата дата, час и тикер"
   },
   "reorderButton": {
-    "en": "⇄ Reorder",
-    "bg": "⇄ Пренареждане"
+    "en": "Reorder",
+    "bg": "Пренареждане"
   },
   "editButton": {
     "en": "Edit",

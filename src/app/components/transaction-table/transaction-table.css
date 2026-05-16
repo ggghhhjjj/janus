@@ -147,7 +147,8 @@
 
 .btn--warn-ghost {
   color: #fbbf24;
-  border-color: #fbbf24;
+  border-color: transparent;
+  background: transparent;
 }
 
 .btn--warn-ghost:hover:not(:disabled) {
