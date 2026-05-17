@@ -16,7 +16,8 @@
       <p>{{ i18n.translate('noTransactionsYet') }} <strong>"{{ i18n.translate('addTransaction') }}"</strong> {{ i18n.translate('toBegin') }}</p>
     </div>
   } @else {
-    <div class="table-wrapper" role="region" [attr.aria-label]="i18n.translate('transactions') + ' ' + i18n.translate('tableHeaderActions')" tabindex="0">
+    <app-tx-table>
+      <div class="table-wrapper" role="region" [attr.aria-label]="i18n.translate('transactions') + ' ' + i18n.translate('tableHeaderActions')" tabindex="0">
       <table class="data-table" [attr.aria-label]="i18n.translate('transactions')">
         <thead>
           <tr>
@@ -63,7 +64,7 @@
               </td>
               <td>
                 <strong>{{ tx.ticker }}</strong>
-                <div class="tx-ticker__meta" style="display:flex; flex-direction:column; gap:0.2rem; align-items:flex-start;">
+                <div class="tx-ticker__meta">
                   <div class="tx-type">
                     <span class="type-badge type-badge--{{ tx.type }}">{{ i18n.translate(tx.type) }}</span>
                   </div>
@@ -75,12 +76,12 @@
               <td class="text-left">
                 @if (tx.price) { {{ tx.price | currency: tx.currency : 'symbol' : '1.2-4' }} } @else { — }
                 @if (tx.price && tx.quantity) {
-                  <div class="tx-total" style="font-size:0.95em; margin-top:0.25rem;">
+                  <div class="tx-total">
                     <strong>{{ i18n.translate('totalLabel') }}: {{ (tx.quantity * tx.price) | currency: tx.currency : 'symbol' : '1.2-4' }}</strong>
                   </div>
                 }
                 @if (tx.fee) {
-                  <div class="tx-fee" style="font-size:0.85em; color:var(--text-muted); margin-top:0.25rem;">
+                  <div class="tx-fee">
                     <span class="tx-fee__label">{{ i18n.translate('feeLabel') }}:</span>
                     <span class="tx-fee__value">{{ tx.fee | currency: tx.currency : 'symbol' : '1.2-4' }}</span>
                   </div>
@@ -91,7 +92,8 @@
           }
         </tbody>
       </table>
-    </div>
+      </div>
+    </app-tx-table>
   }
 </div>
 

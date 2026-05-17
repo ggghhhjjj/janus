@@ -16,11 +16,12 @@ import { CommonModule, DecimalPipe, CurrencyPipe } from '@angular/common';
 import { StateService } from '../../services/state.service';
 import { I18nService } from '../../services/i18n.service';
 import { Transaction } from '../../models/transaction.model';
+import { TxTableComponent } from '../shared/tx-table/tx-table';
 
 @Component({
   selector: 'app-swap-modal',
   standalone: true,
-  imports: [CommonModule, DecimalPipe, CurrencyPipe],
+  imports: [CommonModule, DecimalPipe, CurrencyPipe, TxTableComponent],
   templateUrl: './swap-modal.html',
   styleUrl: './swap-modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

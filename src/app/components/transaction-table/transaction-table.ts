@@ -14,6 +14,7 @@ import { Transaction } from '../../models/transaction.model';
 import { TransactionFormComponent } from '../transaction-form/transaction-form';
 import { SwapModalComponent } from '../swap-modal/swap-modal';
 import { ActionMenuComponent, ActionMenuItem } from '../action-menu/action-menu';
+import { TxTableComponent } from '../shared/tx-table/tx-table';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 type SortColumn = 'date' | 'ticker' | 'quantity' | 'price' | 'fee';
@@ -22,7 +23,7 @@ type SortDir = 'asc' | 'desc';
 @Component({
   selector: 'app-transaction-table',
   standalone: true,
-  imports: [DecimalPipe, CurrencyPipe, TransactionFormComponent, SwapModalComponent, ActionMenuComponent],
+  imports: [DecimalPipe, CurrencyPipe, TransactionFormComponent, SwapModalComponent, ActionMenuComponent, TxTableComponent],
   templateUrl: './transaction-table.html',
   styleUrl: './transaction-table.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

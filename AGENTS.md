@@ -31,6 +31,7 @@ Apache Cordova app targeting the **browser** platform, with **Angular 21** as th
 | `src/app/components/yearly-breakdown/` | Component — year-by-year gain/loss table |
 | `src/app/components/open-lots/` | Component — open positions by ticker |
 | `src/app/components/fifo-matching/` | Component — FIFO lot matching detail table |
+| `src/app/components/shared/tx-table/` | **CSS ownership boundary** — `TxTableComponent` (`ViewEncapsulation.None`) owns all shared transaction-cell classes: `.type-badge*`, `.num-cell*`, `.col-date__*`, `.tx-ticker__meta`, `.tx-row--conflict`, `.notes-cell`. Wrap any `<table class="data-table">` that needs these styles in `<app-tx-table>`. |
 | `public/` | Static assets copied verbatim into `www/` |
 | `angular.json` | Angular CLI config — output path is `www/` |
 | `hooks/before_prepare/build_angular.js` | Cordova hook — runs `npm run build` before prepare/build/run |
@@ -103,7 +104,18 @@ All CSS in this project **must follow BEM (Block Element Modifier)** naming.
 - **Never use nested tag selectors** to style elements — e.g. `.swap-radio-label input` is wrong; use `.swap-radio-label__input` instead.
 - **Never use ID selectors** (`#foo`) for styling.
 - **Pseudo-classes and pseudo-elements** are allowed directly on a BEM class — e.g. `.swap-radio-label__input:checked::before` is correct.
-- Each BEM block maps to one component CSS file; blocks are not shared across components (except globals in `src/styles.css`).
+- Each BEM block maps to one component CSS file; blocks are not shared across components (except globals in `src/styles.css` and the transaction-cell design system in `src/app/components/shared/tx-table/tx-table.css`).
+- **Never redeclare** `.type-badge*`, `.num-cell*`, `.col-date__*`, `.tx-ticker__meta`, `.tx-row--conflict`, or `.notes-cell` in any consumer component CSS — they live in `tx-table.css`.
+- **Never add inline styles** to elements that have a corresponding class in `tx-table.css` (e.g. `.tx-ticker__meta`, `.tx-total`, `.tx-fee` are already styled there).
+
+### CSS Shared via `ViewEncapsulation.None`
+
+`TxTableComponent` uses `ViewEncapsulation.None` so its styles apply to projected content from any parent component. Angular's emulated encapsulation stamps projected DOM elements with the *providing* component's `_ngcontent` attribute — not the wrapper's — so scoped CSS rules on the wrapper cannot match them. `None` makes the styles global; BEM class names are the safety boundary.
+
+**Rules for this pattern:**
+- Use only when the same CSS classes need to apply to content projected from *multiple* different parent components.
+- Always set `your-element-selector { display: block; }` in the CSS file — HTML custom elements default to `display: inline`, which can disrupt block layout of children.
+- Consumer components must add `TxTableComponent` to their `imports` array and wrap the table in `<app-tx-table>`.
 
 **Examples:**
 ```css
@@ -171,5 +183,7 @@ See full documentation in [I18N.md](I18N.md). Use `/add-i18n` skill for step-by-
 - **No hardcoded UI strings** — all text goes through `i18n.translate()`.
 - **CSP failures are silent** — if an API call fails, check `src/index.html` CSP header.
 - **`cordova` object undefined in dev** — always guard with `typeof cordova !== 'undefined'`.
+- **`ViewEncapsulation.None` styles are global** — classes in `tx-table.css` apply everywhere once `TxTableComponent` is mounted. Never add generic or short class names to this file; BEM is the only safety net.
+- **Custom elements default to `display:inline`** — any new `ViewEncapsulation.None` wrapper component must include `selector { display: block; }` in its CSS file.
 
 

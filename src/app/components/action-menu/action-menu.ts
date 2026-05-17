@@ -46,9 +46,15 @@ export class ActionMenuComponent {
     if (this.isOpen()) {
       this.close();
     } else {
+      // Calculate position before showing the popup so the first render already
+      // has position:fixed applied. If isOpen were set first, Angular would render
+      // the popup without a position style (positionStyle() returns '') causing it
+      // to appear in normal document flow and force a table layout reflow.
+      this.calculatePosition();
       this.isOpen.set(true);
       setTimeout(() => {
-        this.calculatePosition();
+        // Focus must still be deferred — the popup DOM doesn't exist yet when
+        // isOpen.set(true) is called; Angular renders it after this event handler.
         const firstItem = (this.el.nativeElement as HTMLElement).querySelector<HTMLElement>('.action-menu__item');
         firstItem?.focus();
       }, 0);
