@@ -494,8 +494,8 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
     "bg": "Теглене"
   },
   "brokerAccountBalance": {
-    "en": "Broker Account Balance",
-    "bg": "Баланс на брокерския счет"
+    "en": "Account Balance",
+    "bg": "Баланс на сметката"
   },
   "brokerAccountEmpty": {
     "en": "No funding or withdrawal transactions yet.",
