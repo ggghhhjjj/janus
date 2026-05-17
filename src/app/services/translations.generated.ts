@@ -528,5 +528,13 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
   "refreshTooltip": {
     "en": "Refresh application",
     "bg": "Обновяване на приложението"
+  },
+  "tableHeaderTime": {
+    "en": "Time",
+    "bg": "Час"
+  },
+  "exportCsv": {
+    "en": "↓ Export CSV",
+    "bg": "↓ Експорт CSV"
   }
 };

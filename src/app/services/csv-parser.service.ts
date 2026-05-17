@@ -8,6 +8,21 @@ export interface ImportResult {
   duplicates: NewTransaction[];
 }
 
+export interface ExportLabels {
+  headers: {
+    date: string;
+    time: string;
+    ticker: string;
+    type: string;
+    quantity: string;
+    price: string;
+    fee: string;
+    notes: string;
+    currency: string;
+  };
+  typeLabels: Record<string, string>;
+}
+
 @Injectable({ providedIn: 'root' })
 export class CsvParserService {
   /**
@@ -98,14 +113,13 @@ export class CsvParserService {
       return 'degiro';
     }
 
-    // Generic: must have date, (ticker or symbol), type, quantity, price
-    if (
-      h.includes('date') &&
-      (h.includes('ticker') || h.includes('symbol')) &&
-      h.includes('type') &&
-      h.includes('quantity') &&
-      h.includes('price')
-    ) {
+    // Generic: must have date, (ticker or symbol), type, quantity, price — English or Bulgarian headers
+    const hasDate = h.includes('date') || h.includes('дата');
+    const hasTicker = h.includes('ticker') || h.includes('тикер') || h.includes('symbol');
+    const hasType = h.includes('type') || h.includes('вид');
+    const hasQuantity = h.includes('quantity') || h.includes('количество');
+    const hasPrice = h.includes('price') || h.includes('цена');
+    if (hasDate && hasTicker && hasType && hasQuantity && hasPrice) {
       return 'generic';
     }
 
@@ -141,6 +155,26 @@ export class CsvParserService {
       return idx >= 0 ? (row[idx] ?? '').trim() : '';
     };
 
+    // For generic format: support localized (Bulgarian) column headers and type values
+    let colGeneric: (row: string[], name: string) => string = col;
+    const typeAliasMap: Record<string, string> = {};
+    if (format === 'generic') {
+      const headerAliases: Record<string, string> = {
+        'дата': 'date', 'час': 'time', 'тикер': 'ticker', 'вид': 'type',
+        'количество': 'quantity', 'цена': 'price', 'комисион': 'fee',
+        'бележки': 'notes', 'валута': 'currency',
+      };
+      const normalizedHeaders = headers.map(h => headerAliases[h] ?? h);
+      colGeneric = (row: string[], name: string): string => {
+        const idx = normalizedHeaders.indexOf(name);
+        return idx >= 0 ? (row[idx] ?? '').trim() : '';
+      };
+      Object.assign(typeAliasMap, {
+        'покупка': 'buy', 'продажба': 'sell', 'дивидент': 'dividend',
+        'сплит': 'split', 'депозит': 'funding', 'теглене': 'withdrawal',
+      });
+    }
+
     const parseDate = (raw: string): string | null => {
       if (!raw) return null;
       // Try YYYY-MM-DD
@@ -169,6 +203,7 @@ export class CsvParserService {
         let priceStr = '';
         let feeStr = '';
         let notes = '';
+        let currency = 'USD';
 
         if (format === 'ibkr') {
           rawDate = col(row, 'tradedate');
@@ -223,15 +258,17 @@ export class CsvParserService {
           feeStr = col(row, 'fee') || col(row, 'commission') || col(row, 'cost') || col(row, 'commissionfee') || '';
           notes = description || col(row, 'notes') || '';
         } else {
-          // generic
-          rawDate = col(row, 'date');
-          rawTime = col(row, 'time') || '';
-          ticker = (col(row, 'ticker') || col(row, 'symbol')).toUpperCase();
-          typeStr = col(row, 'type').toLowerCase();
-          quantityStr = col(row, 'quantity');
-          priceStr = col(row, 'price');
-          feeStr = col(row, 'fee') || col(row, 'commission') || col(row, 'cost') || col(row, 'commissionfee') || '';
-          notes = col(row, 'notes') || '';
+          // generic — supports both English and Bulgarian headers/type values
+          rawDate = colGeneric(row, 'date');
+          rawTime = colGeneric(row, 'time') || '';
+          ticker = (colGeneric(row, 'ticker') || colGeneric(row, 'symbol')).toUpperCase();
+          typeStr = colGeneric(row, 'type').toLowerCase();
+          typeStr = typeAliasMap[typeStr] ?? typeStr;
+          quantityStr = colGeneric(row, 'quantity');
+          priceStr = colGeneric(row, 'price');
+          feeStr = colGeneric(row, 'fee') || colGeneric(row, 'commission') || colGeneric(row, 'cost') || colGeneric(row, 'commissionfee') || '';
+          notes = colGeneric(row, 'notes') || '';
+          currency = colGeneric(row, 'currency') || 'USD';
         }
 
         const date = parseDate(rawDate);
@@ -252,7 +289,7 @@ export class CsvParserService {
           continue; // skip invalid rows silently
         }
 
-        results.push({ date, time, ticker, type, quantity, price, currency: 'USD', ...(fee && !isNaN(fee) ? { fee } : {}), notes });
+        results.push({ date, time, ticker, type, quantity, price, currency, ...(fee && !isNaN(fee) ? { fee } : {}), notes });
       } catch {
         // skip malformed rows
         continue;
@@ -260,6 +297,46 @@ export class CsvParserService {
     }
 
     return results;
+  }
+
+  /**
+   * Export transactions as a generic-format CSV string.
+   * Column order: date, time, ticker, type, quantity, price, fee, notes, currency.
+   * For funding/withdrawal rows, the quantity column holds tx.price (the cash amount)
+   * so that re-importing via normalize() correctly reconstructs the transaction.
+   */
+  exportGenericCsv(transactions: Transaction[], labels: ExportLabels): string {
+    const { headers: h, typeLabels } = labels;
+    const toRow = (cells: string[]): string => cells.map(v => this.csvEscape(v)).join(',');
+
+    const headerRow = toRow([
+      h.date, h.time, h.ticker, h.type, h.quantity, h.price, h.fee, h.notes, h.currency,
+    ]);
+
+    const dataRows = transactions.map(tx => {
+      const isCash = tx.type === 'funding' || tx.type === 'withdrawal';
+      const quantityCol = isCash ? tx.price : tx.quantity;
+      return toRow([
+        tx.date,
+        tx.time,
+        tx.ticker,
+        typeLabels[tx.type] ?? tx.type,
+        String(quantityCol),
+        String(tx.price),
+        tx.fee != null ? String(tx.fee) : '',
+        tx.notes ?? '',
+        tx.currency,
+      ]);
+    });
+
+    return [headerRow, ...dataRows].join('\n');
+  }
+
+  private csvEscape(value: string): string {
+    if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
+      return '"' + value.replace(/"/g, '""') + '"';
+    }
+    return value;
   }
 
   findDuplicates(incoming: NewTransaction[], existing: Transaction[]): ImportResult {

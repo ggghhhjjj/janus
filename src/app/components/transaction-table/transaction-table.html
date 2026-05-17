@@ -11,7 +11,9 @@
         {{ i18n.translate('backToDashboard') }}
       </button>
     }
-    <h1 class="tx-table-view__title">{{ i18n.translate('transactions') }}</h1>
+    <button type="button" class="btn btn--primary" (click)="exportCsv()" [attr.aria-label]="i18n.translate('exportCsv')">
+      {{ i18n.translate('exportCsv') }}
+    </button>
     <button type="button" class="btn btn--primary" (click)="openAdd()" [attr.aria-label]="i18n.translate('addTransaction')">
       {{ i18n.translate('addTransaction') }}
     </button>

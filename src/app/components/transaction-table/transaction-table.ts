@@ -18,6 +18,7 @@ import { ActionMenuComponent, ActionMenuItem } from '../action-menu/action-menu'
 import { TxTableComponent } from '../shared/tx-table/tx-table';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CordovaService } from '../../cordova.service';
+import { CsvParserService, ExportLabels } from '../../services/csv-parser.service';
 
 type SortColumn = 'date' | 'ticker' | 'quantity' | 'price' | 'fee';
 type SortDir = 'asc' | 'desc';
@@ -124,6 +125,7 @@ type SortDir = 'asc' | 'desc';
     
     /** Cordova service for device event access (deviceready/backbutton). */
     private readonly cordova = inject(CordovaService);
+  private readonly csvParser = inject(CsvParserService);
 
     /** Handler for Cordova 'backbutton' events. */
     private readonly backButtonHandler = (ev: Event) => {
@@ -538,4 +540,39 @@ type SortDir = 'asc' | 'desc';
       }
       return null;
     }
+
+  exportCsv(): void {
+    const labels: ExportLabels = {
+      headers: {
+        date: this.i18n.translate('tableHeaderDate'),
+        time: this.i18n.translate('tableHeaderTime'),
+        ticker: this.i18n.translate('tableHeaderTicker'),
+        type: this.i18n.translate('tableHeaderType'),
+        quantity: this.i18n.translate('tableHeaderQuantity'),
+        price: this.i18n.translate('tableHeaderPrice'),
+        fee: this.i18n.translate('feeLabel'),
+        notes: this.i18n.translate('tableHeaderNotes'),
+        currency: this.i18n.translate('tableHeaderCurrency'),
+      },
+      typeLabels: {
+        buy: this.i18n.translate('buy'),
+        sell: this.i18n.translate('sell'),
+        dividend: this.i18n.translate('dividend'),
+        split: this.i18n.translate('split'),
+        funding: this.i18n.translate('funding'),
+        withdrawal: this.i18n.translate('withdrawal'),
+      },
+    };
+    const csvContent = this.csvParser.exportGenericCsv(this.sorted(), labels);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const today = new Date().toISOString().slice(0, 10);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `transactions-${today}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
+}
