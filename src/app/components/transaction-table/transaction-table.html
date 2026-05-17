@@ -62,7 +62,8 @@
               (dragend)="onDragEnd($event)"
               (touchstart)="onTouchStart(tx, $event)"
               (touchmove)="onTouchMove($event)"
-              (touchend)="onTouchEnd($event)"
+              (touchend)="onTouchEnd(tx, $event)"
+              (dblclick)="openEdit(tx)"
             >
               <td class="col-num text-left num-cell">
                 <div class="num-cell__content">

@@ -120,6 +120,12 @@ type SortDir = 'asc' | 'desc';
     /** Whether a touch drag is currently active. */
     private isTouchDragging: boolean = false;
 
+    // Double-tap state for mobile edit
+    /** Timestamp of the last tap; used to detect double-tap within 300ms. */
+    private lastTapTime: number | null = null;
+    /** Transaction ID of the last tap; used to verify double-tap is on the same row. */
+    private lastTapTxId: number | null = null;
+
     // Navigation / highlight (exposed from StateService for template)
     /** ID of the highlighted transaction (used by templates to focus a row). */
     readonly highlightedTransactionId = this.state.highlightedTransactionId;
@@ -378,10 +384,11 @@ type SortDir = 'asc' | 'desc';
      * Initiates a 500ms tap-and-hold timer; if user holds without moving, drag begins.
      */
     onTouchStart(tx: Transaction, event: TouchEvent): void {
-      if (!this.conflictTransactionIds().has(tx.id)) return;
       const touch = event.touches[0];
       this.touchStartX = touch.clientX;
       this.touchStartY = touch.clientY;
+      // DnD hold timer only applies to conflict rows.
+      if (!this.conflictTransactionIds().has(tx.id)) return;
       this.touchStartTime = Date.now();
     }
 
@@ -428,21 +435,50 @@ type SortDir = 'asc' | 'desc';
     }
 
     /**
-     * Handle touchend event to execute the swap or cancel if no valid target.
+     * Handle touchend event to execute the swap, detect double-tap for edit, or cancel if no valid target.
      */
-    async onTouchEnd(event: TouchEvent): Promise<void> {
-      if (!this.isTouchDragging) {
+    async onTouchEnd(tx: Transaction, event: TouchEvent): Promise<void> {
+      // If a drag is in progress, execute the swap.
+      if (this.isTouchDragging) {
+        const draggedId = this.draggedTransactionId();
+        const targetId = this.dropTargetTransactionId();
+        if (draggedId != null && targetId != null) {
+          try {
+            await this.state.swapSeqNos(draggedId, targetId);
+          } catch (error) {
+            console.error('Failed to swap sequence numbers:', error);
+          }
+        }
         this.clearDragState();
         return;
       }
-      const draggedId = this.draggedTransactionId();
-      const targetId = this.dropTargetTransactionId();
-      if (draggedId != null && targetId != null) {
-        try {
-          await this.state.swapSeqNos(draggedId, targetId);
-        } catch (error) {
-          console.error('Failed to swap sequence numbers:', error);
-        }
+      // No drag in progress; check for double-tap to open edit modal.
+      // Double-tap is detected if: (1) previous tap was on the same row, (2) within 300ms, and (3) no significant movement.
+      const now = Date.now();
+      const moveDistance = Math.sqrt(
+        Math.pow(event.changedTouches[0].clientX - this.touchStartX, 2) +
+          Math.pow(event.changedTouches[0].clientY - this.touchStartY, 2)
+      );
+      const isDoubleTap =
+        this.lastTapTxId === tx.id &&
+        this.lastTapTime != null &&
+        now - this.lastTapTime < 300 &&
+        moveDistance < 10;
+
+      if (isDoubleTap) {
+        this.lastTapTime = null;
+        this.lastTapTxId = null;
+        this.openEdit(tx);
+      } else {
+        this.lastTapTime = now;
+        this.lastTapTxId = tx.id;
+        // Clear the tap after 300ms if no second tap occurs.
+        setTimeout(() => {
+          if (this.lastTapTime === now) {
+            this.lastTapTime = null;
+            this.lastTapTxId = null;
+          }
+        }, 300);
       }
       this.clearDragState();
     }
