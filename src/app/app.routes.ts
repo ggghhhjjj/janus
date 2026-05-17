@@ -1,23 +1,21 @@
 import { Routes } from '@angular/router';
+import { DashboardComponent } from './components/dashboard/dashboard';
+import { TransactionTableComponent } from './components/transaction-table/transaction-table';
+import { CsvImporterComponent } from './components/csv-importer/csv-importer';
 
 export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    loadComponent: () =>
-      import('./components/dashboard/dashboard').then((m) => m.DashboardComponent),
+    component: DashboardComponent,
   },
   {
     path: 'transactions',
-    loadComponent: () =>
-      import('./components/transaction-table/transaction-table').then(
-        (m) => m.TransactionTableComponent
-      ),
+    component: TransactionTableComponent,
   },
   {
     path: 'import',
-    loadComponent: () =>
-      import('./components/csv-importer/csv-importer').then((m) => m.CsvImporterComponent),
+    component: CsvImporterComponent,
   },
   { path: '**', redirectTo: '' },
 ];

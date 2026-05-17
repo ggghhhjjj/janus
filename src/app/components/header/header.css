@@ -111,6 +111,37 @@
   font-weight: 600;
 }
 
+/* Action Menu Styles */
+.header__action-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 2.5rem;
+}
+
+.header__loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.spinner {
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 480px) {
   .header {
     padding: 0.6rem 1rem;
@@ -128,6 +159,16 @@
   .header__language-button {
     font-size: 0.8rem;
     padding: 0.35rem 0.65rem;
+  }
+
+  .header__action-menu {
+    height: 2rem;
+  }
+
+  .spinner {
+    width: 1rem;
+    height: 1rem;
+    border-width: 2px;
   }
 }
 

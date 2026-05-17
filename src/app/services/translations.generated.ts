@@ -524,5 +524,13 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
   "tableHeaderCurrency": {
     "en": "Currency",
     "bg": "Валута"
+  },
+  "refresh": {
+    "en": "Refresh",
+    "bg": "Обновяване"
+  },
+  "refreshTooltip": {
+    "en": "Refresh application",
+    "bg": "Обновяване на приложението"
   }
 };
