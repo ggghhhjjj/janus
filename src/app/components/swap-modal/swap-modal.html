@@ -5,6 +5,7 @@
   [attr.aria-label]="i18n.translate('reorderTitle')"
   (click)="closeSwapModal()"
   tabindex="-1"
+  (keydown)="handleKeydown($event)"
 >
   <div class="modal-card" (click)="$event.stopPropagation()">
     <h2 class="modal-title">{{ i18n.translate('reorderTitle') }}</h2>
@@ -13,8 +14,8 @@
       <div class="swap-section">
         <h3 class="swap-section__title">{{ i18n.translate('sourceTransaction') }}</h3>
         @for (tx of swapGroupTransactions(); track tx.id) {
-          @if (tx.id === swapSourceId()) {
-            <div class="swap-transaction-summary">
+            @if (tx.id === swapSourceId()) {
+            <div class="swap-transaction-summary" #row tabindex="0" [attr.data-tx-id]="tx.id">
               <span class="swap-tx-num">#{{ transactionNumbers().get(tx.id) ?? '' }}</span>
               <span class="swap-tx-datetime">{{ tx.date }} {{ tx.time }}</span>
               <span class="swap-tx-ticker"><strong>{{ tx.ticker }}</strong></span>
@@ -36,7 +37,7 @@
         <div class="swap-radio-group">
           @for (tx of swapGroupTransactions(); track tx.id) {
             @if (tx.id !== swapSourceId()) {
-              <label class="swap-radio-label">
+              <label class="swap-radio-label" #row tabindex="0" [attr.data-tx-id]="tx.id" (click)="selectSwapTarget(tx.id)">
                 <input
                   class="swap-radio-label__input"
                   type="radio"
