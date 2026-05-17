@@ -38,6 +38,7 @@
             @if (tx.id !== swapSourceId()) {
               <label class="swap-radio-label">
                 <input
+                  class="swap-radio-label__input"
                   type="radio"
                   name="swap-target"
                   [value]="tx.id"
