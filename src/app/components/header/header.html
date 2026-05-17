@@ -30,30 +30,5 @@
     </a>
   </nav>
 
-  <!-- Language Selector -->
-  <div class="header__language-selector">
-    <button
-      class="header__language-button"
-      (click)="toggleLanguageMenu()"
-      [attr.aria-expanded]="showLanguageMenu"
-    >
-      {{ i18n.translate('language') }}
-    </button>
-
-    @if (showLanguageMenu) {
-      <div class="header__language-menu" role="menu">
-        @for (locale of i18n.getSupportedLocales(); track locale) {
-          <button
-            type="button"
-            class="header__language-option"
-            [class.header__language-option--active]="i18n.getCurrentLocale() === locale"
-            (click)="selectLanguage(locale)"
-            role="menuitem"
-          >
-            {{ i18n.getLocaleLabel(locale) }}
-          </button>
-        }
-      </div>
-    }
-  </div>
+  <app-language-selector></app-language-selector>
 </header>

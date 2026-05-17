@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { I18nService } from '../../services/i18n.service';
 import { ActionMenuComponent, ActionMenuItem } from '../action-menu/action-menu';
+import { LanguageSelectorComponent } from '../language-selector/language-selector';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ActionMenuComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, ActionMenuComponent, LanguageSelectorComponent],
   templateUrl: './header.html',
   styleUrl: './header.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,9 +28,6 @@ import { ActionMenuComponent, ActionMenuItem } from '../action-menu/action-menu'
  *   Actual locale persistence and translation behavior are delegated to `I18nService`.
  */
 export class HeaderComponent {
-  /** Whether the language menu dropdown is currently visible. */
-  showLanguageMenu = false;
-
   /** Whether the app is currently refreshing. */
   readonly isRefreshing = signal(false);
 
@@ -47,25 +45,6 @@ export class HeaderComponent {
       action: () => this.refresh(),
     },
   ];
-
-  /** Toggle the visibility of the language menu. */
-  toggleLanguageMenu(): void {
-    this.showLanguageMenu = !this.showLanguageMenu;
-  }
-
-  /** Close the language menu. */
-  closeLanguageMenu(): void {
-    this.showLanguageMenu = false;
-  }
-
-  /**
-   * Select a language and apply it via `I18nService`, then close the menu.
-   * @param locale Locale code to select (e.g. 'en', 'bg')
-   */
-  selectLanguage(locale: string): void {
-    this.i18n.setLocale(locale);
-    this.closeLanguageMenu();
-  }
 
   /**
    * Refresh the entire application by reloading all resources.
