@@ -7,6 +7,8 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
+  AfterViewInit,
+  ViewChild,
   Output,
   SimpleChanges,
   inject,
@@ -24,7 +26,7 @@ import { I18nService } from '../../services/i18n.service';
   styleUrl: './transaction-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TransactionFormComponent implements OnChanges, OnInit, OnDestroy {
+export class TransactionFormComponent implements OnChanges, OnInit, OnDestroy, AfterViewInit {
   /**
    * Transaction to edit. When `null` the form functions in "add" mode.
    */
@@ -41,6 +43,15 @@ export class TransactionFormComponent implements OnChanges, OnInit, OnDestroy {
 
   /** Reactive form backing the transaction editor. */
   form: FormGroup;
+
+  /**
+   * Template reference to the date input element.
+   *
+   * Focused automatically when the form modal opens (see `ngAfterViewInit()`).
+   * Also used by `onDateKeydown()` to move focus to the time input.
+   * Optional because the element may be unavailable during some lifecycle phases or in unit tests.
+   */
+  @ViewChild('dateInput') private dateInput?: ElementRef<HTMLInputElement>;
 
   /** True while a save operation is in progress. */
   saving = false;
@@ -79,6 +90,30 @@ export class TransactionFormComponent implements OnChanges, OnInit, OnDestroy {
   ngOnInit(): void {
     this.setupTypeChangeListener();
     this.setupEscapeKeyListener();
+  }
+
+  ngAfterViewInit(): void {
+    // Focus the date input once the view is initialized.
+    // Use setTimeout to ensure the element is present in the DOM.
+    setTimeout(() => {
+      try {
+        this.dateInput?.nativeElement?.focus();
+      } catch (e) {
+        const el = this.elementRef.nativeElement.querySelector('#tx-date') as HTMLElement | null;
+        if (el) el.focus();
+      }
+    }, 0);
+  }
+
+  onDateKeydown(event: KeyboardEvent): void {
+    // Ensure Tab from the date input moves to the time field reliably.
+    if (event.key === 'Tab' && !event.shiftKey) {
+      const next = this.elementRef.nativeElement.querySelector('#tx-time') as HTMLElement | null;
+      if (next) {
+        event.preventDefault();
+        next.focus();
+      }
+    }
   }
 
   ngOnDestroy(): void {

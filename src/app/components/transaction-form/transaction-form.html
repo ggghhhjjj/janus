@@ -15,11 +15,14 @@
         <label class="field__label" for="tx-date">{{ i18n.translate('formLabelDate') }} <span aria-hidden="true">{{ i18n.translate('requiredField') }}</span></label>
         <input
           id="tx-date"
+          #dateInput
           type="date"
           class="field__input"
           [class.field__input--error]="hasError('date')"
           formControlName="date"
           aria-required="true"
+          (keydown)="onDateKeydown($event)"
+          autofocus
         />
         @if (hasError('date')) {
           <span class="field__error" role="alert">{{ i18n.translate('formErrorDate') }}</span>
@@ -200,11 +203,11 @@
       }
 
       <div class="modal-actions">
-        <button type="button" class="btn btn--secondary" (click)="onCancel()" [disabled]="saving">
-          {{ i18n.translate('cancelButton') }}
-        </button>
         <button type="submit" class="btn btn--primary" [disabled]="saving">
           {{ saving ? i18n.translate('saving') : i18n.translate('saveButton') }}
+        </button>
+        <button type="button" class="btn btn--secondary" (click)="onCancel()" [disabled]="saving">
+          {{ i18n.translate('cancelButton') }}
         </button>
       </div>
     </form>

@@ -94,6 +94,11 @@
   margin-top: 1.5rem;
 }
 
+/* Ensure keyboard order (DOM) places primary action first, while visual order
+   on wide screens shows secondary (cancel) to the left of primary. */
+.modal-actions .btn--secondary { order: 0; }
+.modal-actions .btn--primary { order: 1; }
+
 .sheet-handle {
   display: none;
 }
@@ -129,8 +134,13 @@
   }
 
   .modal-actions {
-    flex-direction: column-reverse;
+    /* Stack vertically on mobile with primary first (top) and cancel last. */
+    flex-direction: column;
   }
+
+  /* Reverse visual order on mobile so primary appears before secondary. */
+  .modal-actions .btn--secondary { order: 1; }
+  .modal-actions .btn--primary { order: 0; }
 
   .modal-actions .btn {
     width: 100%;
