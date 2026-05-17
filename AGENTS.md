@@ -92,6 +92,35 @@ export class MyWidgetComponent {
 
 See `src/app/components/total-gain-loss/` for the simplest widget example.
 
+## CSS Conventions
+
+All CSS in this project **must follow BEM (Block Element Modifier)** naming.
+
+**Rules:**
+- **Block**: the component root class, e.g. `.swap-modal`, `.transaction-table`.
+- **Element**: a child of a block, joined with `__`, e.g. `.swap-modal__title`, `.swap-radio-label__input`.
+- **Modifier**: a variant of a block or element, joined with `--`, e.g. `.type-badge--buy`, `.modal-card--wide`.
+- **Never use nested tag selectors** to style elements — e.g. `.swap-radio-label input` is wrong; use `.swap-radio-label__input` instead.
+- **Never use ID selectors** (`#foo`) for styling.
+- **Pseudo-classes and pseudo-elements** are allowed directly on a BEM class — e.g. `.swap-radio-label__input:checked::before` is correct.
+- Each BEM block maps to one component CSS file; blocks are not shared across components (except globals in `src/styles.css`).
+
+**Examples:**
+```css
+/* ✅ Correct BEM */
+.swap-radio-label { }
+.swap-radio-label__input { }
+.swap-radio-label__input:checked { }
+.swap-radio-label__input:checked::before { }
+.type-badge--buy { }
+
+/* ❌ Wrong — nested tag selector */
+.swap-radio-label input[type="radio"] { }
+
+/* ❌ Wrong — nesting without BEM element class */
+.swap-radio-label > span { }
+```
+
 ## Service Conventions
 
 - **Pure/sync services**: Business-logic services (`FifoService`, `MatchingService`) are stateless and synchronous — no `async`, no RxJS, no Angular injection needed to instantiate them in tests.
