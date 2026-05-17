@@ -19,8 +19,8 @@ Apache Cordova app targeting the **browser** platform, with **Angular 21** as th
 | `src/app/cordova.service.ts` | `CordovaService` — wraps `deviceready` as an Observable |
 | `src/app/services/i18n.service.ts` | Runtime i18n — `translate(key)`, `setLocale()`, Signal-based |
 | `src/app/services/translations.generated.ts` | **All translations** — single source of truth for i18n |
-| `src/app/services/state.service.ts` | Global app state |
-| `src/app/services/database.service.ts` | Persistence layer |
+| `src/app/services/state.service.ts` | Global app state — exposes `transactions$`, `fifoState$`; computed signals: `transactionNumbers`, `conflictTransactionIds`, `brokerAccountBalances` |
+| `src/app/services/database.service.ts` | IndexedDB persistence (stores: `transactions`, `settings`; indexes: ticker, date, type) |
 | `src/app/services/fifo.service.ts` | FIFO calculation logic |
 | `src/app/services/matching.service.ts` | Transforms `FifoState` → `MatchingDetailsRow[]`, totals, and verification flag |
 | `src/app/utils/number-utils.ts` | Shared rounding helpers — **always use `round2()` from here, never redefine it** |
@@ -41,6 +41,8 @@ Apache Cordova app targeting the **browser** platform, with **Angular 21** as th
 npm install          # First time or after package.json changes
 npm run build        # ng build → www/ → cordova build browser
 npm run cordova:run  # Build + serve in browser
+npm run watch        # ng build --watch (Angular only, no Cordova step — fast dev loop)
+npm test             # Vitest (watch mode auto-starts)
 npm run clean        # Delete www/ output directory
 ```
 
@@ -64,7 +66,8 @@ npm run clean        # Delete www/ output directory
 Dashboard sections are **self-sufficient widgets** — each widget owns its data, presentation, and styles without receiving inputs from its host.
 
 **Rules:**
-- Widgets inject `StateService` (or other services) directly — **never use `@input()` to pass data that could be fetched from a service**.
+- Widgets inject `StateService` (or other services) directly — **never use `@Input()` to pass data that could be fetched from a service**.
+- **Exception**: `ActionMenuComponent` is a reusable UI primitive that legitimately receives `ActionMenuItem[]` via `@Input()` — this is not a dashboard widget.
 - Use `toSignal(inject(StateService).fifoState$, { initialValue: null })` as the standard pattern to subscribe to reactive state.
 - Widget CSS files are **self-contained** — include `.card`, `.card__title`, utility classes like `.text-right` etc. if used in the template.
 - `.card` base styles are defined globally in `src/styles.css` — no need to redeclare; declare only widget-specific overrides.
@@ -98,6 +101,7 @@ See `src/app/components/total-gain-loss/` for the simplest widget example.
   - `MatchingService` — presentation transform only: flattens `FifoState` → rows/totals/verification. No DB or state writes.
   - `StateService` — reactive bridge; calls `FifoService.calculate()` and exposes `fifoState$` to the UI.
 - **Testing**: pure services can be unit-tested by `new FifoService()` / `new MatchingService()` directly — no `TestBed`.
+- **MatchingService verification**: uses epsilon `0.01` to compare detailed gain sum vs `fifoState.totalRealizedGainLoss`.
 
 ## Tests
 
@@ -105,6 +109,7 @@ See `src/app/components/total-gain-loss/` for the simplest widget example.
 - Location: co-located spec files (`*.spec.ts`) next to the source they test.
 - Style: `describe` / `it` / `expect` from `vitest` — see [`src/app/services/fifo.service.spec.ts`](src/app/services/fifo.service.spec.ts) for reference.
 - `Transaction` factory pattern: use a `makeTx(overrides)` helper that spreads defaults (including required `time: '00:00:00.000'` and `currency: 'USD'`) before overrides.
+- `Transaction.seqNo` is optional — used for conflict ordering when multiple transactions share the same `date + time + ticker`. Use `StateService.swapSeqNos()` to resolve conflicts.
 - For `MatchingService` tests compose `FifoService.calculate(txs)` to produce canonical `FifoState`, then assert `MatchingService.computeMatching(state)` — see [`src/app/services/matching.service.spec.ts`](src/app/services/matching.service.spec.ts).
 - No Angular `TestBed` is needed for pure service tests.
 
