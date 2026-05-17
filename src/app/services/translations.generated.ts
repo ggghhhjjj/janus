@@ -5,21 +5,17 @@ export interface TranslationMap {
 }
 
 export const GENERATED_TRANSLATIONS: TranslationMap = {
-  "fifoAccounter": {
-    "en": "FIFO Accounter",
-    "bg": "FIFO Счетоводител"
-  },
   "dashboard": {
-    "en": "Dashboard",
-    "bg": "Таблица"
+    "en": "⧉",
+    "bg": "⧉"
   },
   "transactions": {
     "en": "Transactions",
     "bg": "Транзакции"
   },
   "importCsv": {
-    "en": "Import CSV",
-    "bg": "Импортиране CSV"
+    "en": "Import",
+    "bg": "Импорт"
   },
   "language": {
     "en": "Language",
@@ -34,12 +30,12 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
     "bg": "Български"
   },
   "loadingFifoAccounter": {
-    "en": "Loading FIFO Accounter…",
-    "bg": "Зареждане на FIFO Счетоводител…"
+    "en": "Loading …",
+    "bg": "Зареждане …"
   },
   "backToDashboard": {
-    "en": "← Back to Dashboard",
-    "bg": "← Обратно към Таблица"
+    "en": "← Back to ⧉",
+    "bg": "← Обратно към ⧉"
   },
   "addTransaction": {
     "en": "+ Add Transaction",
@@ -142,12 +138,12 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
     "bg": "Пренареждане на конфликтни транзакции"
   },
   "sourceTransaction": {
-    "en": "Source Transaction (will swap with selected target)",
-    "bg": "Изходна транзакция (ще се обменя с избрания целеви)"
+    "en": "Source Transaction (will swap with selected one)",
+    "bg": "Изходна транзакция (ще се размени с избрана)"
   },
   "swapWith": {
     "en": "Swap with (select one)",
-    "bg": "Обмяна с (изберете един)"
+    "bg": "Размяна с (изберете един)"
   },
   "closeButton": {
     "en": "Close",
@@ -155,7 +151,7 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
   },
   "swapNumbers": {
     "en": "Swap Numbers",
-    "bg": "Обмяна на номера"
+    "bg": "Размяна на номера"
   },
   "totalRealizedGainLoss": {
     "en": "Total Realized Gain / Loss",
@@ -187,7 +183,7 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
   },
   "tableHeaderQuantityHeld": {
     "en": "Quantity Held",
-    "bg": "Количество държано"
+    "bg": "Държано Количество"
   },
   "tableHeaderAvgCostBasis": {
     "en": "Avg. Cost Basis",
@@ -195,7 +191,7 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
   },
   "fifoMatchingDetails": {
     "en": "FIFO Matching Details",
-    "bg": "Детайли на FIFO съответствие"
+    "bg": "Детайли на FIFO сопоставяне"
   },
   "hideButton": {
     "en": "Hide",
