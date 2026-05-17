@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   signal,
+  OnDestroy,
 } from '@angular/core';
 import { DecimalPipe, CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
@@ -16,6 +17,7 @@ import { SwapModalComponent } from '../swap-modal/swap-modal';
 import { ActionMenuComponent, ActionMenuItem } from '../action-menu/action-menu';
 import { TxTableComponent } from '../shared/tx-table/tx-table';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { CordovaService } from '../../cordova.service';
 
 type SortColumn = 'date' | 'ticker' | 'quantity' | 'price' | 'fee';
 type SortDir = 'asc' | 'desc';
@@ -42,7 +44,7 @@ type SortDir = 'asc' | 'desc';
    *   signals used by templates (modal visibility, editing state, swap UI).
    * - Delegate persistence and sequence-swapping operations to `StateService`.
    */
-  export class TransactionTableComponent {
+  export class TransactionTableComponent implements OnDestroy {
     /** Global application state for reading and mutating transactions. */
     private readonly state = inject(StateService);
 
@@ -119,6 +121,34 @@ type SortDir = 'asc' | 'desc';
     private touchStartY: number = 0;
     /** Whether a touch drag is currently active. */
     private isTouchDragging: boolean = false;
+    
+    /** Cordova service for device event access (deviceready/backbutton). */
+    private readonly cordova = inject(CordovaService);
+
+    /** Handler for Cordova 'backbutton' events. */
+    private readonly backButtonHandler = (ev: Event) => {
+      if (!this.showBackButton()) return;
+      ev.preventDefault();
+      this.navigateBackToDashboard();
+    };
+
+    /** Handler for keyboard events (Escape / Backspace) to trigger back. */
+    private readonly keydownHandler = (ev: KeyboardEvent) => {
+      if (!this.showBackButton()) return;
+      // Don't steal Escape from open modals — let them close first.
+      if (this.formOpen() || this.swapModalOpen()) return;
+      const target = ev.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
+      ) {
+        return; // don't hijack typing
+      }
+      if (ev.key === 'Escape' || ev.key === 'Backspace') {
+        ev.preventDefault();
+        this.navigateBackToDashboard();
+      }
+    };
 
     // Double-tap state for mobile edit
     /** Timestamp of the last tap; used to detect double-tap within 300ms. */
@@ -174,6 +204,18 @@ type SortDir = 'asc' | 'desc';
             ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 100);
       });
+      // Global keyboard listener: support Escape / Backspace to trigger back
+      window.addEventListener('keydown', this.keydownHandler);
+
+      // Cordova hardware back button: attach after deviceready
+      this.cordova.deviceReady$.subscribe(() => {
+        document.addEventListener('backbutton', this.backButtonHandler);
+      });
+    }
+
+    ngOnDestroy(): void {
+      window.removeEventListener('keydown', this.keydownHandler as EventListener);
+      document.removeEventListener('backbutton', this.backButtonHandler);
     }
 
     /** Toggle sorting for a column; reverses direction when selecting same column. */

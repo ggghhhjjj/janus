@@ -1,7 +1,13 @@
 <div class="tx-table-view">
   <div class="tx-table-view__toolbar">
     @if (showBackButton()) {
-      <button type="button" class="btn btn--ghost btn--sm back-btn" (click)="navigateBackToDashboard()" [attr.aria-label]="i18n.translate('backToDashboard')">
+      <button
+        type="button"
+        class="btn btn--ghost btn--sm back-btn"
+        (click)="navigateBackToDashboard()"
+        [attr.aria-label]="i18n.translate('backToDashboard')"
+        aria-keyshortcuts="Escape Backspace"
+        [attr.title]="i18n.translate('backToDashboard') + ' (Esc)'">
         {{ i18n.translate('backToDashboard') }}
       </button>
     }
