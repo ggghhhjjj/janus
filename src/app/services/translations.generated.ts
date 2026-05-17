@@ -182,8 +182,8 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
     "bg": "Няма отворени позиции."
   },
   "tableHeaderQuantityHeld": {
-    "en": "Quantity Held",
-    "bg": "Държано Количество"
+    "en": "Quantity",
+    "bg": "Количество"
   },
   "tableHeaderAvgCostBasis": {
     "en": "Avg. Cost Basis",

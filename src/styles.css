@@ -2,6 +2,7 @@
 
 /* ── CSS Custom Properties ─────────────────────────────────────────────── */
 :root {
+  --header-height: 3.5rem;
   --color-primary: #2563eb;
   --color-primary-light: rgba(37, 99, 235, 0.1);
   --color-success: #16a34a;

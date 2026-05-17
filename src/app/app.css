@@ -1,5 +1,6 @@
 .app-content {
   padding: 1.5rem;
+  padding-top: calc(1.5rem + var(--header-height) + env(safe-area-inset-top, 0px));
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
@@ -32,6 +33,7 @@
 @media (max-width: 768px) {
   .app-content {
     padding: 1rem;
+    padding-top: calc(1rem + var(--header-height) + env(safe-area-inset-top, 0px));
   }
 }
 
