@@ -12,6 +12,34 @@
  *           in the consumer's own CSS file.
  */
 
+:root {
+  --tx-type-buy-bg: rgba(34, 197, 94, 0.12);
+  --tx-type-buy-fg: #16a34a;
+  --tx-type-sell-bg: rgba(239, 68, 68, 0.12);
+  --tx-type-sell-fg: #dc2626;
+  --tx-type-dividend-bg: rgba(59, 130, 246, 0.12);
+  --tx-type-dividend-fg: #2563eb;
+  --tx-type-split-bg: rgba(168, 85, 247, 0.12);
+  --tx-type-split-fg: #7c3aed;
+  --tx-type-funding-bg: rgba(20, 184, 166, 0.12);
+  --tx-type-funding-fg: #0d9488;
+  --tx-type-withdrawal-bg: rgba(249, 115, 22, 0.12);
+  --tx-type-withdrawal-fg: #d97706;
+
+  --tx-conflict-border: #fbbf24;
+  --tx-conflict-bg: rgba(251, 191, 36, 0.08);
+  --tx-conflict-bg-hover: rgba(251, 191, 36, 0.12);
+
+  --tx-dragging-bg: rgba(159, 168, 218, 0.1);
+
+  --tx-drop-bg: rgba(52, 168, 83, 0.15);
+  --tx-drop-border: rgba(52, 168, 83, 0.8);
+  --tx-drop-shadow: rgba(52, 168, 83, 0.3);
+
+  --tx-invalid-drop-bg: rgba(220, 38, 38, 0.08);
+  --tx-invalid-drop-border: rgba(220, 38, 38, 0.4);
+}
+
 /* Custom elements default to display:inline — override so the host does not
    disrupt block layout of its .table-wrapper child. */
 app-tx-table {
@@ -120,42 +148,70 @@ app-tx-table {
 }
 
 .type-badge--buy {
-  background: rgba(34, 197, 94, 0.12);
-  color: #16a34a;
+  background: var(--tx-type-buy-bg);
+  color: var(--tx-type-buy-fg);
 }
 
 .type-badge--sell {
-  background: rgba(239, 68, 68, 0.12);
-  color: #dc2626;
+  background: var(--tx-type-sell-bg);
+  color: var(--tx-type-sell-fg);
 }
 
 .type-badge--dividend {
-  background: rgba(59, 130, 246, 0.12);
-  color: #2563eb;
+  background: var(--tx-type-dividend-bg);
+  color: var(--tx-type-dividend-fg);
 }
 
 .type-badge--split {
-  background: rgba(168, 85, 247, 0.12);
-  color: #7c3aed;
+  background: var(--tx-type-split-bg);
+  color: var(--tx-type-split-fg);
 }
 
 .type-badge--funding {
-  background: rgba(20, 184, 166, 0.12);
-  color: #0d9488;
+  background: var(--tx-type-funding-bg);
+  color: var(--tx-type-funding-fg);
 }
 
 .type-badge--withdrawal {
-  background: rgba(249, 115, 22, 0.12);
-  color: #d97706;
+  background: var(--tx-type-withdrawal-bg);
+  color: var(--tx-type-withdrawal-fg);
 }
 
 /* ── Conflict row ──────────────────────────────────────────────────── */
 
 .tx-row--conflict {
-  border-left: 4px solid #fbbf24;
-  background-color: rgba(251, 191, 36, 0.08);
+  border-left: 4px solid var(--tx-conflict-border);
+  background-color: var(--tx-conflict-bg);
 }
 
 .tx-row--conflict:hover {
-  background-color: rgba(251, 191, 36, 0.12);
+  background-color: var(--tx-conflict-bg-hover);
+}
+
+/* ── Drag-and-drop reordering (conflict rows only) ─────────────────── */
+
+.tx-row--draggable {
+  cursor: grab;
+  user-select: none;
+}
+
+.tx-row--draggable:active {
+  cursor: grabbing;
+}
+
+.tx-row--dragging {
+  opacity: 0.5;
+  background-color: var(--tx-dragging-bg);
+}
+
+.tx-row--drop-target {
+  background-color: var(--tx-drop-bg);
+  border-left: 4px solid var(--tx-drop-border);
+  box-shadow: inset 0 0 0 1px var(--tx-drop-shadow);
+}
+
+.tx-row--invalid-drop-target {
+  background-color: var(--tx-invalid-drop-bg);
+  border-left: 4px solid var(--tx-invalid-drop-border);
+  opacity: 0.7;
 }

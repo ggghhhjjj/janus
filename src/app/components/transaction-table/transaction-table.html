@@ -48,6 +48,21 @@
               [attr.data-tx-id]="tx.id"
               [class.highlighted]="highlightedTransactionId() === tx.id"
               [class.tx-row--conflict]="conflictTransactionIds().has(tx.id)"
+              [class.tx-row--draggable]="conflictTransactionIds().has(tx.id)"
+              [class.tx-row--dragging]="draggedTransactionId() === tx.id"
+              [class.tx-row--drop-target]="dropTargetTransactionId() === tx.id && isValidDropTarget(tx)"
+              [class.tx-row--invalid-drop-target]="dropTargetTransactionId() === tx.id && !isValidDropTarget(tx)"
+              [attr.draggable]="conflictTransactionIds().has(tx.id)"
+              [attr.aria-grabbed]="draggedTransactionId() === tx.id"
+              [attr.aria-dropeffect]="conflictTransactionIds().has(tx.id) ? 'move' : 'none'"
+              (dragstart)="onDragStart(tx, $event)"
+              (dragover)="onDragOver(tx, $event)"
+              (dragleave)="onDragLeave($event)"
+              (drop)="onDrop(tx, $event)"
+              (dragend)="onDragEnd($event)"
+              (touchstart)="onTouchStart(tx, $event)"
+              (touchmove)="onTouchMove($event)"
+              (touchend)="onTouchEnd($event)"
             >
               <td class="col-num text-left num-cell">
                 <div class="num-cell__content">

@@ -107,6 +107,19 @@ type SortDir = 'asc' | 'desc';
     /** Source transaction id for swapping sequence numbers. */
     readonly swapSourceId = signal<number | null>(null);
 
+    // Drag-and-drop state for conflict row reordering
+    /** ID of the currently dragged transaction (if any). */
+    readonly draggedTransactionId = signal<number | null>(null);
+    /** ID of the current drop target transaction (if any). */
+    readonly dropTargetTransactionId = signal<number | null>(null);
+    /** Timestamp of touchstart; used to detect tap-and-hold gesture (500ms threshold). */
+    private touchStartTime: number | null = null;
+    /** Touch position at start; used to detect if user moved during tap-and-hold. */
+    private touchStartX: number = 0;
+    private touchStartY: number = 0;
+    /** Whether a touch drag is currently active. */
+    private isTouchDragging: boolean = false;
+
     // Navigation / highlight (exposed from StateService for template)
     /** ID of the highlighted transaction (used by templates to focus a row). */
     readonly highlightedTransactionId = this.state.highlightedTransactionId;
@@ -116,6 +129,34 @@ type SortDir = 'asc' | 'desc';
     readonly conflictTransactionIds = this.state.conflictTransactionIds;
     /** Whether to show a back button when a transaction is highlighted. */
     readonly showBackButton = computed(() => this.highlightedTransactionId() != null);
+
+    /**
+     * Helper to get all transaction IDs in the same conflict group as the given transaction.
+     * A conflict group is defined by matching date + time + ticker.
+     */
+    getConflictGroupForTransaction(tx: Transaction): Set<number> {
+      const groupKey = `${tx.date}|${tx.time}|${tx.ticker}`;
+      return new Set(
+        this.allTransactions()
+          .filter((t) => `${t.date}|${t.time}|${t.ticker}` === groupKey)
+          .map((t) => t.id)
+      );
+    }
+
+    /**
+     * Check if a transaction is a valid drop target for the currently dragged transaction.
+     * Valid means: target is in the same conflict group and is not the dragged row itself.
+     */
+    isValidDropTarget(tx: Transaction): boolean {
+      const draggedId = this.draggedTransactionId();
+      if (draggedId == null) return false;
+      if (tx.id === draggedId) return false;
+      // Find the dragged transaction to get its conflict group
+      const draggedTx = this.allTransactions().find((t) => t.id === draggedId);
+      if (!draggedTx) return false;
+      const groupKey = `${draggedTx.date}|${draggedTx.time}|${draggedTx.ticker}`;
+      return `${tx.date}|${tx.time}|${tx.ticker}` === groupKey;
+    }
 
     constructor() {
       // Scroll to the highlighted row after Angular renders
@@ -245,5 +286,178 @@ type SortDir = 'asc' | 'desc';
       this.swapModalOpen.set(false);
       this.swapGroupTransactions.set([]);
       this.swapSourceId.set(null);
+    }
+
+    /**
+     * Handle dragstart event for conflict rows.
+     * Marks the row as being dragged and stores its ID in the DataTransfer for drop validation.
+     */
+    onDragStart(tx: Transaction, event: DragEvent): void {
+      if (!this.conflictTransactionIds().has(tx.id)) return;
+      this.draggedTransactionId.set(tx.id);
+      if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', tx.id.toString());
+      }
+    }
+
+    /**
+     * Handle dragover event on potential drop targets.
+     * Validates if the target is in the same conflict group and updates visual feedback.
+     */
+    onDragOver(tx: Transaction, event: DragEvent): void {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = this.isValidDropTarget(tx) ? 'move' : 'none';
+      }
+      // Update drop target feedback
+      if (this.isValidDropTarget(tx)) {
+        this.dropTargetTransactionId.set(tx.id);
+      }
+    }
+
+    /**
+     * Handle dragleave event to clear drop target feedback.
+     */
+    onDragLeave(event: DragEvent): void {
+      event.preventDefault();
+      event.stopPropagation();
+      // Only clear if leaving the entire table; check if relatedTarget is outside
+      const target = event.relatedTarget as HTMLElement | null;
+      if (target && !target.closest('[data-tx-id]')) {
+        this.dropTargetTransactionId.set(null);
+      }
+    }
+
+    /**
+     * Handle drop event to execute the swap.
+     * Extracts the dragged transaction ID from DataTransfer and calls StateService.swapSeqNos().
+     */
+    async onDrop(tx: Transaction, event: DragEvent): Promise<void> {
+      event.preventDefault();
+      event.stopPropagation();
+      const draggedIdStr = event.dataTransfer?.getData('text/plain');
+      const draggedId = draggedIdStr ? parseInt(draggedIdStr, 10) : null;
+      if (draggedId == null || !this.isValidDropTarget(tx)) {
+        this.clearDragState();
+        return;
+      }
+      try {
+        await this.state.swapSeqNos(draggedId, tx.id);
+      } catch (error) {
+        console.error('Failed to swap sequence numbers:', error);
+      } finally {
+        this.clearDragState();
+      }
+    }
+
+    /**
+     * Handle dragend event to clear all drag state.
+     */
+    onDragEnd(event: DragEvent): void {
+      event.preventDefault();
+      event.stopPropagation();
+      this.clearDragState();
+    }
+
+    /**
+     * Helper to clear all drag-and-drop state signals.
+     */
+    private clearDragState(): void {
+      this.draggedTransactionId.set(null);
+      this.dropTargetTransactionId.set(null);
+      this.isTouchDragging = false;
+      this.touchStartTime = null;
+      this.touchStartX = 0;
+      this.touchStartY = 0;
+    }
+
+    /**
+     * Handle touchstart event on conflict rows for mobile drag-and-drop.
+     * Initiates a 500ms tap-and-hold timer; if user holds without moving, drag begins.
+     */
+    onTouchStart(tx: Transaction, event: TouchEvent): void {
+      if (!this.conflictTransactionIds().has(tx.id)) return;
+      const touch = event.touches[0];
+      this.touchStartX = touch.clientX;
+      this.touchStartY = touch.clientY;
+      this.touchStartTime = Date.now();
+    }
+
+    /**
+     * Handle touchmove event during a potential tap-and-hold drag.
+     * Detects movement during the 500ms hold window; if moved, cancel drag.
+     * Once hold window expires, finds element under touch point and updates drop target.
+     */
+    onTouchMove(event: TouchEvent): void {
+      if (this.touchStartTime == null) return;
+      const touch = event.touches[0];
+      const moveDistance = Math.sqrt(
+        Math.pow(touch.clientX - this.touchStartX, 2) +
+          Math.pow(touch.clientY - this.touchStartY, 2)
+      );
+      const elapsedMs = Date.now() - this.touchStartTime;
+      // If moved too far before 500ms, cancel drag
+      if (elapsedMs < 500 && moveDistance > 10) {
+        this.clearDragState();
+        return;
+      }
+      // After 500ms, mark as dragging and find drop target under finger
+      if (elapsedMs >= 500 && !this.isTouchDragging) {
+        this.draggedTransactionId.set(this.getDraggedIdFromTouchStart());
+        this.isTouchDragging = true;
+      }
+      if (this.isTouchDragging) {
+        const elementAtTouch = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement;
+        const rowElement = elementAtTouch?.closest('[data-tx-id]') as HTMLElement | null;
+        if (rowElement) {
+          const targetId = rowElement.getAttribute('data-tx-id');
+          if (targetId) {
+            const targetTx = this.allTransactions().find((t) => t.id === parseInt(targetId, 10));
+            if (targetTx && this.isValidDropTarget(targetTx)) {
+              this.dropTargetTransactionId.set(targetTx.id);
+            } else {
+              this.dropTargetTransactionId.set(null);
+            }
+          }
+        } else {
+          this.dropTargetTransactionId.set(null);
+        }
+      }
+    }
+
+    /**
+     * Handle touchend event to execute the swap or cancel if no valid target.
+     */
+    async onTouchEnd(event: TouchEvent): Promise<void> {
+      if (!this.isTouchDragging) {
+        this.clearDragState();
+        return;
+      }
+      const draggedId = this.draggedTransactionId();
+      const targetId = this.dropTargetTransactionId();
+      if (draggedId != null && targetId != null) {
+        try {
+          await this.state.swapSeqNos(draggedId, targetId);
+        } catch (error) {
+          console.error('Failed to swap sequence numbers:', error);
+        }
+      }
+      this.clearDragState();
+    }
+
+    /**
+     * Helper to retrieve the dragged transaction ID from the initial touchstart.
+     * Scans all transactions for one matching the touchStartX, touchStartY coordinates.
+     */
+    private getDraggedIdFromTouchStart(): number | null {
+      const elementAtStart = document.elementFromPoint(this.touchStartX, this.touchStartY) as HTMLElement | null;
+      const rowElement = elementAtStart?.closest('[data-tx-id]') as HTMLElement | null;
+      if (rowElement) {
+        const id = rowElement.getAttribute('data-tx-id');
+        return id ? parseInt(id, 10) : null;
+      }
+      return null;
     }
   }
