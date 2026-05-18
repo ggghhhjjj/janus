@@ -2,7 +2,7 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 10px;
-  padding: 1.25rem 1.5rem;
+  padding: var(--card-padding);
 }
 
 .card__title {
@@ -16,6 +16,7 @@
 
 .text-right {
   text-align: right;
+  white-space: nowrap;
 }
 
 .text-positive {

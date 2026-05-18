@@ -154,8 +154,8 @@ export const GENERATED_TRANSLATIONS: TranslationMap = {
     "bg": "Размяна на номера"
   },
   "totalRealizedGainLoss": {
-    "en": "Total Realized Gain / Loss",
-    "bg": "Общо реализирана печалба / загуба"
+    "en": "Gain / Loss",
+    "bg": "Печалба / Загуба"
   },
   "noRealizedGainsYet": {
     "en": "No realized gains or losses yet.",

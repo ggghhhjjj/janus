@@ -15,6 +15,8 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto;
+    /* Prefer filling rows and allow dense packing to reduce vertical gaps when items span */
+    grid-auto-flow: row dense;
   }
 
   .dashboard__title {
@@ -22,6 +24,24 @@
   }
 
   app-fifo-matching {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Desktop: allow more flexible column counts and utility classes for priority rows */
+@media (min-width: 1200px) {
+  .dashboard {
+    display: grid;
+    /* allow the grid to grow to N columns based on available width, each column no smaller than 360px */
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-auto-rows: auto;
+    grid-auto-flow: row dense;
+    gap: 1.5rem;
+  }
+
+  /* Utility: apply to any dashboard child to force it to take a full row (highest visual priority)
+     Example usage: add `class="dashboard__item--full"` on the component wrapper. */
+  .dashboard__item--full {
     grid-column: 1 / -1;
   }
 }

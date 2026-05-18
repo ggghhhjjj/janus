@@ -37,6 +37,17 @@
   }
 }
 
+@media (min-width: 1200px) {
+  .app-content {
+    max-width: none;
+    width: auto;
+    margin: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    box-sizing: border-box;
+  }
+}
+
 /* Legacy reset placeholder — real reset is in styles.css */
 * {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
