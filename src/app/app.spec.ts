@@ -1,13 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
-import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter(routes)],
     }).compileComponents();
   });
 
@@ -17,12 +14,10 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('shows loading state before deviceready', () => {
+  it('should render title', async () => {
     const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+    await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    // Before deviceready fires the loading overlay is shown
-    expect(compiled.querySelector('.app-loading')).toBeTruthy();
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, hello-cordova');
   });
 });
-

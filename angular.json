@@ -43,15 +43,11 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "5kB",
+                  "maximumWarning": "4kB",
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all",
-              "optimization": {
-                "scripts": true,
-                "styles": false
-              }
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
