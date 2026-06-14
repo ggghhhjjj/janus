@@ -28,13 +28,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Angular app
-        run: npm run build:web
+      - name: Install Cordova CLI
+        run: npm install -g cordova
+
+      - name: Build Cordova browser app
+        run: |
+          cordova platform add browser
+          cordova build browser
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./www
+          path: platforms/browser/www
 
   deploy:
     needs: build
