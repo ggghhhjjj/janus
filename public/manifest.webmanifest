@@ -1,0 +1,17 @@
+{
+  "name": "Janus",
+  "short_name": "Janus",
+  "description": "Janus organizer",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2196F3",
+  "lang": "bg",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    }
+  ]
+}

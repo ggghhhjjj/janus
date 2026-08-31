@@ -25,6 +25,13 @@ jobs:
           node-version: '24'
           cache: npm
 
+      # file: ui-header requires the built library. Assumes janus-platform sibling layout.
+      - name: Build ui-header library
+        working-directory: ${{ github.workspace }}/../dynamic-components
+        run: |
+          npm ci
+          npm run build:ui-header
+
       - name: Install dependencies
         run: npm ci
 

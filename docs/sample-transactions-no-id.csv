@@ -1,0 +1,11 @@
+date,time,ticker,type,quantity,price,currency,fee,notes,seqNo
+2024-01-15,10:30:00.000,AAPL,buy,10,185.50,USD,1.00,Initial purchase,
+2024-03-20,14:00:00.000,AAPL,dividend,10,0.25,USD,,Q2 dividend,
+2024-08-01,09:15:00.000,AAPL,sell,5,210.00,USD,0.99,Partial sell,
+2024-09-01,,MSFT,buy,20,420.00,USD,,Time omitted — defaults to 00:00:00.000,
+2024-01-10,00:00:00.000,CASH,funding,1,10000.00,EUR,,Cash deposit,
+2024-12-01,00:00:00.000,CASH,withdrawal,1,500.00,EUR,,Cash withdrawal,
+2024-07-04,00:00:00.000,TSLA,split,2,0,USD,,2-for-1 split,1
+2024-07-04,00:00:00.000,TSLA,split,2,0,USD,,Duplicate slot — seqNo tie-breaker,2
+2024-11-12,16:45:00.000,SAP,buy,15,180.75,EUR,2.50,"Note, with comma",
+2025-02-01,08:00:00.000,BG0001,buy,100,12.30,BGN,,Първа покупка — UTF-8 в notes,

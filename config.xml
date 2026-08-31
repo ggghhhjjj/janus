@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.apache.cordova.hellocordova" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Hello Cordova</name>
+<widget id="app.janus" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Janus</name>
     <description>
-        A sample Apache Cordova application that responds to the deviceready event.
+        Janus organizer — Cordova browser PWA with runtime i18n.
     </description>
     <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
         Apache Cordova Team

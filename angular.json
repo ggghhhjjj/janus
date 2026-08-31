@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "hello-cordova": {
+    "janus": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -31,7 +31,9 @@
             ],
             "styles": [
               "src/styles.css"
-            ]
+            ],
+            "serviceWorker": "ngsw-config.json",
+            "preserveSymlinks": true
           },
           "configurations": {
             "production": {
@@ -61,10 +63,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "hello-cordova:build:production"
+              "buildTarget": "janus:build:production"
             },
             "development": {
-              "buildTarget": "hello-cordova:build:development"
+              "buildTarget": "janus:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -1,7 +1,20 @@
 <div class="app">
-  <h1>Apache Cordova</h1>
-  <div id="deviceready" [class.ready]="ready()">
-    <p class="event listening">Connecting to Device</p>
-    <p class="event received">Device is Ready</p>
-  </div>
+  <ui-header
+    [tabs]="tabs()"
+    [selectedTabId]="selectedTabId"
+    [menuItems]="menuItems()"
+    [languages]="languages"
+    [activeLanguage]="activeLanguage()"
+    [menuLabel]="i18n.text('header.menu')"
+    [languageLabel]="i18n.text('header.language')"
+    [shareLabel]="i18n.text('header.share')"
+    [shareCopiedLabel]="i18n.text('header.shareCopied')"
+    [shareTitle]="i18n.text('header.shareTitle')"
+    [shareText]="i18n.text('header.shareText')"
+    [statusLabel]="i18n.text('header.status')"
+    [autoShare]="true"
+    (menuSelect)="onMenuSelect($event)"
+    (languageSelect)="onLanguageSelect($event)"
+  />
+  <main class="app__body"></main>
 </div>
